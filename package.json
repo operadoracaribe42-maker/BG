@@ -1,0 +1,18 @@
+{
+  "name": "bg-caribe-web",
+  "version": "1.0.0",
+  "description": "Sitio web premium para la agencia de viajes BG Caribe",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx http-server -p 3000"
+  },
+  "keywords": [
+    "travel",
+    "xcaret",
+    "nickelodeon",
+    "caribe",
+    "premium"
+  ],
+  "author": "BG Caribe Team",
+  "license": "ISC"
+}

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BG Caribe - Tu agencia de viajes de confianza. Especialistas en paquetes todo incluido al Caribe Mexicano, Riviera Maya, Hotel Xcaret y Nickelodeon Hotels. RNT: 0423005C28259.">
+  <meta name="keywords" content="BG Caribe, Xcaret, Nickelodeon Riviera Maya, Viajes Caribe, Riviera Maya Todo Incluido, BG Transportadora del Caribe, Hoteles Xcaret, Agencia de Viajes Premium">
+  <title>BG Caribe | Tu Próxima Experiencia Todo Incluido en el Caribe</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/dest_cancun.png">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+  <!-- ==========================================
+       NAVIGATION HEADER
+       ========================================== -->
+  <header class="main-header" id="mainHeader">
+    <div class="container nav-container">
+      <!-- Logo -->
+      <a href="#" class="logo-link" id="logoLink">
+        <img src="images/logo.jpg" alt="BG Caribe" style="height: 55px; width: auto; object-fit: contain; mix-blend-mode: multiply;">
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <nav class="main-nav">
+        <ul class="nav-menu" id="navMenu">
+          <li class="nav-item"><a href="#">Inicio</a></li>
+          <li class="nav-item"><a href="#destinos">Destinos</a></li>
+          <li class="nav-item"><a href="#xcaret">Experiencia Xcaret</a></li>
+          <li class="nav-item"><a href="#nickelodeon">Nickelodeon</a></li>
+          <li class="nav-item"><a href="#beneficios">Beneficios</a></li>
+          <li class="nav-item"><a href="#cotizar" class="btn btn-secondary btn-nav-mobile" style="margin-top: 20px; display: none;">Cotizar Ahora</a></li>
+        </ul>
+      </nav>
+
+      <!-- Legal & Action buttons -->
+      <div class="nav-actions">
+        <div class="rnt-indicator" id="rntHeaderIndicator">
+          <span class="rnt-label">Registro Nacional de Turismo</span>
+          <span class="rnt-number">0423005C28259</span>
+        </div>
+        <a href="#cotizar" class="btn btn-primary" id="btnCotizarNav">Cotizar Ahora</a>
+        
+        <!-- Mobile Toggle Button -->
+        <div class="mobile-nav-toggle" id="mobileToggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       1. HERO SECTION
+       ========================================== -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg">
+      <img src="images/hero_caribbean.png" alt="Playa del Caribe Mexicano - BG Caribe" id="heroBgImage">
+    </div>
+    
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge scroll-animate" id="heroBadge">
+          <span class="glass-badge"><i class="fa-solid fa-certificate"></i> Agencia Oficial de Confianza</span>
+        </div>
+        
+        <h1 class="hero-title scroll-animate delay-100" id="heroMainTitle">
+          <span>Viajes Todo Incluido Premium</span>
+          Tu próxima experiencia en el Caribe comienza aquí
+        </h1>
+        
+        <p class="hero-desc scroll-animate delay-200" id="heroDescText">
+          Diseñamos escapadas de lujo accesible y paquetes exclusivos a la Riviera Maya, Cancún y los mejores resorts del Caribe. Vive la magia All-Fun Inclusive de Xcaret o las divertidas suites familiares de Nickelodeon con tarifas mayoristas especiales.
+        </p>
+        
+        <div class="hero-actions scroll-animate delay-300" id="heroBtnGroup">
+          <a href="#cotizar" class="btn btn-accent"><i class="fa-solid fa-calendar-days"></i> Cotizar ahora</a>
+          <a href="https://wa.me/529989800625?text=Hola,%20quiero%20cotizar%20un%20viaje%20con%20BG%20Caribe." target="_blank" class="btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Hablar por WhatsApp</a>
+        </div>
+      </div>
+
+      <!-- Quick Search Widget -->
+      <form class="hero-widget scroll-animate delay-400" id="heroQuickWidget" action="#cotizar">
+        <div class="widget-group">
+          <label for="widgetDestino">Destino</label>
+          <div class="widget-input-wrapper">
+            <i class="fa-solid fa-location-dot"></i>
+            <select id="widgetDestino" required>
+              <option value="" disabled selected>¿A dónde viajas?</option>
+              <option value="Riviera Maya">Riviera Maya</option>
+              <option value="Cancún">Cancún</option>
+              <option value="Hoteles Xcaret">Hoteles Xcaret</option>
+              <option value="Nickelodeon Hotels">Nickelodeon Resort</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="widget-group">
+          <label for="widgetFecha">Fecha Estimada</label>
+          <div class="widget-input-wrapper">
+            <i class="fa-solid fa-calendar"></i>
+            <input type="month" id="widgetFecha" required>
+          </div>
+        </div>
+        
+        <div class="widget-group">
+          <label for="widgetPasajeros">Viajeros</label>
+          <div class="widget-input-wrapper">
+            <i class="fa-solid fa-user-group"></i>
+            <select id="widgetPasajeros" required>
+              <option value="2 Adultos">2 Adultos (Pareja)</option>
+              <option value="1 Adulto">1 Adulto</option>
+              <option value="Familia (2 Ad + 1 Niño)">Fam. (2 Ad + 1 Niño)</option>
+              <option value="Familia (2 Ad + 2 Niños)">Fam. (2 Ad + 2 Niños)</option>
+              <option value="Grupo (Más de 5)">Grupo (+5 personas)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="widget-group">
+          <label for="widgetHotel">Preferencia</label>
+          <div class="widget-input-wrapper">
+            <i class="fa-solid fa-hotel"></i>
+            <select id="widgetHotel">
+              <option value="Cualquier Resort">Cualquier Resort</option>
+              <option value="Hotel Xcaret México">Hotel Xcaret México</option>
+              <option value="Hotel Xcaret Arte">Hotel Xcaret Arte</option>
+              <option value="Nickelodeon Riviera Maya">Nickelodeon Resort</option>
+              <option value="Solo Todo Incluido Luxury">Sólo Luxury All-Inc</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="widget-group widget-btn-col">
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Buscar Tarifas</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       2. SPECIALISTS & TRUST SECTION
+       ========================================= -->
+  <section class="specialists section-padding" id="nosotros">
+    <div class="container specialists-grid">
+      <div class="specialists-images scroll-animate" id="specialistsImagesArea">
+        <div class="deco-box"></div>
+        <div class="main-img-wrapper">
+          <img src="images/expert_agent.png" alt="Asesora de Viajes Experta - BG Caribe" id="expertAgentPhoto">
+        </div>
+        <div class="floating-badge-agent" id="expertFloatingCard">
+          <div class="agent-icon"><i class="fa-solid fa-user-tie"></i></div>
+          <div class="agent-text">
+            <h4>Atención 100% Humana</h4>
+            <p>Sin bots. Asesores certificados.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="specialists-info scroll-animate delay-200" id="specialistsInfoArea">
+        <span class="section-tag">Especialistas en el Caribe</span>
+        <h2 class="section-title">Asesoría de viaje experta para experiencias sin contratiempos</h2>
+        <p class="section-desc">
+          En <strong>BG Caribe</strong>, marca comercial de <strong>BG Transportadora del Caribe S.A. de C.V.</strong>, no vendemos simples reservaciones; diseñamos memorias. Como operador mayorista certificado, combinamos tarifas preferenciales exclusivas con la seguridad jurídica y el respaldo de nuestro <strong>Registro Nacional de Turismo: 0423005C28259</strong>.
+        </p>
+        
+        <div class="specialists-features">
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fa-solid fa-heart"></i></div>
+            <h3>Hoteles Xcaret</h3>
+            <p>Especialistas certificados en el concepto All-Fun Inclusive, reservando suites preferenciales en México y Arte.</p>
+          </div>
+          
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fa-solid fa-face-smile"></i></div>
+            <h3>Nickelodeon Riviera Maya</h3>
+            <p>Creamos paquetes familiares perfectos con acceso ilimitado a Aqua Nick y experiencias exclusivas con personajes.</p>
+          </div>
+          
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fa-solid fa-ring"></i></div>
+            <h3>Lunas de Miel & Romance</h3>
+            <p>Buscamos rincones paradisíacos solo para adultos con cortesías de luna de miel y atención de lujo vip.</p>
+          </div>
+          
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fa-solid fa-umbrella-beach"></i></div>
+            <h3>Paquetes Premium</h3>
+            <p>Vuelos, traslados privados y hospedaje todo incluido unificados en un solo itinerario sin preocupaciones.</p>
+          </div>
+        </div>
+
+        <div class="trust-badges-row" id="trustBadgesRow">
+          <div class="trust-badge-card">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Sectur Reg: 0423005C28259</span>
+          </div>
+          <div class="trust-badge-card">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Operador Mayorista Oficial</span>
+          </div>
+          <div class="trust-badge-card">
+            <i class="fa-solid fa-lock"></i>
+            <span>Pagos Directos Seguros</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       3. DESTINATIONS SECTION
+       ========================================== -->
+  <section class="destinations section-padding" id="destinos">
+    <div class="container">
+      <div class="section-title-wrapper scroll-animate">
+        <span class="section-tag">Colección Premium</span>
+        <h2 class="section-title">Destinos recomendados para tus vacaciones</h2>
+        <p class="section-desc">Seleccionamos cuidadosamente los resorts y playas que ofrecen el balance idóneo entre lujo, hospitalidad superior y tarifas mayoristas negociadas.</p>
+      </div>
+
+      <div class="destinations-grid">
+        <!-- Destination 1: Riviera Maya -->
+        <div class="dest-card scroll-animate" data-destination="Riviera Maya">
+          <div class="dest-card-img">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Riviera Maya - BG Caribe">
+          </div>
+          <div class="dest-card-overlay">
+            <div class="dest-card-info">
+              <span class="dest-tag">México</span>
+              <h3 class="dest-title">Riviera Maya</h3>
+              <div class="dest-meta">
+                <div class="dest-price">Paquetes desde <span>$14,990 MXN</span></div>
+                <span class="dest-btn-link">Ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Destination 2: Cancún -->
+        <div class="dest-card scroll-animate delay-100" data-destination="Cancún">
+          <div class="dest-card-img">
+            <img src="images/dest_cancun.png" alt="Cancún - BG Caribe">
+          </div>
+          <div class="dest-card-overlay">
+            <div class="dest-card-info">
+              <span class="dest-tag">México</span>
+              <h3 class="dest-title">Cancún</h3>
+              <div class="dest-meta">
+                <div class="dest-price">Paquetes desde <span>$12,450 MXN</span></div>
+                <span class="dest-btn-link">Ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Destination 3: Hoteles Xcaret -->
+        <div class="dest-card scroll-animate delay-200" data-destination="Hoteles Xcaret">
+          <div class="dest-card-img">
+            <img src="images/xcaret mexico.png" alt="Hoteles Xcaret - BG Caribe">
+          </div>
+          <div class="dest-card-overlay">
+            <div class="dest-card-info">
+              <span class="dest-tag">Eco-Lujo All-Fun Inclusive</span>
+              <h3 class="dest-title">Hoteles Xcaret</h3>
+              <div class="dest-meta">
+                <div class="dest-price">Paquetes desde <span>$29,600 MXN</span></div>
+                <span class="dest-btn-link">Ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       4. SECTION ESPECIAL XCARET (ECO-LUXURY)
+       ========================================== -->
+  <section class="xcaret-section section-padding" id="xcaret">
+    <div class="container xcaret-layout">
+      <!-- Media gallery display -->
+      <div class="xcaret-gallery scroll-animate" id="xcaretGalleryBox">
+        <div class="xcaret-gallery-badge">
+          <span class="glass-badge"><i class="fa-solid fa-seedling"></i> Destino Eco-Sustentable</span>
+        </div>
+        <img src="images/xcaret arte.png" alt="Hotel Xcaret Arte y México - BG Caribe" id="xcaretActiveImage">
+        <div class="xcaret-gallery-caption">
+          <h3 id="xcaretCaptionTitle">Hotel Xcaret Arte</h3>
+          <p id="xcaretCaptionText">Homenaje a los artistas y artesanos mexicanos en una arquitectura eco-integradora frente al mar.</p>
+        </div>
+      </div>
+
+      <!-- Information details -->
+      <div class="xcaret-details scroll-animate delay-200" id="xcaretDetailsBlock">
+        <span class="section-tag" style="color: #0D5C63;"><i class="fa-solid fa-leaf"></i> Arquitectura Sostenible</span>
+        <h2 class="section-title">El Arte de Vivir: Hoteles Xcaret</h2>
+        <p class="section-desc" style="margin-bottom: 24px;">
+          Adéntrate en el revolucionario concepto <strong>All-Fun Inclusive®</strong>. Más allá de un todo incluido tradicional, tu hospedaje te otorga acceso ilimitado y traslados redondos a todos los parques de Grupo Xcaret.
+        </p>
+
+        <!-- Tabs -->
+        <div class="xcaret-tabs" id="xcaretTabNav">
+          <span class="xcaret-tab-btn active" data-tab="arte">Xcaret Arte</span>
+          <span class="xcaret-tab-btn" data-tab="mexico">Xcaret México</span>
+          <span class="xcaret-tab-btn" data-tab="allfun">All-Fun Inclusive</span>
+        </div>
+
+        <!-- Tab contents -->
+        <div class="xcaret-tab-content active" id="tab-arte">
+          <h3>Hotel Xcaret Arte (Solo Adultos)</h3>
+          <p>Dirigido a mayores de 16 años, el hotel cuenta con 900 suites inspiradas en la cultura nacional. Cuenta con talleres artísticos interactivos (alfarería, tejido, pintura, baile) y una experiencia gastronómica dirigida por los mejores chefs del país.</p>
+          <ul class="xcaret-features-list">
+            <li><i class="fa-solid fa-check"></i> 5 Casas Artísticas Exclusivas</li>
+            <li><i class="fa-solid fa-check"></i> Colectivo Gastronómico Estrella</li>
+            <li><i class="fa-solid fa-check"></i> Spa en Cavernas Naturales</li>
+            <li><i class="fa-solid fa-check"></i> Talleres Artísticos Incluidos</li>
+          </ul>
+          <a href="#cotizar" class="btn btn-primary" onclick="setPreselectedDestination('Hoteles Xcaret', 'Hotel Xcaret Arte')">Cotizar Xcaret Arte</a>
+        </div>
+
+        <div class="xcaret-tab-content" id="tab-mexico">
+          <h3>Hotel Xcaret México (Familiar)</h3>
+          <p>Un paraíso natural pensado para familias. Cuenta con playas de arena blanca, caletas de agua cristalina, ríos subterráneos y albercas infinity integradas armónicamente con la selva maya. Diversión y lujo para todas las edades.</p>
+          <ul class="xcaret-features-list">
+            <li><i class="fa-solid fa-check"></i> Kids Club & actividades familiares</li>
+            <li><i class="fa-solid fa-check"></i> Restaurantes premium para niños</li>
+            <li><i class="fa-solid fa-check"></i> Caletas fluviales naturales</li>
+            <li><i class="fa-solid fa-check"></i> Habitaciones familiares de lujo</li>
+          </ul>
+          <a href="#cotizar" class="btn btn-primary" onclick="setPreselectedDestination('Hoteles Xcaret', 'Hotel Xcaret México')">Cotizar Xcaret México</a>
+        </div>
+
+        <div class="xcaret-tab-content" id="tab-allfun">
+          <h3>Todo Incluido de Parques & Tours</h3>
+          <p>Acceso ilimitado a: Xcaret, Xel-Há, Xplor, Xplor Fuego, Xoximilco, Xenses, Xenotes y Xavage. Incluye traslados desde el hotel en autobuses premium y alimentos en los restaurantes buffet oficiales de cada parque.</p>
+          <ul class="xcaret-features-list">
+            <li><i class="fa-solid fa-check"></i> Entradas ilimitadas a 8 parques</li>
+            <li><i class="fa-solid fa-check"></i> Transportación hotel-parque-hotel</li>
+            <li><i class="fa-solid fa-check"></i> Alimentos & bebidas en parques</li>
+            <li><i class="fa-solid fa-check"></i> Tours arqueológicos de lujo</li>
+          </ul>
+          <a href="#cotizar" class="btn btn-primary" onclick="setPreselectedDestination('Hoteles Xcaret', 'Solo Todo Incluido Luxury')">Cotizar Paquete Todo Incluido</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       5. SECTION NICKELODEON HOTELS (PREMIUM & FUN)
+       ========================================== -->
+  <section class="nickelodeon-section section-padding" id="nickelodeon">
+    <div class="container nick-layout">
+      <div class="nick-info scroll-animate" id="nickInfoBlock">
+        <span class="section-tag nick-tag"><i class="fa-solid fa-star"></i> Diversión Gourmet All-Inclusive</span>
+        <h2 class="section-title nick-title">Lujo Familiar en Nickelodeon Hotels & Resorts</h2>
+        <p class="section-desc" style="margin-bottom: 20px;">
+          Diseñado para los fans de Bob Esponja, las Tortugas Ninja y Dora la Exploradora, Nickelodeon Hotels & Resorts Riviera Maya ofrece una experiencia vacacional premium de 5 estrellas de la prestigiosa cadena Karisma.
+        </p>
+        <p class="section-desc" style="margin-bottom: 30px; font-size: 0.95rem;">
+          Toda la familia disfrutará del concepto <strong>Karisma Gourmet Inclusive®</strong>: platillos gourmet preparados al momento, bebidas premium, servicio a la habitación las 24 horas y eventos exclusivos con los personajes favoritos de los pequeños.
+        </p>
+
+        <div class="nick-features-grid">
+          <div class="nick-feature-card">
+            <h4>Suites con Alberca Privada</h4>
+            <p>Todas las habitaciones del resort son suites de 1 o 2 baños, con acceso directo a una alberca infinity privada desde el balcón.</p>
+          </div>
+          
+          <div class="nick-feature-card">
+            <h4>Aqua Nick® Gratis</h4>
+            <p>Acceso diario gratuito al colosal parque acuático de 2.4 hectáreas con toboganes extremos, ríos lentos y baños de Slime.</p>
+          </div>
+
+          <div class="nick-feature-card">
+            <h4>Interacción con Personajes</h4>
+            <p>Desayunos interactivos con Bob Esponja, fotos con Patricio Estrella y entrenamientos con las Tortugas Ninja.</p>
+          </div>
+
+          <div class="nick-feature-card">
+            <h4>Gourmet Superior</h4>
+            <p>Restaurantes temáticos y de especialidades de nivel internacional que encantarán a adultos y niños por igual.</p>
+          </div>
+        </div>
+
+        <a href="#cotizar" class="btn btn-accent nick-btn" onclick="setPreselectedDestination('Nickelodeon Hotels', 'Nickelodeon Riviera Maya')"><i class="fa-solid fa-wand-magic-sparkles"></i> Cotizar Nickelodeon</a>
+      </div>
+
+      <div class="nick-visuals scroll-animate delay-200" id="nickVisualsBlock">
+        <div class="nick-img-main">
+          <img src="images/nickelodeon.png" alt="Nickelodeon Hotels & Resorts Riviera Maya - BG Caribe">
+        </div>
+        <div class="nick-floating-badge" id="nickFloatingBadge">
+          <div class="nick-badge-icon"><i class="fa-solid fa-umbrella-beach"></i></div>
+          <div class="nick-badge-text">
+            <h5>Aqua Nick® Incluido</h5>
+            <p>24,000 m² de diversión acuática</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       6. BENEFITS OF BOOKING WITH BG CARIBE
+       ========================================== -->
+  <section class="benefits section-padding" id="beneficios">
+    <div class="container">
+      <div class="section-title-wrapper scroll-animate">
+        <span class="section-tag">Por Qué Elegirnos</span>
+        <h2 class="section-title">Beneficios exclusivos al reservar con nosotros</h2>
+        <p class="section-desc">Garantizamos una experiencia de planificación sin fricciones, tarifas de operador y soporte absoluto en tu destino.</p>
+      </div>
+
+      <div class="benefits-grid">
+        <!-- Benefit 1 -->
+        <div class="benefit-card scroll-animate">
+          <div class="benefit-card-icon"><i class="fa-solid fa-user-check"></i></div>
+          <h3>Asesoría Humana Real</h3>
+          <p>Te atiende un especialista certificado desde la planeación hasta el regreso de tu viaje, no un bot automatizado.</p>
+        </div>
+
+        <!-- Benefit 2 -->
+        <div class="benefit-card scroll-animate delay-100">
+          <div class="benefit-card-icon"><i class="fa-solid fa-credit-card"></i></div>
+          <h3>Pagos Directos y Seguros</h3>
+          <p>Tus depósitos y transferencias se realizan directo a la cuenta moral corporativa registrada del operador.</p>
+        </div>
+
+        <!-- Benefit 3 -->
+        <div class="benefit-card scroll-animate delay-200">
+          <div class="benefit-card-icon"><i class="fa-solid fa-percent"></i></div>
+          <h3>Meses Sin Intereses</h3>
+          <p>Facilidades de pago y esquemas diferidos a meses con tarjetas participantes para amortizar tu reservación.</p>
+        </div>
+
+        <!-- Benefit 4 -->
+        <div class="benefit-card scroll-animate delay-300">
+          <div class="benefit-card-icon"><i class="fa-solid fa-headset"></i></div>
+          <h3>Soporte en Destino 24/7</h3>
+          <p>Línea de emergencia exclusiva mientras estás de viaje para resolver cualquier eventualidad aeroportuaria o de hotel.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       7. TESTIMONIALS SECTION
+       ========================================== -->
+  <section class="testimonials section-padding" id="testimonios">
+    <div class="container">
+      <div class="section-title-wrapper scroll-animate">
+        <span class="section-tag">Experiencias Memorables</span>
+        <h2 class="section-title">Nuestros clientes nos recomiendan</h2>
+        <p class="section-desc">Descubre las vivencias de viajeros y familias que confiaron sus vacaciones a BG Caribe.</p>
+      </div>
+
+      <div class="testimonials-carousel-wrapper scroll-animate" id="testimonialsCarousel">
+        <div class="quote-icon-bg">“</div>
+        <div class="testimonials-track" id="testimonialsTrack">
+          <!-- Slide 1 -->
+          <div class="testimonial-slide">
+            <div class="testimonial-card">
+              <div class="testimonial-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+              <p class="testimonial-text">
+                "Reservamos el paquete de Hotel Xcaret Arte con BG Caribe y superó las expectativas. Todo fue transparente: los vuelos, la transportación oficial y el hotel. El precio de operador fue mucho menor que en portales tradicionales. ¡Recomendados al 100%!"
+              </p>
+              <div class="testimonial-author">
+                <div class="author-img">
+                  <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&h=150&q=80" alt="Mariana Silva">
+                </div>
+                <div class="author-info">
+                  <h4>Mariana Silva</h4>
+                  <p>Viajó a Hotel Xcaret Arte | Ciudad de México</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="testimonial-slide">
+            <div class="testimonial-card">
+              <div class="testimonial-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+              <p class="testimonial-text">
+                "La atención de los asesores es increíble. Diseñaron nuestro viaje familiar a Nickelodeon Riviera Maya. Los niños se divirtieron como locos en Aqua Nick y nosotros pudimos relajarnos gracias a la comida gourmet. El RNT registrado nos dio mucha confianza."
+              </p>
+              <div class="testimonial-author">
+                <div class="author-img">
+                  <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80" alt="Alejandro Pineda">
+                </div>
+                <div class="author-info">
+                  <h4>Alejandro Pineda</h4>
+                  <p>Viajó a Nickelodeon Riviera Maya | Monterrey</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="testimonial-slide">
+            <div class="testimonial-card">
+              <div class="testimonial-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+              <p class="testimonial-text">
+                "Excelente atención antes y durante el viaje. Tuvimos un pequeño retraso de vuelo de regreso y el soporte telefónico 24/7 nos guio para reagendar el traslado sin costo extra. Ese tipo de atención humana no se encuentra en las páginas baratas."
+              </p>
+              <div class="testimonial-author">
+                <div class="author-img">
+                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80" alt="Dra. Lorena Treviño">
+                </div>
+                <div class="author-info">
+                  <h4>Lorena Treviño</h4>
+                  <p>Viajó a Cancún Luxury | Guadalajara</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="carousel-controls">
+          <div class="carousel-btn" id="prevBtn"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="carousel-dots" id="carouselDots"></div>
+          <div class="carousel-btn" id="nextBtn"><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+        
+        <!-- View All Button -->
+        <div class="testimonials-action-container">
+          <button class="btn btn-secondary" id="btnVerMasTestimonios"><i class="fa-solid fa-comments"></i> Ver las 50+ Opiniones Verificadas</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       8. BOOKING FORM SECTION
+       ========================================== -->
+  <section class="quote-section section-padding" id="cotizar">
+    <div class="container quote-layout">
+      <!-- Info Column -->
+      <div class="quote-info-side scroll-animate" id="quoteInfoSide">
+        <span class="section-tag">Cotización Personalizada</span>
+        <h2>¿Listo para planear tus próximas vacaciones?</h2>
+        <p>
+          Rellena nuestro formulario rápido. Un experto de <strong>BG Caribe</strong> analizará las fechas de viaje y te enviará una propuesta formal por correo y WhatsApp con las tarifas vigentes negociadas de operador.
+        </p>
+
+        <div class="contact-cards">
+          <div class="contact-card">
+            <div class="contact-card-icon"><i class="fa-solid fa-phone"></i></div>
+            <div class="contact-card-info">
+              <span>Línea Directa Directiva</span>
+              <h4>+52 (998) 980-0625</h4>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <div class="contact-card-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div class="contact-card-info">
+              <span>Correo Oficial</span>
+              <h4>reservaciones@bgcaribe.mx</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Column -->
+      <div class="quote-form-card scroll-animate delay-200" id="quoteFormBox">
+        <h3 class="form-title">Solicitar Cotización</h3>
+        <p class="form-subtitle">Respuesta promedio en menos de 2 horas hábiles.</p>
+        
+        <form id="bookingForm" onsubmit="handleFormSubmit(event)">
+          <div class="form-grid">
+            <!-- Nombre -->
+            <div class="form-group form-col-full">
+              <label for="formNombre">Nombre Completo</label>
+              <div class="form-input-wrapper">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="formNombre" placeholder="Ej. Juan Pérez" required>
+              </div>
+            </div>
+
+            <!-- Destino -->
+            <div class="form-group">
+              <label for="formDestino">Destino Seleccionado</label>
+              <div class="form-input-wrapper">
+                <i class="fa-solid fa-location-dot"></i>
+                <select id="formDestino" onchange="updateHotelPreferences()" required>
+                  <option value="" disabled selected>Selecciona destino</option>
+                  <option value="Riviera Maya">Riviera Maya</option>
+                  <option value="Cancún">Cancún</option>
+                  <option value="Hoteles Xcaret">Hoteles Xcaret</option>
+                  <option value="Nickelodeon Hotels">Nickelodeon Resort</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Preferencia de Hotel -->
+            <div class="form-group">
+              <label for="formHotel">Preferencia de Resort</label>
+              <div class="form-input-wrapper">
+                <i class="fa-solid fa-hotel"></i>
+                <select id="formHotel">
+                  <option value="Cualquier Resort">Cualquier Resort Todo Incluido</option>
+                  <option value="Hotel Xcaret México">Hotel Xcaret México</option>
+                  <option value="Hotel Xcaret Arte">Hotel Xcaret Arte</option>
+                  <option value="Nickelodeon Riviera Maya">Nickelodeon Riviera Maya</option>
+                  <option value="Solo Todo Incluido Luxury">Sólo Luxury All-Inc</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Fecha aproximada -->
+            <div class="form-group">
+              <label for="formFecha">Fecha aproximada</label>
+              <div class="form-input-wrapper">
+                <i class="fa-solid fa-calendar-day"></i>
+                <input type="date" id="formFecha" required>
+              </div>
+            </div>
+
+            <!-- Número de Viajeros -->
+            <div class="form-group">
+              <label for="formPasajeros">Número de Viajeros</label>
+              <div class="form-input-wrapper">
+                <i class="fa-solid fa-user-group"></i>
+                <select id="formPasajeros" required>
+                  <option value="2 Adultos">2 Adultos</option>
+                  <option value="1 Adulto">1 Adulto</option>
+                  <option value="2 Adultos + 1 Niño">2 Adultos + 1 Niño</option>
+                  <option value="2 Adultos + 2 Niños">2 Adultos + 2 Niños</option>
+                  <option value="Otro (especificar en comentarios)">Otro (Detallar abajo)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="form-group form-col-full">
+              <label for="formTelefono">Teléfono (WhatsApp)</label>
+              <div class="form-input-wrapper">
+                <i class="fa-solid fa-phone"></i>
+                <input type="tel" id="formTelefono" placeholder="Ej. +52 998 980 0625" required>
+              </div>
+            </div>
+
+            <!-- Comentarios -->
+            <div class="form-group form-col-full">
+              <label for="formComentarios">Peticiones o detalles especiales</label>
+              <div class="form-input-wrapper">
+                <textarea id="formComentarios" rows="3" placeholder="Ej. Viajo por aniversario, requiero habitación con vista al mar, agregar traslados privados..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Enviar Formulario de Cotización</button>
+            <button type="button" class="btn btn-whatsapp" onclick="sendDirectWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Cotizar Rápido por WhatsApp</button>
+          </div>
+          <p class="form-notice">Tus datos están protegidos por nuestro Aviso de Privacidad Oficial de BG Transportadora del Caribe S.A. de C.V.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       10. FOOTER
+       ========================================== -->
+  <footer class="main-footer">
+    <div class="container footer-top">
+      <!-- Brand & Legal Column -->
+      <div class="footer-brand">
+        <div style="background: white; padding: 10px; border-radius: 8px; display: inline-block; margin-bottom: 20px; max-width: 180px;">
+          <img src="images/logo.jpg" alt="BG Caribe Logo" style="height: 45px; width: auto; display: block;">
+        </div>
+        <p class="footer-brand-desc">
+          BG Caribe es la división especializada en turismo vacacional B2C operada bajo la razón social de <strong>BG Transportadora del Caribe S.A. de C.V.</strong> Especialistas en turismo de descanso y experiencias eco-luxury.
+        </p>
+        <div class="legal-box">
+          <h5>Credenciales Oficiales SECTUR</h5>
+          <p><strong>RNT: 0423005C28259</strong></p>
+          <p>Registro Nacional de Turismo Oficial.</p>
+        </div>
+      </div>
+
+      <!-- Links Column -->
+      <div>
+        <h4 class="footer-title">Enlaces Rápidos</h4>
+        <ul class="footer-links">
+          <li><a href="#">Inicio</a></li>
+          <li><a href="#destinos">Destinos Destacados</a></li>
+          <li><a href="#xcaret">Experiencia Hoteles Xcaret</a></li>
+          <li><a href="#nickelodeon">Nickelodeon Hotels & Resorts</a></li>
+          <li><a href="#beneficios">Beneficios de Reservar</a></li>
+          <li><a href="#testimonios">Reseñas de Clientes</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Column -->
+      <div>
+        <h4 class="footer-title">Contacto & Soporte</h4>
+        <div class="footer-contact-info">
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>
+              <strong>Oficina Corporativa</strong>
+              Av. Cobá SM 35, Mza 2, Lte 12, Cancún, Quintana Roo, México. C.P. 77500
+            </div>
+          </div>
+
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-phone"></i>
+            <div>
+              <strong>Línea de Ventas</strong>
+              +52 (998) 980-0625
+            </div>
+          </div>
+
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-envelope"></i>
+            <div>
+              <strong>Atención al Cliente</strong>
+              ventas@bgcaribe.mx
+            </div>
+          </div>
+        </div>
+
+        <div class="social-links">
+          <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legal Area -->
+    <div class="container footer-bottom">
+      <p>&copy; 2026 BG Transportadora del Caribe S.A. de C.V. Todos los derechos reservados. RNT: 0423005C28259.</p>
+      <div class="footer-legal-links">
+        <a href="#">Aviso de Privacidad</a>
+        <a href="#">Términos y Condiciones</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp -->
+  <a href="https://wa.me/529989800625?text=Hola,%20vengo%20de%20la%20página%20web%20y%20me%20gustaría%20cotizar%20un%20viaje." target="_blank" class="whatsapp-float" id="whatsappFloat">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <!-- Modal de Testimonios (+50 Opiniones) -->
+  <div class="testimonials-modal" id="testimonialsModal">
+    <div class="testimonials-modal-content">
+      <div class="testimonials-modal-header">
+        <h3>Muro de Opiniones de Viajeros</h3>
+        <span class="close-modal" id="closeTestimonialsModal">&times;</span>
+      </div>
+      <div class="testimonials-modal-filters">
+        <span class="filter-tab active" data-filter="todos">Todos</span>
+        <span class="filter-tab" data-filter="xcaret">Hoteles Xcaret</span>
+        <span class="filter-tab" data-filter="nickelodeon">Nickelodeon Resorts</span>
+        <span class="filter-tab" data-filter="caribe">Riviera Maya / Cancún</span>
+      </div>
+      <div class="testimonials-modal-grid" id="modalTestimonialsGrid">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Scripts -->
+  <script src="js/main.js"></script>
+</body>
+</html>
