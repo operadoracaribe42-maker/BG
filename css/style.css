@@ -167,6 +167,10 @@ button, input, select, textarea {
   gap: 10px;
 }
 
+.btn-nav-mobile {
+  display: none;
+}
+
 .btn-primary {
   background-color: var(--color-primary);
   color: var(--white);
@@ -443,6 +447,32 @@ button, input, select, textarea {
   .rnt-indicator {
     display: none; /* Hide on mobile navbar action area, show in mobile menu */
   }
+
+  .logo-main {
+    font-size: 1.4rem;
+  }
+
+  .logo-sub {
+    font-size: 0.55rem;
+  }
+
+  .nav-actions {
+    gap: 12px;
+  }
+
+  #btnCotizarNav {
+    display: none;
+  }
+
+  .btn-nav-mobile {
+    display: inline-flex !important;
+    width: 100% !important;
+    margin-top: 20px;
+  }
+
+  .header-social-link {
+    margin-right: 5px;
+  }
 }
 
 /* ========================================================================
@@ -627,11 +657,13 @@ button, input, select, textarea {
   .hero-title {
     font-size: 2.2rem;
   }
-  .hero-widget {
-    grid-template-columns: 1fr;
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
-  .widget-btn-col {
-    grid-column: span 1;
+  .hero-actions .btn {
+    width: 100%;
   }
 }
 
@@ -1141,6 +1173,30 @@ button, input, select, textarea {
   }
 }
 
+@media (max-width: 576px) {
+  .xcaret-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(13, 92, 99, 0.08);
+  }
+  .xcaret-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .xcaret-tab-btn {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    padding: 8px 2px;
+  }
+  .xcaret-features-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
 /* ========================================================================
    6. NICKELODEON SECTION
    ======================================================================== */
@@ -1292,6 +1348,13 @@ button, input, select, textarea {
     right: 20px;
     bottom: -15px;
     top: auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .nick-features-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 
@@ -1517,6 +1580,15 @@ button, input, select, textarea {
   }
   .testimonial-text {
     font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .testimonial-card {
+    padding: 20px;
+  }
+  .testimonial-text {
+    font-size: 0.95rem;
   }
 }
 
@@ -1905,6 +1977,16 @@ button, input, select, textarea {
 .whatsapp-float:hover {
   transform: scale(1.1) rotate(5deg);
   background-color: #20BA5A;
+}
+
+@media (max-width: 576px) {
+  .whatsapp-float {
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
 }
 
 /* Animations */
