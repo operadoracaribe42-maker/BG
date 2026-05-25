@@ -2304,6 +2304,41 @@ button, input, select, textarea {
   object-fit: contain;
 }
 
+.offices-logo-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.offices-logo-main {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--teal-vivid) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.offices-logo-sub {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.offices-logo-rnt {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(13, 92, 99, 0.12);
+}
+
 @media (max-width: 992px) {
   .offices-layout {
     grid-template-columns: 1fr;
