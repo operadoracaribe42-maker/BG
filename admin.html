@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BG Caribe — Panel de Administración</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome 6.4 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Admin Styles -->
+  <link rel="stylesheet" href="css/admin.css">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏝️</text></svg>">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     TOAST CONTAINER
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     LOGIN SCREEN
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="logo-area">
+      <h1>BG CARIBE</h1>
+      <p>Panel de Administración</p>
+    </div>
+    <form id="loginForm" autocomplete="off">
+      <div class="login-field">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="loginPassword" placeholder="Contraseña de acceso" required>
+      </div>
+      <p class="login-error" id="loginError"></p>
+      <button type="submit" class="btn btn-gold btn-full">
+        <i class="fas fa-sign-in-alt"></i> Ingresar
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     ADMIN DASHBOARD
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="admin-dashboard" id="adminDashboard">
+
+  <!-- ── HEADER ──────────────────────────────────────────────────── -->
+  <header class="admin-header">
+    <div class="brand">
+      <button class="menu-toggle" id="menuToggle" aria-label="Menú">
+        <i class="fas fa-bars"></i>
+      </button>
+      <h1>BG CARIBE</h1>
+      <span><i class="fas fa-shield-halved"></i> Admin</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline btn-sm" id="btnLogout">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
+  </header>
+
+  <!-- ── SIDEBAR ─────────────────────────────────────────────────── -->
+  <nav class="admin-sidebar" id="adminSidebar">
+    <ul class="sidebar-nav">
+      <li>
+        <a href="#" class="active" data-section="dashboard">
+          <i class="fas fa-chart-pie"></i> Dashboard
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="nueva-reserva">
+          <i class="fas fa-plus-circle"></i> Nueva Reserva
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="reservas">
+          <i class="fas fa-list-check"></i> Reservaciones
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ── SIDEBAR MOBILE BACKDROP ─────────────────────────────────── -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- ── MAIN CONTENT ────────────────────────────────────────────── -->
+  <main class="admin-main">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SECTION: DASHBOARD
+         ═══════════════════════════════════════════════════════════════ -->
+    <section class="admin-section active" id="section-dashboard">
+      <h2 class="section-title">Dashboard</h2>
+      <p class="section-subtitle">Resumen general del sistema de reservaciones</p>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card teal">
+          <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-label">Total Reservas</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-icon"><i class="fas fa-clock"></i></div>
+          <div class="stat-value" id="statPendientes">0</div>
+          <div class="stat-label">Pendientes</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-value" id="statConfirmadas">0</div>
+          <div class="stat-label">Confirmadas</div>
+        </div>
+        <div class="stat-card mint">
+          <div class="stat-icon"><i class="fas fa-coins"></i></div>
+          <div class="stat-value" id="statIngresos">$0</div>
+          <div class="stat-label">Ingresos Totales</div>
+        </div>
+      </div>
+
+      <!-- Recent reservations preview -->
+      <h3 class="section-title" style="font-size:1.15rem;">Reservaciones Recientes</h3>
+      <p class="section-subtitle">Últimas reservaciones registradas</p>
+      <div class="table-card">
+        <div class="table-wrap">
+          <table class="data-table" id="dashboardTable">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Destino</th>
+                <th>Fechas</th>
+                <th>Monto</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardTableBody">
+              <tr>
+                <td colspan="6">
+                  <div class="loading-overlay">
+                    <div class="spinner"></div>
+                    <span>Cargando reservaciones...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SECTION: NUEVA RESERVA
+         ═══════════════════════════════════════════════════════════════ -->
+    <section class="admin-section" id="section-nueva-reserva">
+      <h2 class="section-title">Nueva Reserva</h2>
+      <p class="section-subtitle">Completa todos los campos para generar una nueva reservación</p>
+
+      <form id="reservationForm" autocomplete="off">
+
+        <!-- ── Cliente ──────────────────────────────────────────── -->
+        <div class="form-card">
+          <div class="form-section-title">
+            <i class="fas fa-user"></i> Información del Cliente
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="clienteNombre">Nombre completo *</label>
+              <input type="text" id="clienteNombre" name="clienteNombre" placeholder="Ej. Juan Pérez García" required>
+            </div>
+            <div class="form-group">
+              <label for="clienteEmail">Email *</label>
+              <input type="email" id="clienteEmail" name="clienteEmail" placeholder="correo@ejemplo.com" required>
+            </div>
+            <div class="form-group">
+              <label for="clienteTelefono">Teléfono / WhatsApp *</label>
+              <input type="tel" id="clienteTelefono" name="clienteTelefono" placeholder="+52 999 123 4567" required>
+            </div>
+            <div class="form-group">
+              <label for="clienteCiudad">Ciudad de origen *</label>
+              <input type="text" id="clienteCiudad" name="clienteCiudad" placeholder="Ej. Ciudad de México" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Viaje ────────────────────────────────────────────── -->
+        <div class="form-card">
+          <div class="form-section-title">
+            <i class="fas fa-plane"></i> Detalles del Viaje
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="destino">Destino *</label>
+              <select id="destino" name="destino" required>
+                <option value="">Seleccionar destino</option>
+                <option value="Riviera Maya">Riviera Maya</option>
+                <option value="Cancún">Cancún</option>
+                <option value="Hoteles Xcaret">Hoteles Xcaret</option>
+                <option value="Nickelodeon Hotels">Nickelodeon Hotels</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="hotel">Hotel / Resort *</label>
+              <select id="hotel" name="hotel" required>
+                <option value="">Primero selecciona un destino</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="tipoHabitacion">Tipo de habitación</label>
+              <select id="tipoHabitacion" name="tipoHabitacion">
+                <option value="Estándar">Estándar</option>
+                <option value="Superior">Superior</option>
+                <option value="Deluxe">Deluxe</option>
+                <option value="Junior Suite">Junior Suite</option>
+                <option value="Suite">Suite</option>
+                <option value="Suite Premium">Suite Premium</option>
+                <option value="Villa">Villa</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fechaEntrada">Fecha de entrada *</label>
+              <input type="date" id="fechaEntrada" name="fechaEntrada" required>
+            </div>
+            <div class="form-group">
+              <label for="fechaSalida">Fecha de salida *</label>
+              <input type="date" id="fechaSalida" name="fechaSalida" required>
+            </div>
+            <div class="form-group">
+              <label for="adultos">Número de adultos *</label>
+              <input type="number" id="adultos" name="adultos" min="1" value="2" required>
+            </div>
+            <div class="form-group">
+              <label for="ninos">Número de niños</label>
+              <input type="number" id="ninos" name="ninos" min="0" value="0">
+            </div>
+            <div class="form-group form-check">
+              <input type="checkbox" id="vueloIncluido" name="vueloIncluido">
+              <label for="vueloIncluido">Vuelo incluido</label>
+            </div>
+            <div class="form-group form-check">
+              <input type="checkbox" id="trasladosIncluidos" name="trasladosIncluidos">
+              <label for="trasladosIncluidos">Traslados incluidos</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Financiero ───────────────────────────────────────── -->
+        <div class="form-card">
+          <div class="form-section-title">
+            <i class="fas fa-money-bill-wave"></i> Información Financiera
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="montoTotal">Monto total del paquete (MXN) *</label>
+              <input type="number" id="montoTotal" name="montoTotal" min="0" step="0.01" placeholder="0.00" required>
+            </div>
+            <div class="form-group">
+              <label for="anticipo">Anticipo recibido (MXN)</label>
+              <input type="number" id="anticipo" name="anticipo" min="0" step="0.01" value="0" placeholder="0.00">
+            </div>
+            <div class="form-group">
+              <label>Saldo pendiente (MXN)</label>
+              <div class="saldo-display" id="saldoPendiente">$0.00 MXN</div>
+            </div>
+            <div class="form-group">
+              <label for="metodoPago">Método de pago</label>
+              <select id="metodoPago" name="metodoPago">
+                <option value="Transferencia bancaria">Transferencia bancaria</option>
+                <option value="Depósito en efectivo">Depósito en efectivo</option>
+                <option value="Tarjeta de crédito/débito">Tarjeta de crédito/débito</option>
+                <option value="Meses sin intereses (3 MSI)">Meses sin intereses (3 MSI)</option>
+                <option value="Meses sin intereses (6 MSI)">Meses sin intereses (6 MSI)</option>
+                <option value="Meses sin intereses (12 MSI)">Meses sin intereses (12 MSI)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Notas ────────────────────────────────────────────── -->
+        <div class="form-card">
+          <div class="form-section-title">
+            <i class="fas fa-sticky-note"></i> Notas
+          </div>
+          <div class="form-group">
+            <label for="notas">Notas internas</label>
+            <textarea id="notas" name="notas" placeholder="Observaciones, solicitudes especiales, recordatorios..."></textarea>
+          </div>
+        </div>
+
+        <!-- ── Submit ───────────────────────────────────────────── -->
+        <div class="form-actions">
+          <button type="reset" class="btn btn-outline">
+            <i class="fas fa-eraser"></i> Limpiar
+          </button>
+          <button type="submit" class="btn btn-gold" id="btnCrearReserva">
+            <i class="fas fa-ticket"></i> Generar Reserva
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SECTION: RESERVACIONES
+         ═══════════════════════════════════════════════════════════════ -->
+    <section class="admin-section" id="section-reservas">
+      <h2 class="section-title">Reservaciones</h2>
+      <p class="section-subtitle">Gestión completa de todas las reservaciones</p>
+
+      <!-- Stats (duplicated here for context) -->
+      <div class="stats-grid">
+        <div class="stat-card teal">
+          <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-value stat-total-mirror">0</div>
+          <div class="stat-label">Total Reservas</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-icon"><i class="fas fa-clock"></i></div>
+          <div class="stat-value stat-pendientes-mirror">0</div>
+          <div class="stat-label">Pendientes</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-value stat-confirmadas-mirror">0</div>
+          <div class="stat-label">Confirmadas</div>
+        </div>
+        <div class="stat-card mint">
+          <div class="stat-icon"><i class="fas fa-coins"></i></div>
+          <div class="stat-value stat-ingresos-mirror">$0</div>
+          <div class="stat-label">Ingresos Totales</div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchInput" placeholder="Buscar por código, nombre, destino...">
+        </div>
+        <select id="filterStatus">
+          <option value="">Todos los estados</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="confirmada">Confirmada</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="table-card">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Destino</th>
+                <th>Fechas</th>
+                <th>Monto</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="reservationsTableBody">
+              <tr>
+                <td colspan="7">
+                  <div class="loading-overlay">
+                    <div class="spinner"></div>
+                    <span>Cargando reservaciones...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /.admin-main -->
+</div><!-- /.admin-dashboard -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MODAL: RESERVA CREADA (SUCCESS)
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <h2>Reserva Creada</h2>
+      <button class="modal-close" onclick="closeModal('successModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="success-content">
+        <div class="check-icon"><i class="fas fa-check"></i></div>
+        <h3>¡Reservación generada exitosamente!</h3>
+        <p class="text-muted">Código de reservación:</p>
+        <div class="code-display" id="successCode">BG-XXXXXXXX</div>
+        <br>
+        <button class="btn btn-outline btn-sm copy-btn" onclick="copyCode()">
+          <i class="fas fa-copy"></i> Copiar Código
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="closeModal('successModal')">
+        <i class="fas fa-check"></i> Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MODAL: EDITAR RESERVA
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2><i class="fas fa-edit" style="color:var(--gold);margin-right:8px;"></i>Editar Reservación</h2>
+      <button class="modal-close" onclick="closeModal('editModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="editForm" autocomplete="off">
+        <input type="hidden" id="editDocId">
+
+        <!-- Estado -->
+        <div class="form-card" style="margin-bottom:20px;">
+          <div class="form-section-title">
+            <i class="fas fa-flag"></i> Estado de la Reserva
+          </div>
+          <div class="form-group">
+            <label for="editEstado">Estado</label>
+            <select id="editEstado" name="editEstado">
+              <option value="pendiente">Pendiente</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="cancelada">Cancelada</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Cliente -->
+        <div class="form-card" style="margin-bottom:20px;">
+          <div class="form-section-title">
+            <i class="fas fa-user"></i> Cliente
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="editNombre">Nombre completo</label>
+              <input type="text" id="editNombre" required>
+            </div>
+            <div class="form-group">
+              <label for="editEmail">Email</label>
+              <input type="email" id="editEmail" required>
+            </div>
+            <div class="form-group">
+              <label for="editTelefono">Teléfono / WhatsApp</label>
+              <input type="tel" id="editTelefono" required>
+            </div>
+            <div class="form-group">
+              <label for="editCiudad">Ciudad de origen</label>
+              <input type="text" id="editCiudad" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Viaje -->
+        <div class="form-card" style="margin-bottom:20px;">
+          <div class="form-section-title">
+            <i class="fas fa-plane"></i> Viaje
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="editDestino">Destino</label>
+              <select id="editDestino">
+                <option value="">Seleccionar destino</option>
+                <option value="Riviera Maya">Riviera Maya</option>
+                <option value="Cancún">Cancún</option>
+                <option value="Hoteles Xcaret">Hoteles Xcaret</option>
+                <option value="Nickelodeon Hotels">Nickelodeon Hotels</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editHotel">Hotel / Resort</label>
+              <select id="editHotel">
+                <option value="">Seleccionar hotel</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editTipoHabitacion">Tipo de habitación</label>
+              <select id="editTipoHabitacion">
+                <option value="Estándar">Estándar</option>
+                <option value="Superior">Superior</option>
+                <option value="Deluxe">Deluxe</option>
+                <option value="Junior Suite">Junior Suite</option>
+                <option value="Suite">Suite</option>
+                <option value="Suite Premium">Suite Premium</option>
+                <option value="Villa">Villa</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editFechaEntrada">Fecha de entrada</label>
+              <input type="date" id="editFechaEntrada" required>
+            </div>
+            <div class="form-group">
+              <label for="editFechaSalida">Fecha de salida</label>
+              <input type="date" id="editFechaSalida" required>
+            </div>
+            <div class="form-group">
+              <label for="editAdultos">Adultos</label>
+              <input type="number" id="editAdultos" min="1" required>
+            </div>
+            <div class="form-group">
+              <label for="editNinos">Niños</label>
+              <input type="number" id="editNinos" min="0">
+            </div>
+            <div class="form-group form-check">
+              <input type="checkbox" id="editVuelo">
+              <label for="editVuelo">Vuelo incluido</label>
+            </div>
+            <div class="form-group form-check">
+              <input type="checkbox" id="editTraslados">
+              <label for="editTraslados">Traslados incluidos</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financiero -->
+        <div class="form-card" style="margin-bottom:20px;">
+          <div class="form-section-title">
+            <i class="fas fa-money-bill-wave"></i> Financiero
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="editMonto">Monto total (MXN)</label>
+              <input type="number" id="editMonto" min="0" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="editAnticipo">Anticipo recibido (MXN)</label>
+              <input type="number" id="editAnticipo" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>Saldo pendiente (MXN)</label>
+              <div class="saldo-display" id="editSaldo">$0.00 MXN</div>
+            </div>
+            <div class="form-group">
+              <label for="editMetodoPago">Método de pago</label>
+              <select id="editMetodoPago">
+                <option value="Transferencia bancaria">Transferencia bancaria</option>
+                <option value="Depósito en efectivo">Depósito en efectivo</option>
+                <option value="Tarjeta de crédito/débito">Tarjeta de crédito/débito</option>
+                <option value="Meses sin intereses (3 MSI)">Meses sin intereses (3 MSI)</option>
+                <option value="Meses sin intereses (6 MSI)">Meses sin intereses (6 MSI)</option>
+                <option value="Meses sin intereses (12 MSI)">Meses sin intereses (12 MSI)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notas -->
+        <div class="form-card">
+          <div class="form-section-title">
+            <i class="fas fa-sticky-note"></i> Notas
+          </div>
+          <div class="form-group">
+            <label for="editNotas">Notas internas</label>
+            <textarea id="editNotas" placeholder="Observaciones..."></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('editModal')">
+        <i class="fas fa-times"></i> Cancelar
+      </button>
+      <button class="btn btn-gold" id="btnGuardarEdicion" onclick="saveEdit()">
+        <i class="fas fa-save"></i> Guardar Cambios
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MODAL: CONFIRMAR ELIMINACIÓN
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <h2><i class="fas fa-exclamation-triangle" style="color:var(--status-cancelled);margin-right:8px;"></i>Confirmar</h2>
+      <button class="modal-close" onclick="closeModal('deleteModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body text-center">
+      <p>¿Estás seguro de que deseas eliminar la reservación <strong id="deleteCodeDisplay"></strong>?</p>
+      <p class="text-muted mt-1">Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('deleteModal')">Cancelar</button>
+      <button class="btn btn-danger" id="btnConfirmDelete" onclick="confirmDelete()">
+        <i class="fas fa-trash"></i> Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/admin.js"></script>
+
+</body>
+</html>

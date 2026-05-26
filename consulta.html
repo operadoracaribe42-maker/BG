@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Consulta el estado de tu reservación con BG Caribe. Introduce tu código de reserva para ver todos los detalles de tu viaje.">
+  <title>Consulta tu Reservación — BG Caribe</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6.4 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/consulta.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230D5C63'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='serif' font-size='18' font-weight='bold'%3EBG%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="site-header">
+    <div class="header-brand">
+      <h1><span>BG</span> CARIBE</h1>
+      <p>Portal de Consulta de Reservaciones</p>
+    </div>
+  </header>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Search Card -->
+      <div class="search-card">
+        <div class="search-icon">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <h2>Consulta tu Reservación</h2>
+        <p class="subtitle">Introduce tu código de reserva para ver los detalles de tu viaje</p>
+
+        <form class="search-form" id="searchForm" autocomplete="off">
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="codigoInput"
+              class="search-input"
+              placeholder="Ej. BG-A1B2C3D4"
+              maxlength="14"
+              aria-label="Código de reservación"
+            >
+            <i class="fa-solid fa-ticket"></i>
+          </div>
+          <button type="submit" class="btn-search" id="btnSearch">
+            <i class="fa-solid fa-search"></i>
+            <span>Buscar Reservación</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Result Area -->
+      <div class="result-area" id="resultArea">
+
+        <!-- STATE: Loading -->
+        <div class="state-loading hidden" id="stateLoading">
+          <div class="spinner"></div>
+          <p>Buscando tu reservación...</p>
+        </div>
+
+        <!-- STATE: Result Card (found) -->
+        <div class="result-card hidden" id="stateFound">
+          <!-- Card Header -->
+          <div class="result-card-header">
+            <div class="reservation-code" id="resCode">
+              <i class="fa-solid fa-bookmark"></i>
+              <span id="resCodeText"></span>
+            </div>
+            <div id="resStatusBadge"></div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="result-card-body">
+
+            <!-- Section: Datos del Titular -->
+            <div class="detail-section">
+              <div class="section-title">
+                <i class="fa-solid fa-user"></i>
+                <span>Datos del Titular</span>
+              </div>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="detail-label">Nombre completo</span>
+                  <span class="detail-value" id="resNombre">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Correo electrónico</span>
+                  <span class="detail-value" id="resEmail">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Teléfono</span>
+                  <span class="detail-value" id="resTelefono">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Ciudad</span>
+                  <span class="detail-value" id="resCiudad">—</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section: Detalles del Viaje -->
+            <div class="detail-section">
+              <div class="section-title">
+                <i class="fa-solid fa-plane"></i>
+                <span>Detalles del Viaje</span>
+              </div>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="detail-label">Destino</span>
+                  <span class="detail-value" id="resDestino">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Hotel</span>
+                  <span class="detail-value" id="resHotel">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Tipo de habitación</span>
+                  <span class="detail-value" id="resHabitacion">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Fecha de salida</span>
+                  <span class="detail-value" id="resFechaSalida">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Fecha de regreso</span>
+                  <span class="detail-value" id="resFechaRegreso">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Adultos</span>
+                  <span class="detail-value" id="resAdultos">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Niños</span>
+                  <span class="detail-value" id="resNinos">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Vuelo incluido</span>
+                  <span class="detail-value" id="resVuelo">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Traslados incluidos</span>
+                  <span class="detail-value" id="resTraslados">—</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section: Información Financiera -->
+            <div class="detail-section">
+              <div class="section-title">
+                <i class="fa-solid fa-credit-card"></i>
+                <span>Información Financiera</span>
+              </div>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="detail-label">Monto total</span>
+                  <span class="detail-value highlight" id="resMontoTotal">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Anticipo recibido</span>
+                  <span class="detail-value" id="resAnticipo">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Método de pago</span>
+                  <span class="detail-value" id="resMetodoPago">—</span>
+                </div>
+              </div>
+              <div class="financial-highlight" id="resSaldoBox">
+                <span class="label">Saldo pendiente</span>
+                <span class="amount" id="resSaldo">—</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Print Button -->
+          <button class="btn-print" id="btnPrint" type="button">
+            <i class="fa-solid fa-print"></i>
+            Imprimir Comprobante
+          </button>
+        </div>
+
+        <!-- STATE: Not Found -->
+        <div class="state-not-found hidden" id="stateNotFound">
+          <div class="not-found-icon">
+            <i class="fa-solid fa-circle-question"></i>
+          </div>
+          <h3>Reservación no encontrada</h3>
+          <p>No encontramos ninguna reservación con ese código. Verifica que esté escrito correctamente o contáctanos para asistencia.</p>
+          <a href="https://wa.me/529981234567?text=Hola%2C%20necesito%20ayuda%20con%20mi%20reservaci%C3%B3n" target="_blank" rel="noopener" class="btn-whatsapp">
+            <i class="fa-brands fa-whatsapp"></i>
+            Contactar por WhatsApp
+          </a>
+        </div>
+
+        <!-- STATE: Error -->
+        <div class="state-error hidden" id="stateError">
+          <div class="error-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <h3>Error de conexión</h3>
+          <p>Ocurrió un problema al consultar tu reservación. Por favor intenta de nuevo en unos momentos.</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="site-footer">
+    <div class="footer-legal">
+      <strong>BG Transportadora del Caribe S.A. de C.V.</strong><br>
+      RNT: 04230051C28259
+      <span class="footer-divider">|</span>
+      <a href="https://wa.me/529981234567" target="_blank" rel="noopener">
+        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+      </a>
+    </div>
+  </footer>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/consulta.js"></script>
+
+</body>
+</html>
