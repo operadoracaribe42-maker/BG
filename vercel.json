@@ -16,10 +16,10 @@
       "has": [
         {
           "type": "host",
-          "value": "consulta.bgcaribe.mx"
+          "value": "confirmacion.bgcaribe.mx"
         }
       ],
-      "destination": "/consulta.html"
+      "destination": "/confirmacion.html"
     }
   ]
 }
