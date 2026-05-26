@@ -1,8 +1,8 @@
 /*
 ========================================================================
    BG CARIBE — ADMIN PANEL JAVASCRIPT
-   Lógica completa del panel de administración
-   Firebase Firestore · Tiempo real · CRUD de reservaciones
+   Logica completa del panel de administracion
+   Supabase · Tiempo real · CRUD de reservaciones
 ========================================================================
 */
 
@@ -51,7 +51,7 @@ const MESES_ES = [
 let allReservations = [];
 let deleteTargetId = null;
 let deleteTargetCode = null;
-let unsubscribeListener = null;
+let realtimeChannel = null;
 
 /* ══════════════════════════════════════════════════════════════════════
    3.  DOM REFERENCES
@@ -104,13 +104,14 @@ function showDashboard() {
   $('#loginScreen').classList.add('hidden');
   $('#adminDashboard').classList.add('active');
   loadReservations();
+  subscribeRealtime();
 }
 
 function logout() {
   sessionStorage.removeItem('bgAdmin');
-  if (unsubscribeListener) {
-    unsubscribeListener();
-    unsubscribeListener = null;
+  if (realtimeChannel) {
+    db.removeChannel(realtimeChannel);
+    realtimeChannel = null;
   }
   $('#adminDashboard').classList.remove('active');
   $('#loginScreen').classList.remove('hidden');
@@ -181,12 +182,33 @@ function initReservationForm() {
     try {
       const formData = gatherFormData();
       const code = await generateReservationCode();
-      formData.codigo = code;
-      formData.estado = 'pendiente';
-      formData.creadoEn = firebase.firestore.FieldValue.serverTimestamp();
-      formData.actualizadoEn = firebase.firestore.FieldValue.serverTimestamp();
 
-      await reservasRef.add(formData);
+      const record = {
+        codigo: code,
+        estado: 'pendiente',
+        cliente_nombre: formData.clienteNombre,
+        cliente_email: formData.clienteEmail,
+        cliente_telefono: formData.clienteTelefono,
+        cliente_ciudad: formData.clienteCiudad,
+        destino: formData.destino,
+        hotel: formData.hotel,
+        tipo_habitacion: formData.tipoHabitacion,
+        fecha_entrada: formData.fechaEntrada || null,
+        fecha_salida: formData.fechaSalida || null,
+        adultos: formData.adultos,
+        ninos: formData.ninos,
+        vuelo_incluido: formData.vueloIncluido,
+        traslados_incluidos: formData.trasladosIncluidos,
+        monto_total: formData.montoTotal,
+        anticipo: formData.anticipo,
+        saldo_pendiente: formData.saldoPendiente,
+        metodo_pago: formData.metodoPago,
+        notas: formData.notas
+      };
+
+      const { error } = await db.from('reservas').insert([record]);
+
+      if (error) throw error;
 
       // Show success modal
       $('#successCode').textContent = code;
@@ -197,6 +219,9 @@ function initReservationForm() {
       $('#reservationForm').reset();
       $('#saldoPendiente').textContent = '$0.00 MXN';
       updateHotelOptions('destino', 'hotel');
+
+      // Reload data
+      await loadReservations();
 
     } catch (error) {
       console.error('Error al crear reservación:', error);
@@ -287,9 +312,15 @@ async function generateReservationCode() {
     for (let i = 0; i < 8; i++) {
       code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    // Check uniqueness in Firestore
-    const snapshot = await reservasRef.where('codigo', '==', code).get();
-    if (snapshot.empty) {
+    // Check uniqueness in Supabase
+    const { data, error } = await db
+      .from('reservas')
+      .select('id')
+      .eq('codigo', code)
+      .limit(1);
+
+    if (error) throw error;
+    if (!data || data.length === 0) {
       unique = true;
     }
   }
@@ -298,27 +329,75 @@ async function generateReservationCode() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   11.  FIRESTORE — LOAD RESERVATIONS (REAL-TIME)
+   11.  SUPABASE — LOAD RESERVATIONS
    ══════════════════════════════════════════════════════════════════════ */
-function loadReservations() {
-  if (unsubscribeListener) {
-    unsubscribeListener();
+async function loadReservations() {
+  try {
+    const { data, error } = await db
+      .from('reservas')
+      .select('*')
+      .order('creado_en', { ascending: false });
+
+    if (error) throw error;
+
+    allReservations = (data || []).map(mapSupabaseRecord);
+    updateStats(allReservations);
+    filterReservations();
+    renderDashboardTable(allReservations.slice(0, 5));
+  } catch (error) {
+    console.error('Error al cargar reservaciones:', error);
+    showToast('Error al cargar reservaciones', 'error');
+  }
+}
+
+/* Map Supabase snake_case columns to the camelCase used by the UI */
+function mapSupabaseRecord(row) {
+  return {
+    id:                 row.id,
+    codigo:             row.codigo,
+    estado:             row.estado,
+    clienteNombre:      row.cliente_nombre,
+    clienteEmail:       row.cliente_email,
+    clienteTelefono:    row.cliente_telefono,
+    clienteCiudad:      row.cliente_ciudad,
+    destino:            row.destino,
+    hotel:              row.hotel,
+    tipoHabitacion:     row.tipo_habitacion,
+    fechaEntrada:       row.fecha_entrada,
+    fechaSalida:        row.fecha_salida,
+    adultos:            row.adultos,
+    ninos:              row.ninos,
+    vueloIncluido:      row.vuelo_incluido,
+    trasladosIncluidos: row.traslados_incluidos,
+    montoTotal:         parseFloat(row.monto_total) || 0,
+    anticipo:           parseFloat(row.anticipo) || 0,
+    saldoPendiente:     parseFloat(row.saldo_pendiente) || 0,
+    metodoPago:         row.metodo_pago,
+    notas:              row.notas,
+    creadoEn:           row.creado_en,
+    actualizadoEn:      row.actualizado_en
+  };
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   11b.  SUPABASE — REAL-TIME SUBSCRIPTION
+   ══════════════════════════════════════════════════════════════════════ */
+function subscribeRealtime() {
+  if (realtimeChannel) {
+    db.removeChannel(realtimeChannel);
   }
 
-  unsubscribeListener = reservasRef
-    .orderBy('creadoEn', 'desc')
-    .onSnapshot((snapshot) => {
-      allReservations = [];
-      snapshot.forEach((doc) => {
-        allReservations.push({ id: doc.id, ...doc.data() });
-      });
-      updateStats(allReservations);
-      filterReservations();
-      renderDashboardTable(allReservations.slice(0, 5));
-    }, (error) => {
-      console.error('Error en listener de reservaciones:', error);
-      showToast('Error al cargar reservaciones', 'error');
-    });
+  realtimeChannel = db
+    .channel('reservas-changes')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'reservas' },
+      () => {
+        // Reload all reservations on any change
+        loadReservations();
+      }
+    )
+    .subscribe();
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -516,32 +595,39 @@ async function saveEdit() {
   const editAnticipo = parseFloat($('#editAnticipo').value) || 0;
 
   const updatedData = {
-    estado:             $('#editEstado').value,
-    clienteNombre:      $('#editNombre').value.trim(),
-    clienteEmail:       $('#editEmail').value.trim(),
-    clienteTelefono:    $('#editTelefono').value.trim(),
-    clienteCiudad:      $('#editCiudad').value.trim(),
-    destino:            $('#editDestino').value,
-    hotel:              $('#editHotel').value,
-    tipoHabitacion:     $('#editTipoHabitacion').value,
-    fechaEntrada:       $('#editFechaEntrada').value,
-    fechaSalida:        $('#editFechaSalida').value,
-    adultos:            parseInt($('#editAdultos').value) || 1,
-    ninos:              parseInt($('#editNinos').value) || 0,
-    vueloIncluido:      $('#editVuelo').checked,
-    trasladosIncluidos: $('#editTraslados').checked,
-    montoTotal:         editMonto,
-    anticipo:           editAnticipo,
-    saldoPendiente:     editMonto - editAnticipo,
-    metodoPago:         $('#editMetodoPago').value,
-    notas:              $('#editNotas').value.trim(),
-    actualizadoEn:      firebase.firestore.FieldValue.serverTimestamp()
+    estado:              $('#editEstado').value,
+    cliente_nombre:      $('#editNombre').value.trim(),
+    cliente_email:       $('#editEmail').value.trim(),
+    cliente_telefono:    $('#editTelefono').value.trim(),
+    cliente_ciudad:      $('#editCiudad').value.trim(),
+    destino:             $('#editDestino').value,
+    hotel:               $('#editHotel').value,
+    tipo_habitacion:     $('#editTipoHabitacion').value,
+    fecha_entrada:       $('#editFechaEntrada').value || null,
+    fecha_salida:        $('#editFechaSalida').value || null,
+    adultos:             parseInt($('#editAdultos').value) || 1,
+    ninos:               parseInt($('#editNinos').value) || 0,
+    vuelo_incluido:      $('#editVuelo').checked,
+    traslados_incluidos: $('#editTraslados').checked,
+    monto_total:         editMonto,
+    anticipo:            editAnticipo,
+    saldo_pendiente:     editMonto - editAnticipo,
+    metodo_pago:         $('#editMetodoPago').value,
+    notas:               $('#editNotas').value.trim(),
+    actualizado_en:      new Date().toISOString()
   };
 
   try {
-    await reservasRef.doc(docId).update(updatedData);
+    const { error } = await db
+      .from('reservas')
+      .update(updatedData)
+      .eq('id', docId);
+
+    if (error) throw error;
+
     closeModal('editModal');
     showToast('Reservación actualizada exitosamente', 'success');
+    await loadReservations();
   } catch (error) {
     console.error('Error al actualizar:', error);
     showToast('Error al actualizar: ' + error.message, 'error');
@@ -569,9 +655,16 @@ async function confirmDelete() {
   btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px;"></div> Eliminando...';
 
   try {
-    await reservasRef.doc(deleteTargetId).delete();
+    const { error } = await db
+      .from('reservas')
+      .delete()
+      .eq('id', deleteTargetId);
+
+    if (error) throw error;
+
     closeModal('deleteModal');
     showToast(`Reservación ${deleteTargetCode} eliminada`, 'success');
+    await loadReservations();
   } catch (error) {
     console.error('Error al eliminar:', error);
     showToast('Error al eliminar: ' + error.message, 'error');
@@ -648,7 +741,7 @@ function formatCurrency(amount) {
 
 function formatDate(dateString) {
   if (!dateString) return '—';
-  const parts = dateString.split('-');
+  const parts = String(dateString).split('-');
   if (parts.length !== 3) return dateString;
   const day = parseInt(parts[2]);
   const month = MESES_ES[parseInt(parts[1]) - 1];

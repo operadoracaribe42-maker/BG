@@ -1,6 +1,6 @@
 /* ============================================================
    BG CARIBE — Portal de Consulta de Reservaciones
-   Client Logic  |  consulta.js
+   Client Logic  |  consulta.js  |  Supabase
    ============================================================ */
 
 (function () {
@@ -39,17 +39,13 @@
 
   /**
    * Format a date string (YYYY-MM-DD or ISO) into Spanish: "15 de junio de 2026"
-   * Also handles Firestore Timestamps.
    */
   function formatDate(dateInput) {
     if (!dateInput) return '—';
 
     var d;
 
-    // Firestore Timestamp object
-    if (dateInput && typeof dateInput.toDate === 'function') {
-      d = dateInput.toDate();
-    } else if (typeof dateInput === 'string') {
+    if (typeof dateInput === 'string') {
       // Handle YYYY-MM-DD without timezone shift
       if (/^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
         var parts = dateInput.split('-');
@@ -87,7 +83,7 @@
   }
 
   /**
-   * Safely read a nested value or return a fallback.
+   * Safely read a value or return a fallback.
    */
   function safeVal(val, fallback) {
     if (val === null || val === undefined || val === '') return fallback || '—';
@@ -134,7 +130,7 @@
     // Code & Status
     document.getElementById('resCodeText').textContent = safeVal(data.codigo);
 
-    var statusInfo = getStatusLabel(data.estado || data.status);
+    var statusInfo = getStatusLabel(data.estado);
     var badgeEl = document.getElementById('resStatusBadge');
     badgeEl.innerHTML =
       '<span class="status-badge ' + statusInfo.className + '">' +
@@ -143,91 +139,92 @@
       '</span>';
 
     // Datos del Titular
-    document.getElementById('resNombre').textContent    = safeVal(data.nombre || data.nombreCompleto || data.titular);
-    document.getElementById('resEmail').textContent     = safeVal(data.email || data.correo);
-    document.getElementById('resTelefono').textContent  = safeVal(data.telefono);
-    document.getElementById('resCiudad').textContent    = safeVal(data.ciudad || data.ciudadOrigen);
+    document.getElementById('resNombre').textContent    = safeVal(data.cliente_nombre);
+    document.getElementById('resEmail').textContent     = safeVal(data.cliente_email);
+    document.getElementById('resTelefono').textContent  = safeVal(data.cliente_telefono);
+    document.getElementById('resCiudad').textContent    = safeVal(data.cliente_ciudad);
 
     // Detalles del Viaje
     document.getElementById('resDestino').textContent     = safeVal(data.destino);
     document.getElementById('resHotel').textContent       = safeVal(data.hotel);
-    document.getElementById('resHabitacion').textContent   = safeVal(data.tipoHabitacion || data.habitacion);
-    document.getElementById('resFechaSalida').textContent  = formatDate(data.fechaSalida || data.fechaInicio);
-    document.getElementById('resFechaRegreso').textContent = formatDate(data.fechaRegreso || data.fechaFin);
+    document.getElementById('resHabitacion').textContent   = safeVal(data.tipo_habitacion);
+    document.getElementById('resFechaSalida').textContent  = formatDate(data.fecha_entrada);
+    document.getElementById('resFechaRegreso').textContent = formatDate(data.fecha_salida);
     document.getElementById('resAdultos').textContent      = safeVal(data.adultos, '0');
     document.getElementById('resNinos').textContent        = safeVal(data.ninos, '0');
 
     // Boolean fields: vuelo & traslados
     var vueloEl = document.getElementById('resVuelo');
-    if (data.vueloIncluido === true || data.vueloIncluido === 'Sí' || data.vueloIncluido === 'si') {
+    if (data.vuelo_incluido === true) {
       vueloEl.innerHTML = '<span class="included-yes"><i class="fa-solid fa-check"></i> Incluido</span>';
-    } else if (data.vueloIncluido === false || data.vueloIncluido === 'No' || data.vueloIncluido === 'no') {
-      vueloEl.innerHTML = '<span class="included-no"><i class="fa-solid fa-minus"></i> No incluido</span>';
     } else {
-      vueloEl.textContent = safeVal(data.vueloIncluido);
+      vueloEl.innerHTML = '<span class="included-no"><i class="fa-solid fa-minus"></i> No incluido</span>';
     }
 
     var trasladosEl = document.getElementById('resTraslados');
-    if (data.trasladosIncluidos === true || data.trasladosIncluidos === 'Sí' || data.trasladosIncluidos === 'si') {
+    if (data.traslados_incluidos === true) {
       trasladosEl.innerHTML = '<span class="included-yes"><i class="fa-solid fa-check"></i> Incluidos</span>';
-    } else if (data.trasladosIncluidos === false || data.trasladosIncluidos === 'No' || data.trasladosIncluidos === 'no') {
-      trasladosEl.innerHTML = '<span class="included-no"><i class="fa-solid fa-minus"></i> No incluidos</span>';
     } else {
-      trasladosEl.textContent = safeVal(data.trasladosIncluidos);
+      trasladosEl.innerHTML = '<span class="included-no"><i class="fa-solid fa-minus"></i> No incluidos</span>';
     }
 
-    // Información Financiera
-    var montoTotal = Number(data.montoTotal || data.total || 0);
-    var anticipo   = Number(data.anticipo || data.abono || 0);
-    var saldo      = data.saldoPendiente !== undefined ? Number(data.saldoPendiente) : (montoTotal - anticipo);
+    // Informacion Financiera
+    var montoTotal = Number(data.monto_total || 0);
+    var anticipo   = Number(data.anticipo || 0);
+    var saldo      = data.saldo_pendiente !== undefined && data.saldo_pendiente !== null
+                     ? Number(data.saldo_pendiente)
+                     : (montoTotal - anticipo);
 
     document.getElementById('resMontoTotal').textContent = formatCurrency(montoTotal);
     document.getElementById('resAnticipo').textContent   = formatCurrency(anticipo);
     document.getElementById('resSaldo').textContent      = formatCurrency(saldo);
-    document.getElementById('resMetodoPago').textContent  = safeVal(data.metodoPago || data.formaPago);
+    document.getElementById('resMetodoPago').textContent  = safeVal(data.metodo_pago);
   }
 
   /* ==========================================================
-     FIRESTORE QUERY
+     SUPABASE QUERY
      ========================================================== */
 
-  function searchReservation(code) {
+  async function searchReservation(code) {
     if (!code) return;
 
     var cleanCode = code.trim().toUpperCase();
-
-    if (!cleanCode) {
-      return;
-    }
+    if (!cleanCode) return;
 
     showLoading();
     btnSearch.disabled = true;
 
-    // Query Firestore: reservas where codigo == cleanCode
-    db.collection('reservas')
-      .where('codigo', '==', cleanCode)
-      .limit(1)
-      .get()
-      .then(function (snapshot) {
-        btnSearch.disabled = false;
+    try {
+      const { data, error } = await db
+        .from('reservas')
+        .select('*')
+        .eq('codigo', cleanCode)
+        .limit(1);
 
-        if (snapshot.empty) {
-          showNotFound();
-          return;
-        }
+      btnSearch.disabled = false;
 
-        var doc = snapshot.docs[0];
-        var data = doc.data();
-        // Ensure code is present in data
-        if (!data.codigo) data.codigo = cleanCode;
-
-        showResult(data);
-      })
-      .catch(function (error) {
+      if (error) {
         console.error('Error al consultar la reservación:', error);
-        btnSearch.disabled = false;
         showError();
-      });
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        showNotFound();
+        return;
+      }
+
+      var record = data[0];
+      // Ensure code is present in data
+      if (!record.codigo) record.codigo = cleanCode;
+
+      showResult(record);
+
+    } catch (err) {
+      console.error('Error al consultar la reservación:', err);
+      btnSearch.disabled = false;
+      showError();
+    }
   }
 
   /* ==========================================================
@@ -275,7 +272,7 @@
     if (codigo) {
       codigo = codigo.trim().toUpperCase();
       codigoInput.value = codigo;
-      // Small delay to let Firebase initialize
+      // Small delay to let Supabase initialize
       setTimeout(function () {
         searchReservation(codigo);
       }, 600);
