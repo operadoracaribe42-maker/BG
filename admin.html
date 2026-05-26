@@ -16,7 +16,7 @@
   <!-- Admin Styles -->
   <link rel="stylesheet" href="css/admin.css">
 
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏝️</text></svg>">
+  <link rel="icon" type="image/png" href="images/dest_cancun.png">
 </head>
 <body>
 
@@ -31,7 +31,7 @@
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <div class="logo-area">
-      <h1>BG CARIBE</h1>
+      <img src="images/logo.jpg" alt="BG Caribe" class="login-logo">
       <p>Panel de Administración</p>
     </div>
     <form id="loginForm" autocomplete="off">
@@ -58,7 +58,7 @@
       <button class="menu-toggle" id="menuToggle" aria-label="Menú">
         <i class="fas fa-bars"></i>
       </button>
-      <h1>BG CARIBE</h1>
+      <img src="images/logo.jpg" alt="BG Caribe" class="header-logo">
       <span><i class="fas fa-shield-halved"></i> Admin</span>
     </div>
     <div class="header-actions">
@@ -126,33 +126,62 @@
         </div>
       </div>
 
-      <!-- Recent reservations preview -->
-      <h3 class="section-title" style="font-size:1.15rem;">Reservaciones Recientes</h3>
-      <p class="section-subtitle">Últimas reservaciones registradas</p>
-      <div class="table-card">
-        <div class="table-wrap">
-          <table class="data-table" id="dashboardTable">
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Destino</th>
-                <th>Fechas</th>
-                <th>Monto</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody id="dashboardTableBody">
-              <tr>
-                <td colspan="6">
-                  <div class="loading-overlay">
-                    <div class="spinner"></div>
-                    <span>Cargando reservaciones...</span>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- Dashboard Split Grid -->
+      <div class="dashboard-layout-grid">
+        <!-- Main Column: Table -->
+        <div class="table-column">
+          <h3 class="section-title" style="font-size:1.15rem; margin-top: 10px;">Reservaciones Recientes</h3>
+          <p class="section-subtitle">Últimas reservaciones registradas</p>
+          <div class="table-card">
+            <div class="table-wrap">
+              <table class="data-table" id="dashboardTable">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Destino</th>
+                    <th>Fechas</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardTableBody">
+                  <tr>
+                    <td colspan="6">
+                      <div class="loading-overlay">
+                        <div class="spinner"></div>
+                        <span>Cargando reservaciones...</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side Column: Calendar Widget -->
+        <div class="calendar-column">
+          <h3 class="section-title" style="font-size:1.15rem; margin-top: 10px;">Calendario de Agente</h3>
+          <p class="section-subtitle">Ocupación y densidad de reservaciones</p>
+          <div class="calendar-card">
+            <div class="calendar-header">
+              <button id="prevMonthBtn" type="button" class="btn-cal"><i class="fas fa-chevron-left"></i></button>
+              <span id="calendarMonthYear" class="cal-title"></span>
+              <button id="nextMonthBtn" type="button" class="btn-cal"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="calendar-weekdays">
+              <span>Do</span><span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sá</span>
+            </div>
+            <div class="calendar-days" id="calendarDays">
+              <!-- Dynamically populated by JS -->
+            </div>
+          </div>
+          <div class="calendar-legend">
+            <div class="legend-item"><span class="legend-dot checkin"></span> Entrada</div>
+            <div class="legend-item"><span class="legend-dot checkout"></span> Salida</div>
+            <div class="legend-item"><span class="legend-dot selected"></span> Filtrado</div>
+          </div>
         </div>
       </div>
     </section>
@@ -169,7 +198,7 @@
         <!-- ── Cliente ──────────────────────────────────────────── -->
         <div class="form-card">
           <div class="form-section-title">
-            <i class="fas fa-user"></i> Información del Cliente
+            <i class="fas fa-user"></i> Información del Cliente (Titular)
           </div>
           <div class="form-grid">
             <div class="form-group">
@@ -214,15 +243,9 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="tipoHabitacion">Tipo de habitación</label>
-              <select id="tipoHabitacion" name="tipoHabitacion">
-                <option value="Estándar">Estándar</option>
-                <option value="Superior">Superior</option>
-                <option value="Deluxe">Deluxe</option>
-                <option value="Junior Suite">Junior Suite</option>
-                <option value="Suite">Suite</option>
-                <option value="Suite Premium">Suite Premium</option>
-                <option value="Villa">Villa</option>
+              <label for="tipoHabitacion">Tipo de habitación *</label>
+              <select id="tipoHabitacion" name="tipoHabitacion" required>
+                <option value="">Primero selecciona un hotel</option>
               </select>
             </div>
             <div class="form-group">
@@ -249,6 +272,63 @@
               <input type="checkbox" id="trasladosIncluidos" name="trasladosIncluidos">
               <label for="trasladosIncluidos">Traslados incluidos</label>
             </div>
+          </div>
+        </div>
+
+        <!-- ── Huéspedes Dinámicos ──────────────────────────────── -->
+        <div class="form-card" id="huespedesSection" style="display: none;">
+          <div class="form-section-title">
+            <i class="fas fa-users"></i> Acompañantes y Huéspedes
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; margin-top: -10px;">
+            Ingresa los nombres de todos los viajeros (incluido el titular en la primera casilla).
+          </p>
+          <div class="form-grid" id="huespedesContainer">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </div>
+
+        <!-- ── Parques Incluidos ────────────────────────────────── -->
+        <div class="form-card">
+          <div class="form-section-title">
+            <i class="fas fa-ticket"></i> Parques Incluidos (Grupo Xcaret)
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; margin-top: -10px;">
+            Selecciona los parques que incluye este paquete vacacional.
+          </p>
+          <div class="parks-grid">
+            <label class="park-checkbox">
+              <input type="checkbox" name="parques" value="Parque Xcaret">
+              <span>Parque Xcaret</span>
+            </label>
+            <label class="park-checkbox">
+              <input type="checkbox" name="parques" value="Parque Xel-Há">
+              <span>Parque Xel-Há</span>
+            </label>
+            <label class="park-checkbox">
+              <input type="checkbox" name="parques" value="Parque Xplor">
+              <span>Parque Xplor</span>
+            </label>
+            <label class="park-checkbox">
+              <input type="checkbox" name="parques" value="Parque Xplor Fuego">
+              <span>Parque Xplor Fuego</span>
+            </label>
+            <label class="park-checkbox">
+              <input type="checkbox" name="parques" value="Parque Xenses">
+              <span>Parque Xenses</span>
+            </label>
+            <label class="park-checkbox">
+              <input type="checkbox" name="parques" value="Parque Xoximilco">
+              <span>Parque Xoximilco</span>
+            </label>
+            <label class="park-checkbox">
+              <input type="checkbox" name="parques" value="Xenotes">
+              <span>Xenotes</span>
+            </label>
+            <label class="park-checkbox">
+              <input type="checkbox" name="parques" value="Xavage">
+              <span>Xavage</span>
+            </label>
           </div>
         </div>
 
@@ -314,7 +394,7 @@
       <h2 class="section-title">Reservaciones</h2>
       <p class="section-subtitle">Gestión completa de todas las reservaciones</p>
 
-      <!-- Stats (duplicated here for context) -->
+      <!-- Stats (mirrored) -->
       <div class="stats-grid">
         <div class="stat-card teal">
           <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
@@ -445,7 +525,7 @@
         <!-- Cliente -->
         <div class="form-card" style="margin-bottom:20px;">
           <div class="form-section-title">
-            <i class="fas fa-user"></i> Cliente
+            <i class="fas fa-user"></i> Cliente (Titular)
           </div>
           <div class="form-grid">
             <div class="form-group">
@@ -492,13 +572,7 @@
             <div class="form-group">
               <label for="editTipoHabitacion">Tipo de habitación</label>
               <select id="editTipoHabitacion">
-                <option value="Estándar">Estándar</option>
-                <option value="Superior">Superior</option>
-                <option value="Deluxe">Deluxe</option>
-                <option value="Junior Suite">Junior Suite</option>
-                <option value="Suite">Suite</option>
-                <option value="Suite Premium">Suite Premium</option>
-                <option value="Villa">Villa</option>
+                <option value="">Seleccionar tipo</option>
               </select>
             </div>
             <div class="form-group">
@@ -525,6 +599,33 @@
               <input type="checkbox" id="editTraslados">
               <label for="editTraslados">Traslados incluidos</label>
             </div>
+          </div>
+        </div>
+
+        <!-- Acompañantes en edición -->
+        <div class="form-card" id="editHuespedesSection" style="margin-bottom:20px; display: none;">
+          <div class="form-section-title">
+            <i class="fas fa-users"></i> Huéspedes
+          </div>
+          <div class="form-grid" id="editHuespedesContainer">
+            <!-- Dynamically populated in JS -->
+          </div>
+        </div>
+
+        <!-- Parques en edición -->
+        <div class="form-card" style="margin-bottom:20px;">
+          <div class="form-section-title">
+            <i class="fas fa-ticket"></i> Parques Incluidos
+          </div>
+          <div class="parks-grid">
+            <label class="park-checkbox"><input type="checkbox" name="editParques" value="Parque Xcaret"> <span>Parque Xcaret</span></label>
+            <label class="park-checkbox"><input type="checkbox" name="editParques" value="Parque Xel-Há"> <span>Parque Xel-Há</span></label>
+            <label class="park-checkbox"><input type="checkbox" name="editParques" value="Parque Xplor"> <span>Parque Xplor</span></label>
+            <label class="park-checkbox"><input type="checkbox" name="editParques" value="Parque Xplor Fuego"> <span>Parque Xplor Fuego</span></label>
+            <label class="park-checkbox"><input type="checkbox" name="editParques" value="Parque Xenses"> <span>Parque Xenses</span></label>
+            <label class="park-checkbox"><input type="checkbox" name="editParques" value="Parque Xoximilco"> <span>Parque Xoximilco</span></label>
+            <label class="park-checkbox"><input type="checkbox" name="editParques" value="Xenotes"> <span>Xenotes</span></label>
+            <label class="park-checkbox"><input type="checkbox" name="editParques" value="Xavage"> <span>Xavage</span></label>
           </div>
         </div>
 

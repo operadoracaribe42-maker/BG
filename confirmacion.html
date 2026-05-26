@@ -18,14 +18,14 @@
   <link rel="stylesheet" href="css/confirmacion.css">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230D5C63'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='serif' font-size='18' font-weight='bold'%3EBG%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" href="images/dest_cancun.png">
 </head>
 <body>
 
   <!-- ========== HEADER ========== -->
   <header class="site-header">
     <div class="header-brand">
-      <h1><span>BG</span> CARIBE</h1>
+      <img src="images/logo.jpg" alt="BG Caribe" class="portal-logo">
       <p>Portal de Confirmación de Reservaciones</p>
     </div>
   </header>
@@ -110,6 +110,17 @@
               </div>
             </div>
 
+            <!-- Section: Acompañantes / Huéspedes -->
+            <div class="detail-section" id="sectionHuespedes" style="display: none;">
+              <div class="section-title">
+                <i class="fa-solid fa-users"></i>
+                <span>Acompañantes / Huéspedes</span>
+              </div>
+              <div class="huespedes-list-grid" id="resHuespedesList">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
             <!-- Section: Detalles del Viaje -->
             <div class="detail-section">
               <div class="section-title">
@@ -122,7 +133,7 @@
                   <span class="detail-value" id="resDestino">—</span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">Hotel</span>
+                  <span class="detail-label">Hotel / Resort</span>
                   <span class="detail-value" id="resHotel">—</span>
                 </div>
                 <div class="detail-item">
@@ -130,12 +141,12 @@
                   <span class="detail-value" id="resHabitacion">—</span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">Fecha de salida</span>
-                  <span class="detail-value" id="resFechaSalida">—</span>
+                  <span class="detail-label">Fecha de entrada</span>
+                  <span class="detail-value" id="resFechaEntrada">—</span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">Fecha de regreso</span>
-                  <span class="detail-value" id="resFechaRegreso">—</span>
+                  <span class="detail-label">Fecha de salida</span>
+                  <span class="detail-value" id="resFechaSalida">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Adultos</span>
@@ -156,6 +167,17 @@
               </div>
             </div>
 
+            <!-- Section: Parques Incluidos -->
+            <div class="detail-section" id="sectionParques" style="display: none;">
+              <div class="section-title">
+                <i class="fa-solid fa-ticket"></i>
+                <span>Parques Incluidos (Grupo Xcaret)</span>
+              </div>
+              <div class="parques-list-badges" id="resParquesList">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
             <!-- Section: Información Financiera -->
             <div class="detail-section">
               <div class="section-title">
@@ -164,7 +186,7 @@
               </div>
               <div class="detail-grid">
                 <div class="detail-item">
-                  <span class="detail-label">Monto total</span>
+                  <span class="detail-label">Monto total del paquete</span>
                   <span class="detail-value highlight" id="resMontoTotal">—</span>
                 </div>
                 <div class="detail-item">
@@ -177,7 +199,7 @@
                 </div>
               </div>
               <div class="financial-highlight" id="resSaldoBox">
-                <span class="label">Saldo pendiente</span>
+                <span class="label">Saldo pendiente a liquidar</span>
                 <span class="amount" id="resSaldo">—</span>
               </div>
             </div>
@@ -187,7 +209,7 @@
           <!-- Print Button -->
           <button class="btn-print" id="btnPrint" type="button">
             <i class="fa-solid fa-print"></i>
-            Imprimir Comprobante
+            Imprimir Comprobante Oficial
           </button>
         </div>
 
@@ -224,7 +246,7 @@
       RNT: 04230051C28259
       <span class="footer-divider">|</span>
       <a href="https://wa.me/529981234567" target="_blank" rel="noopener">
-        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+        <i class="fa-brands fa-whatsapp"></i> WhatsApp de Soporte
       </a>
     </div>
   </footer>

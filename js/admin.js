@@ -1,8 +1,8 @@
 /*
 ========================================================================
    BG CARIBE — ADMIN PANEL JAVASCRIPT
-   Logica completa del panel de administracion
-   Supabase · Tiempo real · CRUD de reservaciones
+   Lógica completa del panel de administración
+   Supabase · Tiempo real · CRUD de reservaciones · Tonos Claros
 ========================================================================
 */
 
@@ -40,9 +40,130 @@ const HOTEL_OPTIONS = {
   ]
 };
 
+// Mapeo detallado de tipos de habitaciones reales por hotel
+const ROOM_OPTIONS = {
+  // Hoteles Xcaret
+  'Hotel Xcaret México': [
+    'Suite Garden',
+    'Suite River',
+    'Suite Ocean View',
+    'Suite Ocean Front',
+    'Swim Up Garden',
+    'Swim Up Ocean View',
+    'Master Suite'
+  ],
+  'Hotel Xcaret Arte': [
+    'Suite Garden (Casa Diseño/Arte)',
+    'Suite River',
+    'Suite Ocean View',
+    'Suite Ocean Front',
+    'Swim Up Garden',
+    'Junior Suite (Casa Artistas)',
+    'Master Suite'
+  ],
+  'La Casa de la Playa': [
+    'Suite Ocean View',
+    'Suite Beach Front',
+    'Suite Ocean Front',
+    'Presidential Suite'
+  ],
+  // Nickelodeon
+  'Nickelodeon Riviera Maya': [
+    'Pad Suite Swim-Up',
+    'Flat Suite Swim-Up',
+    'Swank Swim-Up Suite',
+    'Swank Plunge Pool Suite',
+    'Lair Suite (Ninja Turtles)',
+    'Pineapple Villa (SpongeBob)'
+  ],
+  // Cancún
+  'Hyatt Ziva': [
+    'King Room Standard',
+    'Double Room Standard',
+    'Resort View',
+    'Ocean View',
+    'Club Ocean Front',
+    'Dolphin View',
+    'Swim Up Room'
+  ],
+  'Moon Palace': [
+    'Deluxe Resort View',
+    'Deluxe Ocean View',
+    'Superior Deluxe',
+    'Family Deluxe (2 recámaras)',
+    'Governor Suite',
+    'Presidential Suite'
+  ],
+  'Le Blanc Spa': [
+    'Royale Deluxe Resort View',
+    'Royale Honeymoon Suite',
+    'Royale Junior Suite',
+    'Royale Governor Suite'
+  ],
+  'Secrets The Vine': [
+    'Deluxe Ocean View',
+    'Junior Suite Ocean View',
+    'Preferred Club Deluxe',
+    'Honeymoon Suite',
+    'Governor Suite'
+  ],
+  'Hard Rock Hotel': [
+    'Deluxe Gold',
+    'Deluxe Platinum',
+    'Rock Royalty Room',
+    'Rock Suite Gold',
+    'Rock Suite Platinum'
+  ],
+  'RIU Cancún': [
+    'Standard Room',
+    'Junior Suite Vista Mar',
+    'Suite Vista Mar',
+    'Presidential Suite'
+  ],
+  // Riviera Maya
+  'Iberostar Paraíso': [
+    'Standard Room',
+    'Superior Room',
+    'Junior Suite',
+    'Family Suite',
+    'Presidential Suite'
+  ],
+  'Grand Palladium': [
+    'Standard Deluxe',
+    'Junior Suite',
+    'Amber Suite',
+    'Villa Suite'
+  ],
+  'RIU Palace': [
+    'Junior Suite',
+    'Suite Vista Mar',
+    'Jacuzzi Suite'
+  ],
+  'Barceló Maya': [
+    'Superior Room',
+    'Junior Suite Pool View',
+    'Family Room',
+    'Premium Suite'
+  ],
+  'Otro': [
+    'Estándar',
+    'Superior',
+    'Deluxe',
+    'Junior Suite',
+    'Suite',
+    'Suite Premium',
+    'Villa'
+  ]
+};
+
 const MESES_ES = [
   'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
   'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+];
+
+const MESES_ES_LARGOS = [
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ];
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -52,6 +173,11 @@ let allReservations = [];
 let deleteTargetId = null;
 let deleteTargetCode = null;
 let realtimeChannel = null;
+
+// Estado del calendario widget
+let currentCalYear = new Date().getFullYear();
+let currentCalMonth = new Date().getMonth();
+let selectedFilterDate = null; // Ej: "2026-05-26"
 
 /* ══════════════════════════════════════════════════════════════════════
    3.  DOM REFERENCES
@@ -63,7 +189,7 @@ const $$ = (sel) => document.querySelectorAll(sel);
    4.  INITIALIZATION
    ══════════════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  // Check if already authenticated
+  // Verificar si ya está autenticado
   if (sessionStorage.getItem('bgAdmin') === 'true') {
     showDashboard();
   }
@@ -73,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initReservationForm();
   initFilters();
   initEditFormListeners();
+  initCalendarListeners();
 });
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -96,7 +223,7 @@ function initLoginForm() {
     }
   });
 
-  // Logout
+  // Cerrar sesión
   $('#btnLogout').addEventListener('click', logout);
 }
 
@@ -163,9 +290,26 @@ function initSidebar() {
    7.  RESERVATION FORM
    ══════════════════════════════════════════════════════════════════════ */
 function initReservationForm() {
-  // Destino → Hotel dynamic update
+  // Destino → Hotel
   $('#destino').addEventListener('change', () => {
-    updateHotelOptions('destino', 'hotel');
+    updateHotelOptions('destino', 'hotel', 'tipoHabitacion');
+  });
+
+  // Hotel → Tipo de Habitación
+  $('#hotel').addEventListener('change', () => {
+    updateRoomOptions('hotel', 'tipoHabitacion');
+  });
+
+  // Generación de huéspedes al cambiar adultos/niños
+  $('#adultos').addEventListener('change', () => updateGuestInputs(''));
+  $('#ninos').addEventListener('change', () => updateGuestInputs(''));
+  
+  // Sincronizar el nombre del titular con el primer huésped
+  $('#clienteNombre').addEventListener('input', (e) => {
+    const primerHuespedInput = $('#g-name-1');
+    if (primerHuespedInput) {
+      primerHuespedInput.value = e.target.value;
+    }
   });
 
   // Saldo auto-calculation
@@ -180,7 +324,7 @@ function initReservationForm() {
     btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;"></div> Generando...';
 
     try {
-      const formData = gatherFormData();
+      const formData = gatherFormData('');
       const code = await generateReservationCode();
 
       const record = {
@@ -203,7 +347,9 @@ function initReservationForm() {
         anticipo: formData.anticipo,
         saldo_pendiente: formData.saldoPendiente,
         metodo_pago: formData.metodoPago,
-        notas: formData.notas
+        notas: formData.notas,
+        nombres_huespedes: JSON.stringify(formData.nombresHuespedes),
+        parques_incluidos: JSON.stringify(formData.parquesIncluidos)
       };
 
       const { error } = await db.from('reservas').insert([record]);
@@ -218,7 +364,9 @@ function initReservationForm() {
       // Reset form
       $('#reservationForm').reset();
       $('#saldoPendiente').textContent = '$0.00 MXN';
-      updateHotelOptions('destino', 'hotel');
+      updateHotelOptions('destino', 'hotel', 'tipoHabitacion');
+      $('#huespedesSection').style.display = 'none';
+      $('#huespedesContainer').innerHTML = '';
 
       // Reload data
       await loadReservations();
@@ -231,41 +379,127 @@ function initReservationForm() {
       btn.innerHTML = '<i class="fas fa-ticket"></i> Generar Reserva';
     }
   });
+
+  // Generar huéspedes iniciales (2 adultos, 0 niños)
+  updateGuestInputs('');
 }
 
-function gatherFormData() {
-  const monto = parseFloat($('#montoTotal').value) || 0;
-  const anticipo = parseFloat($('#anticipo').value) || 0;
+// Genera dinámicamente inputs para los huéspedes
+function updateGuestInputs(prefix = '') {
+  const container = $(`#${prefix}huespedesContainer`);
+  const section = $(`#${prefix}huespedesSection`);
+  const adultos = parseInt($(`#${prefix}adultos`).value) || 1;
+  const ninos = parseInt($(`#${prefix}ninos`).value) || 0;
+  const total = adultos + ninos;
+
+  // Guardar los nombres que ya estén escritos para no borrarlos
+  const existingValues = [];
+  const inputs = container.querySelectorAll('input');
+  inputs.forEach(input => {
+    existingValues.push(input.value);
+  });
+
+  container.innerHTML = '';
+  
+  if (total > 0) {
+    section.style.display = 'block';
+  } else {
+    section.style.display = 'none';
+    return;
+  }
+
+  // Generar inputs para adultos
+  for (let i = 1; i <= adultos; i++) {
+    const div = document.createElement('div');
+    div.className = 'form-group';
+    
+    const isTitular = (i === 1 && prefix === '');
+    const labelText = isTitular ? 'Huésped 1 (Titular) *' : `Huésped ${i} (Adulto) *`;
+    
+    // Obtener valor previo o pre-llenar con el titular
+    let val = existingValues[i - 1] || '';
+    if (isTitular && !val) {
+      val = $('#clienteNombre').value;
+    }
+
+    div.innerHTML = `
+      <label>${labelText}</label>
+      <input type="text" id="${prefix}g-name-${i}" placeholder="Nombre completo" value="${escapeHtml(val)}" required>
+    `;
+    container.appendChild(div);
+  }
+
+  // Generar inputs para niños
+  for (let j = 1; j <= ninos; j++) {
+    const idx = adultos + j;
+    const div = document.createElement('div');
+    div.className = 'form-group';
+    let val = existingValues[idx - 1] || '';
+    div.innerHTML = `
+      <label>Huésped ${idx} (Niño) *</label>
+      <input type="text" id="${prefix}g-name-${idx}" placeholder="Nombre completo" value="${escapeHtml(val)}" required>
+    `;
+    container.appendChild(div);
+  }
+}
+
+// Recopila la información del formulario (válido para nueva reserva y editar)
+function gatherFormData(prefix = '') {
+  const monto = parseFloat($(`#${prefix}montoTotal`).value) || 0;
+  const anticipo = parseFloat($(`#${prefix}anticipo`).value) || 0;
+  
+  // Recopilar nombres de los huéspedes
+  const adultos = parseInt($(`#${prefix}adultos`).value) || 1;
+  const ninos = parseInt($(`#${prefix}ninos`).value) || 0;
+  const total = adultos + ninos;
+  const nombresHuespedes = [];
+  for (let i = 1; i <= total; i++) {
+    const val = $(`#${prefix}g-name-${i}`) ? $(`#${prefix}g-name-${i}`).value.trim() : '';
+    if (val) nombresHuespedes.push(val);
+  }
+
+  // Recopilar parques incluidos
+  const selector = prefix === 'edit' ? 'input[name="editParques"]:checked' : 'input[name="parques"]:checked';
+  const parquesIncluidos = Array.from(document.querySelectorAll(selector)).map(cb => cb.value);
+
+  // Selector de total / editMonto
+  const totalInput = prefix === 'edit' ? $(`#${prefix}Monto`) : $(`#${prefix}montoTotal`);
+  const anticipoInput = prefix === 'edit' ? $(`#${prefix}Anticipo`) : $(`#${prefix}anticipo`);
 
   return {
-    clienteNombre:    $('#clienteNombre').value.trim(),
-    clienteEmail:     $('#clienteEmail').value.trim(),
-    clienteTelefono:  $('#clienteTelefono').value.trim(),
-    clienteCiudad:    $('#clienteCiudad').value.trim(),
-    destino:          $('#destino').value,
-    hotel:            $('#hotel').value,
-    tipoHabitacion:   $('#tipoHabitacion').value,
-    fechaEntrada:     $('#fechaEntrada').value,
-    fechaSalida:      $('#fechaSalida').value,
-    adultos:          parseInt($('#adultos').value) || 1,
-    ninos:            parseInt($('#ninos').value) || 0,
-    vueloIncluido:    $('#vueloIncluido').checked,
-    trasladosIncluidos: $('#trasladosIncluidos').checked,
-    montoTotal:       monto,
-    anticipo:         anticipo,
-    saldoPendiente:   monto - anticipo,
-    metodoPago:       $('#metodoPago').value,
-    notas:            $('#notas').value.trim()
+    clienteNombre:    $(`#${prefix}Nombre` || `#clienteNombre`).value.trim(),
+    clienteEmail:     $(`#${prefix}Email` || `#clienteEmail`).value.trim(),
+    clienteTelefono:  $(`#${prefix}Telefono` || `#clienteTelefono`).value.trim(),
+    clienteCiudad:    $(`#${prefix}Ciudad` || `#clienteCiudad`).value.trim(),
+    destino:          $(`#${prefix}Destino` || `#destino`).value,
+    hotel:            $(`#${prefix}Hotel` || `#hotel`).value,
+    tipoHabitacion:   $(`#${prefix}TipoHabitacion` || `#tipoHabitacion`).value,
+    fechaEntrada:     $(`#${prefix}FechaEntrada` || `#fechaEntrada`).value,
+    fechaSalida:      $(`#${prefix}FechaSalida` || `#fechaSalida`).value,
+    adultos:          adultos,
+    ninos:            ninos,
+    vueloIncluido:    $(`#${prefix}Vuelo` || `#vueloIncluido`).checked,
+    trasladosIncluidos: ($(`#${prefix}Traslados` || `#trasladosIncluidos`)).checked,
+    montoTotal:       parseFloat(totalInput.value) || 0,
+    anticipo:         parseFloat(anticipoInput.value) || 0,
+    saldoPendiente:   (parseFloat(totalInput.value) || 0) - (parseFloat(anticipoInput.value) || 0),
+    metodoPago:       $(`#${prefix}MetodoPago` || `#metodoPago`).value,
+    notas:            $(`#${prefix}Notas` || `#notas`).value.trim(),
+    nombresHuespedes: nombresHuespedes,
+    parquesIncluidos: parquesIncluidos
   };
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   8.  DYNAMIC HOTEL OPTIONS
+   8.  DYNAMIC HOTEL & ROOM OPTIONS
    ══════════════════════════════════════════════════════════════════════ */
-function updateHotelOptions(destinoSelectId, hotelSelectId) {
+function updateHotelOptions(destinoSelectId, hotelSelectId, roomSelectId) {
   const destino = $(`#${destinoSelectId}`).value;
   const hotelSelect = $(`#${hotelSelectId}`);
+  const roomSelect = $(`#${roomSelectId}`);
+  
   hotelSelect.innerHTML = '';
+  roomSelect.innerHTML = '<option value="">Primero selecciona un hotel</option>';
 
   if (!destino || !HOTEL_OPTIONS[destino]) {
     hotelSelect.innerHTML = '<option value="">Primero selecciona un destino</option>';
@@ -279,6 +513,29 @@ function updateHotelOptions(destinoSelectId, hotelSelectId) {
     opt.value = h;
     opt.textContent = h;
     hotelSelect.appendChild(opt);
+  });
+}
+
+function updateRoomOptions(hotelSelectId, roomSelectId) {
+  const hotel = $(`#${hotelSelectId}`).value;
+  const roomSelect = $(`#${roomSelectId}`);
+  
+  roomSelect.innerHTML = '';
+
+  if (!hotel) {
+    roomSelect.innerHTML = '<option value="">Primero selecciona un hotel</option>';
+    return;
+  }
+
+  // Si no está mapeado específicamente, usar opciones por defecto
+  const rooms = ROOM_OPTIONS[hotel] || ROOM_OPTIONS['Otro'];
+  
+  roomSelect.innerHTML = '<option value="">Seleccionar tipo</option>';
+  rooms.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r;
+    opt.textContent = r;
+    roomSelect.appendChild(opt);
   });
 }
 
@@ -344,14 +601,34 @@ async function loadReservations() {
     updateStats(allReservations);
     filterReservations();
     renderDashboardTable(allReservations.slice(0, 5));
+    renderCalendar();
   } catch (error) {
     console.error('Error al cargar reservaciones:', error);
     showToast('Error al cargar reservaciones', 'error');
   }
 }
 
-/* Map Supabase snake_case columns to the camelCase used by the UI */
+/* Mapea columnas de Supabase (snake_case) al objeto camelCase */
 function mapSupabaseRecord(row) {
+  let nombresHuespedes = [];
+  let parquesIncluidos = [];
+
+  try {
+    if (row.nombres_huespedes) {
+      nombresHuespedes = JSON.parse(row.nombres_huespedes);
+    }
+  } catch(e) {
+    nombresHuespedes = row.nombres_huespedes ? row.nombres_huespedes.split(',').map(n => n.trim()) : [];
+  }
+
+  try {
+    if (row.parques_incluidos) {
+      parquesIncluidos = JSON.parse(row.parques_incluidos);
+    }
+  } catch(e) {
+    parquesIncluidos = row.parques_incluidos ? row.parques_incluidos.split(',').map(p => p.trim()) : [];
+  }
+
   return {
     id:                 row.id,
     codigo:             row.codigo,
@@ -375,7 +652,9 @@ function mapSupabaseRecord(row) {
     metodoPago:         row.metodo_pago,
     notas:              row.notas,
     creadoEn:           row.creado_en,
-    actualizadoEn:      row.actualizado_en
+    actualizadoEn:      row.actualizado_en,
+    nombresHuespedes:   nombresHuespedes,
+    parquesIncluidos:   parquesIncluidos
   };
 }
 
@@ -393,7 +672,6 @@ function subscribeRealtime() {
       'postgres_changes',
       { event: '*', schema: 'public', table: 'reservas' },
       () => {
-        // Reload all reservations on any change
         loadReservations();
       }
     )
@@ -505,6 +783,11 @@ function filterReservations() {
     filtered = filtered.filter(r => r.estado === status);
   }
 
+  // Filtrar adicional por fecha del calendario si está seleccionada
+  if (selectedFilterDate) {
+    filtered = filtered.filter(r => r.fechaEntrada === selectedFilterDate || r.fechaSalida === selectedFilterDate);
+  }
+
   renderReservationsTable(filtered);
 }
 
@@ -534,12 +817,21 @@ function updateStats(reservations) {
    15.  EDIT MODAL
    ══════════════════════════════════════════════════════════════════════ */
 function initEditFormListeners() {
-  // Dynamic hotel options for edit form
+  // Destino → Hotel
   $('#editDestino').addEventListener('change', () => {
-    updateHotelOptions('editDestino', 'editHotel');
+    updateHotelOptions('editDestino', 'editHotel', 'editTipoHabitacion');
   });
 
-  // Saldo calculation for edit form
+  // Hotel → Habitación
+  $('#editHotel').addEventListener('change', () => {
+    updateRoomOptions('editHotel', 'editTipoHabitacion');
+  });
+
+  // Cambios en adultos/niños en edición
+  $('#editAdultos').addEventListener('change', () => updateGuestInputs('edit'));
+  $('#editNinos').addEventListener('change', () => updateGuestInputs('edit'));
+
+  // Saldo
   $('#editMonto').addEventListener('input', calculateEditSaldo);
   $('#editAnticipo').addEventListener('input', calculateEditSaldo);
 }
@@ -561,13 +853,20 @@ function openEditModal(docId) {
   $('#editDestino').value = reservation.destino || '';
 
   // Update hotel options then set value
-  updateHotelOptions('editDestino', 'editHotel');
-  // Need a small delay to ensure options are rendered
+  updateHotelOptions('editDestino', 'editHotel', 'editTipoHabitacion');
+  
+  // Pequeña demora para asegurar que las opciones se renderizan
   setTimeout(() => {
     $('#editHotel').value = reservation.hotel || '';
+    
+    // Cargar habitaciones dinámicas según el hotel seleccionado
+    updateRoomOptions('editHotel', 'editTipoHabitacion');
+    
+    setTimeout(() => {
+      $('#editTipoHabitacion').value = reservation.tipoHabitacion || '';
+    }, 10);
   }, 10);
 
-  $('#editTipoHabitacion').value = reservation.tipoHabitacion || 'Estándar';
   $('#editFechaEntrada').value = reservation.fechaEntrada || '';
   $('#editFechaSalida').value = reservation.fechaSalida || '';
   $('#editAdultos').value = reservation.adultos || 1;
@@ -580,6 +879,28 @@ function openEditModal(docId) {
   $('#editMetodoPago').value = reservation.metodoPago || 'Transferencia bancaria';
   $('#editNotas').value = reservation.notas || '';
 
+  // Renderizar e re-poblar los huéspedes
+  updateGuestInputs('edit');
+  
+  // Rellenar las cajas de texto de los huéspedes guardados
+  setTimeout(() => {
+    const container = $('#editHuespedesContainer');
+    const inputs = container.querySelectorAll('input');
+    const savedNames = reservation.nombresHuespedes || [];
+    
+    inputs.forEach((input, idx) => {
+      if (savedNames[idx]) {
+        input.value = savedNames[idx];
+      }
+    });
+  }, 50);
+
+  // Limpiar y poblar los checkboxes de Parques
+  const parkCheckboxes = document.querySelectorAll('input[name="editParques"]');
+  parkCheckboxes.forEach(cb => {
+    cb.checked = (reservation.parquesIncluidos || []).includes(cb.value);
+  });
+
   openModal('editModal');
 }
 
@@ -591,29 +912,30 @@ async function saveEdit() {
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px;"></div> Guardando...';
 
-  const editMonto = parseFloat($('#editMonto').value) || 0;
-  const editAnticipo = parseFloat($('#editAnticipo').value) || 0;
+  const formData = gatherFormData('edit');
 
   const updatedData = {
-    estado:              $('#editEstado').value,
-    cliente_nombre:      $('#editNombre').value.trim(),
-    cliente_email:       $('#editEmail').value.trim(),
-    cliente_telefono:    $('#editTelefono').value.trim(),
-    cliente_ciudad:      $('#editCiudad').value.trim(),
-    destino:             $('#editDestino').value,
-    hotel:               $('#editHotel').value,
-    tipo_habitacion:     $('#editTipoHabitacion').value,
-    fecha_entrada:       $('#editFechaEntrada').value || null,
-    fecha_salida:        $('#editFechaSalida').value || null,
-    adultos:             parseInt($('#editAdultos').value) || 1,
-    ninos:               parseInt($('#editNinos').value) || 0,
-    vuelo_incluido:      $('#editVuelo').checked,
-    traslados_incluidos: $('#editTraslados').checked,
-    monto_total:         editMonto,
-    anticipo:            editAnticipo,
-    saldo_pendiente:     editMonto - editAnticipo,
-    metodo_pago:         $('#editMetodoPago').value,
-    notas:               $('#editNotas').value.trim(),
+    estado:              formData.estado,
+    cliente_nombre:      formData.clienteNombre,
+    cliente_email:       formData.clienteEmail,
+    cliente_telefono:    formData.clienteTelefono,
+    cliente_ciudad:      formData.clienteCiudad,
+    destino:             formData.destino,
+    hotel:               formData.hotel,
+    tipo_habitacion:     formData.tipoHabitacion,
+    fecha_entrada:       formData.fechaEntrada || null,
+    fecha_salida:        formData.fechaSalida || null,
+    adultos:             formData.adultos,
+    ninos:               formData.ninos,
+    vuelo_incluido:      formData.vueloIncluido,
+    traslados_incluidos: formData.trasladosIncluidos,
+    monto_total:         formData.montoTotal,
+    anticipo:            formData.anticipo,
+    saldo_pendiente:     formData.saldoPendiente,
+    metodo_pago:         formData.metodoPago,
+    notas:               formData.notas,
+    nombres_huespedes:  JSON.stringify(formData.nombresHuespedes),
+    parques_incluidos:  JSON.stringify(formData.parquesIncluidos),
     actualizado_en:      new Date().toISOString()
   };
 
@@ -677,7 +999,114 @@ async function confirmDelete() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   17.  MODALS
+   17.  CALENDAR WIDGET LOGIC
+   ══════════════════════════════════════════════════════════════════════ */
+function initCalendarListeners() {
+  $('#prevMonthBtn').addEventListener('click', () => {
+    currentCalMonth--;
+    if (currentCalMonth < 0) {
+      currentCalMonth = 11;
+      currentCalYear--;
+    }
+    renderCalendar();
+  });
+
+  $('#nextMonthBtn').addEventListener('click', () => {
+    currentCalMonth++;
+    if (currentCalMonth > 11) {
+      currentCalMonth = 0;
+      currentCalYear++;
+    }
+    renderCalendar();
+  });
+}
+
+function renderCalendar() {
+  const daysContainer = $('#calendarDays');
+  const monthYearLabel = $('#calendarMonthYear');
+  daysContainer.innerHTML = '';
+
+  // Establecer mes y año actual en la cabecera
+  monthYearLabel.textContent = `${MESES_ES_LARGOS[currentCalMonth]} ${currentCalYear}`;
+
+  // Obtener primer día de la semana y cantidad de días del mes
+  const firstDayIndex = new Date(currentCalYear, currentCalMonth, 1).getDay();
+  const totalDays = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+
+  // Generar espacios en blanco para días anteriores
+  for (let i = 0; i < firstDayIndex; i++) {
+    const emptyCell = document.createElement('div');
+    emptyCell.className = 'calendar-day empty';
+    daysContainer.appendChild(emptyCell);
+  }
+
+  // Generar días reales
+  const today = new Date();
+  
+  for (let day = 1; day <= totalDays; day++) {
+    const dayCell = document.createElement('div');
+    dayCell.className = 'calendar-day';
+    dayCell.textContent = day;
+
+    // Formatear fecha para verificar ocupación (Formato "YYYY-MM-DD")
+    const mm = String(currentCalMonth + 1).padStart(2, '0');
+    const dd = String(day).padStart(2, '0');
+    const dateStr = `${currentCalYear}-${mm}-${dd}`;
+
+    // Validar si es el día de hoy
+    if (today.getDate() === day && today.getMonth() === currentCalMonth && today.getFullYear() === currentCalYear) {
+      dayCell.classList.add('today');
+    }
+
+    // Validar si es el día actualmente seleccionado para el filtro
+    if (selectedFilterDate === dateStr) {
+      dayCell.classList.add('selected-filter');
+    }
+
+    // Buscar reservas en este día
+    const checkins = allReservations.filter(r => r.fechaEntrada === dateStr);
+    const checkouts = allReservations.filter(r => r.fechaSalida === dateStr);
+
+    if (checkins.length > 0 || checkouts.length > 0) {
+      const indicators = document.createElement('div');
+      indicators.className = 'day-indicators';
+      
+      if (checkins.length > 0) {
+        const dot = document.createElement('span');
+        dot.className = 'day-dot checkin';
+        dot.title = `${checkins.length} check-in(s)`;
+        indicators.appendChild(dot);
+      }
+      
+      if (checkouts.length > 0) {
+        const dot = document.createElement('span');
+        dot.className = 'day-dot checkout';
+        dot.title = `${checkouts.length} check-out(s)`;
+        indicators.appendChild(dot);
+      }
+      
+      dayCell.appendChild(indicators);
+    }
+
+    // Evento de clic para filtrar la lista por la fecha seleccionada
+    dayCell.addEventListener('click', () => {
+      if (selectedFilterDate === dateStr) {
+        // Deseleccionar
+        selectedFilterDate = null;
+      } else {
+        // Seleccionar
+        selectedFilterDate = dateStr;
+      }
+      renderCalendar();
+      filterReservations();
+    });
+
+    daysContainer.appendChild(dayCell);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   18.  MODALS
    ══════════════════════════════════════════════════════════════════════ */
 function openModal(modalId) {
   $(`#${modalId}`).classList.add('active');
@@ -689,7 +1118,7 @@ function closeModal(modalId) {
   document.body.style.overflow = '';
 }
 
-// Close on backdrop click
+// Clic en fondo cierra modal
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('modal-overlay') && e.target.classList.contains('active')) {
     e.target.classList.remove('active');
@@ -697,7 +1126,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Close on ESC
+// ESC cierra modal
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     $$('.modal-overlay.active').forEach(m => {
@@ -708,14 +1137,13 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* ══════════════════════════════════════════════════════════════════════
-   18.  COPY CODE
+   19.  COPY CODE
    ══════════════════════════════════════════════════════════════════════ */
 function copyCode() {
   const code = $('#successCode').textContent;
   navigator.clipboard.writeText(code).then(() => {
     showToast('Código copiado al portapapeles', 'success');
   }).catch(() => {
-    // Fallback for older browsers
     const ta = document.createElement('textarea');
     ta.value = code;
     ta.style.position = 'fixed';
@@ -729,7 +1157,7 @@ function copyCode() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   19.  FORMATTING HELPERS
+   20.  FORMATTING HELPERS
    ══════════════════════════════════════════════════════════════════════ */
 function formatCurrency(amount) {
   const num = parseFloat(amount) || 0;
@@ -757,7 +1185,7 @@ function escapeHtml(str) {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   20.  TOAST NOTIFICATIONS
+   21.  TOAST NOTIFICATIONS
    ══════════════════════════════════════════════════════════════════════ */
 function showToast(message, type = 'info') {
   const container = $('#toastContainer');
@@ -776,7 +1204,7 @@ function showToast(message, type = 'info') {
 
   container.appendChild(toast);
 
-  // Auto-remove after 4s
+  // Auto-eliminar después de 4 segundos
   setTimeout(() => {
     toast.classList.add('removing');
     setTimeout(() => toast.remove(), 300);

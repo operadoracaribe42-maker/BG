@@ -1,6 +1,6 @@
 /* ============================================================
-   BG CARIBE — Portal de Consulta de Reservaciones
-   Client Logic  |  consulta.js  |  Supabase
+   BG CARIBE — Portal de Confirmación de Reservaciones
+   Client Logic  |  confirmacion.js  |  Supabase
    ============================================================ */
 
 (function () {
@@ -68,18 +68,18 @@
    * Return an object { label, className, icon } for a reservation status.
    */
   function getStatusLabel(status) {
-    if (!status) return { label: 'Sin estado', className: 'status-pendiente', icon: 'fa-circle-question' };
+    if (!status) return { label: 'Sin estado', className: 'badge-pendiente', icon: 'fa-clock' };
 
     var s = String(status).toLowerCase().trim();
 
     if (s === 'confirmada' || s === 'confirmado') {
-      return { label: 'Confirmada', className: 'status-confirmada', icon: 'fa-circle-check' };
+      return { label: 'Confirmada', className: 'badge-confirmada', icon: 'fa-circle-check' };
     }
     if (s === 'cancelada' || s === 'cancelado') {
-      return { label: 'Cancelada', className: 'status-cancelada', icon: 'fa-circle-xmark' };
+      return { label: 'Cancelada', className: 'badge-cancelada', icon: 'fa-circle-xmark' };
     }
     // Default: pendiente
-    return { label: 'Pendiente', className: 'status-pendiente', icon: 'fa-clock' };
+    return { label: 'Pendiente', className: 'badge-pendiente', icon: 'fa-clock' };
   }
 
   /**
@@ -88,6 +88,16 @@
   function safeVal(val, fallback) {
     if (val === null || val === undefined || val === '') return fallback || '—';
     return val;
+  }
+
+  /**
+   * Safely escape HTML characters.
+   */
+  function escapeHtml(str) {
+    if (!str) return '';
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   }
 
   /* ==========================================================
@@ -133,7 +143,7 @@
     var statusInfo = getStatusLabel(data.estado);
     var badgeEl = document.getElementById('resStatusBadge');
     badgeEl.innerHTML =
-      '<span class="status-badge ' + statusInfo.className + '">' +
+      '<span class="badge ' + statusInfo.className + '">' +
         '<i class="fa-solid ' + statusInfo.icon + '"></i> ' +
         statusInfo.label +
       '</span>';
@@ -144,28 +154,80 @@
     document.getElementById('resTelefono').textContent  = safeVal(data.cliente_telefono);
     document.getElementById('resCiudad').textContent    = safeVal(data.cliente_ciudad);
 
+    // Renderizar Acompañantes / Huéspedes
+    var huespedesListEl = document.getElementById('resHuespedesList');
+    var sectionHuespedes = document.getElementById('sectionHuespedes');
+    huespedesListEl.innerHTML = '';
+    
+    var huespedes = [];
+    try {
+      if (data.nombres_huespedes) {
+        huespedes = JSON.parse(data.nombres_huespedes);
+      }
+    } catch(e) {
+      huespedes = data.nombres_huespedes ? data.nombres_huespedes.split(',').map(function(n) { return n.trim(); }) : [];
+    }
+
+    if (huespedes && huespedes.length > 0) {
+      sectionHuespedes.style.display = 'block';
+      huespedes.forEach(function (name, index) {
+        var div = document.createElement('div');
+        div.className = 'huesped-item';
+        div.innerHTML = '<i class="fa-solid fa-circle-user"></i> ' + escapeHtml(name) + (index === 0 ? ' <strong>(Titular)</strong>' : '');
+        huespedesListEl.appendChild(div);
+      });
+    } else {
+      sectionHuespedes.style.display = 'none';
+    }
+
     // Detalles del Viaje
     document.getElementById('resDestino').textContent     = safeVal(data.destino);
     document.getElementById('resHotel').textContent       = safeVal(data.hotel);
     document.getElementById('resHabitacion').textContent   = safeVal(data.tipo_habitacion);
-    document.getElementById('resFechaSalida').textContent  = formatDate(data.fecha_entrada);
-    document.getElementById('resFechaRegreso').textContent = formatDate(data.fecha_salida);
+    document.getElementById('resFechaEntrada').textContent = formatDate(data.fecha_entrada);
+    document.getElementById('resFechaSalida').textContent  = formatDate(data.fecha_salida);
     document.getElementById('resAdultos').textContent      = safeVal(data.adultos, '0');
     document.getElementById('resNinos').textContent        = safeVal(data.ninos, '0');
+
+    // Renderizar Parques Incluidos
+    var parquesListEl = document.getElementById('resParquesList');
+    var sectionParques = document.getElementById('sectionParques');
+    parquesListEl.innerHTML = '';
+
+    var parques = [];
+    try {
+      if (data.parques_incluidos) {
+        parques = JSON.parse(data.parques_incluidos);
+      }
+    } catch(e) {
+      parques = data.parques_incluidos ? data.parques_incluidos.split(',').map(function(p) { return p.trim(); }) : [];
+    }
+
+    if (parques && parques.length > 0) {
+      sectionParques.style.display = 'block';
+      parques.forEach(function (park) {
+        var span = document.createElement('span');
+        span.className = 'park-badge';
+        span.innerHTML = '<i class="fa-solid fa-ticket"></i> ' + escapeHtml(park);
+        parquesListEl.appendChild(span);
+      });
+    } else {
+      sectionParques.style.display = 'none';
+    }
 
     // Boolean fields: vuelo & traslados
     var vueloEl = document.getElementById('resVuelo');
     if (data.vuelo_incluido === true) {
-      vueloEl.innerHTML = '<span class="included-yes"><i class="fa-solid fa-check"></i> Incluido</span>';
+      vueloEl.innerHTML = '<span class="included-yes" style="color:var(--primary); font-weight:600;"><i class="fa-solid fa-check"></i> Incluido</span>';
     } else {
-      vueloEl.innerHTML = '<span class="included-no"><i class="fa-solid fa-minus"></i> No incluido</span>';
+      vueloEl.innerHTML = '<span class="included-no" style="color:var(--text-light);"><i class="fa-solid fa-minus"></i> No incluido</span>';
     }
 
     var trasladosEl = document.getElementById('resTraslados');
     if (data.traslados_incluidos === true) {
-      trasladosEl.innerHTML = '<span class="included-yes"><i class="fa-solid fa-check"></i> Incluidos</span>';
+      trasladosEl.innerHTML = '<span class="included-yes" style="color:var(--primary); font-weight:600;"><i class="fa-solid fa-check"></i> Incluidos</span>';
     } else {
-      trasladosEl.innerHTML = '<span class="included-no"><i class="fa-solid fa-minus"></i> No incluidos</span>';
+      trasladosEl.innerHTML = '<span class="included-no" style="color:var(--text-light);"><i class="fa-solid fa-minus"></i> No incluidos</span>';
     }
 
     // Informacion Financiera
@@ -215,7 +277,6 @@
       }
 
       var record = data[0];
-      // Ensure code is present in data
       if (!record.codigo) record.codigo = cleanCode;
 
       showResult(record);
@@ -272,7 +333,6 @@
     if (codigo) {
       codigo = codigo.trim().toUpperCase();
       codigoInput.value = codigo;
-      // Small delay to let Supabase initialize
       setTimeout(function () {
         searchReservation(codigo);
       }, 600);
