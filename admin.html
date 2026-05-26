@@ -480,10 +480,14 @@
         <h3>¡Reservación generada exitosamente!</h3>
         <p class="text-muted">Código de reservación:</p>
         <div class="code-display" id="successCode">BG-XXXXXXXX</div>
-        <br>
-        <button class="btn btn-outline btn-sm copy-btn" onclick="copyCode()">
-          <i class="fas fa-copy"></i> Copiar Código
-        </button>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+          <button class="btn btn-outline btn-sm copy-btn" onclick="copyCode()">
+            <i class="fas fa-copy"></i> Copiar Código
+          </button>
+          <button class="btn btn-primary btn-sm" id="btnCopyEmail" onclick="copyEmailTemplate()">
+            <i class="fas fa-envelope"></i> Copiar Correo HTML
+          </button>
+        </div>
       </div>
     </div>
     <div class="modal-footer">

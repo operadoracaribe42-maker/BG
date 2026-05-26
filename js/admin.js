@@ -173,6 +173,7 @@ let allReservations = [];
 let deleteTargetId = null;
 let deleteTargetCode = null;
 let realtimeChannel = null;
+let lastCreatedReservation = null;
 
 // Estado del calendario widget
 let currentCalYear = new Date().getFullYear();
@@ -355,6 +356,20 @@ function initReservationForm() {
       const { error } = await db.from('reservas').insert([record]);
 
       if (error) throw error;
+
+      // Guardar última reserva creada para copiar plantilla de correo
+      lastCreatedReservation = {
+        codigo: code,
+        clienteNombre: formData.clienteNombre,
+        destino: formData.destino,
+        hotel: formData.hotel,
+        tipoHabitacion: formData.tipoHabitacion,
+        fechaEntrada: formData.fechaEntrada,
+        fechaSalida: formData.fechaSalida,
+        nombresHuespedes: formData.nombresHuespedes,
+        parquesIncluidos: formData.parquesIncluidos,
+        saldoPendiente: formData.saldoPendiente
+      };
 
       // Show success modal
       $('#successCode').textContent = code;
@@ -1154,6 +1169,113 @@ function copyCode() {
     document.body.removeChild(ta);
     showToast('Código copiado al portapapeles', 'success');
   });
+}
+
+function copyEmailTemplate() {
+  if (!lastCreatedReservation) {
+    showToast('No hay reservación reciente para generar correo', 'error');
+    return;
+  }
+  
+  const r = lastCreatedReservation;
+  
+  // Plantilla HTML en línea para correos electrónicos (tonos claro corporativos)
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eae6e1; border-radius: 8px; overflow: hidden; background-color: #ffffff;">
+      <!-- Cabecera -->
+      <div style="background-color: #0d5c63; padding: 24px; text-align: center; border-bottom: 3px solid #d1ac70;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">BG CARIBE</h1>
+        <p style="color: #eae6e1; margin: 4px 0 0 0; font-size: 14px; text-transform: uppercase;">Confirmación de Reservación</p>
+      </div>
+      <!-- Cuerpo -->
+      <div style="padding: 24px; color: #2c3e50; line-height: 1.5;">
+        <h2 style="margin-top: 0; color: #0d5c63; font-size: 18px; border-bottom: 1px solid #eae6e1; padding-bottom: 8px;">¡Tu reservación está lista!</h2>
+        <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;">
+          Hola, <strong>\${escapeHtml(r.clienteNombre)}</strong>. Te confirmamos que tu paquete vacacional ha sido registrado con éxito en nuestro sistema. A continuación, te compartimos los detalles de tu viaje:
+        </p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
+          <tr>
+            <td style="padding: 10px 0; font-weight: bold; color: #7f8c8d; width: 40%; border-bottom: 1px solid #f3f6f6;">Código de Reserva:</td>
+            <td style="padding: 10px 0; font-weight: bold; color: #0d5c63; font-size: 16px; border-bottom: 1px solid #f3f6f6;">\${r.codigo}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Destino:</td>
+            <td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.destino)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Hotel / Resort:</td>
+            <td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.hotel)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Tipo de Habitación:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.tipoHabitacion)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Fechas de Viaje:</td>
+            <td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${formatDate(r.fechaEntrada)} al \${formatDate(r.fechaSalida)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Huéspedes:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.nombresHuespedes.join(', '))}</td>
+          </tr>
+          \${r.parquesIncluidos.length > 0 ? `
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Parques Incluidos:</td>
+            <td style="padding: 10px 0; color: #0d5c63; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.parquesIncluidos.join(', '))}</td>
+          </tr>
+          ` : ''}
+        </table>
+
+        <!-- Financiero -->
+        <div style="background-color: #f9f6f0; border: 1px dashed #d1ac70; border-radius: 6px; padding: 18px; margin: 24px 0; text-align: center;">
+          <span style="font-size: 11px; text-transform: uppercase; color: #bfa063; font-weight: bold; letter-spacing: 0.8px; display: block; margin-bottom: 4px;">Saldo Pendiente a Liquidar</span>
+          <span style="font-size: 22px; font-weight: bold; color: #0d5c63;">\${formatCurrency(r.saldoPendiente)}</span>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
+          <p style="font-size: 13px; color: #7f8c8d; margin-bottom: 16px;">Puedes consultar los detalles oficiales, vuelos, traslados y descargar tu comprobante digital en cualquier momento entrando a nuestro portal:</p>
+          <a href="https://confirmacion.bgcaribe.mx/?codigo=\${r.codigo}" style="background-color: #d1ac70; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-block;">Ver Comprobante de Viaje</a>
+        </div>
+      </div>
+      <!-- Pie de página -->
+      <div style="background-color: #f9f6f0; padding: 20px; text-align: center; font-size: 11px; color: #7f8c8d; border-top: 1px solid #eae6e1;">
+        <strong>BG Transportadora del Caribe S.A. de C.V.</strong><br>
+        RNT: 04230051C28259<br>
+        ¿Tienes dudas o necesitas asistencia? Contáctanos a nuestro <a href="https://wa.me/529981234567" style="color: #0d5c63; text-decoration: none; font-weight: bold;">WhatsApp de Soporte</a>
+      </div>
+    </div>
+  `;
+
+  // Texto plano como fallback
+  const text = `BG CARIBE - Confirmación de Reservación\\n\\n¡Tu reservación está lista!\\n\\nHola, \${r.clienteNombre}. Te confirmamos tu reservación con código: \${r.codigo}.\\n\\nDetalles del viaje:\\n- Destino: \${r.destino}\\n- Hotel: \${r.hotel}\\n- Habitación: \${r.tipoHabitacion}\\n- Fechas: \${formatDate(r.fechaEntrada)} al \${formatDate(r.fechaSalida)}\\n- Huéspedes: \${r.nombresHuespedes.join(', ')}\\n\${r.parquesIncluidos.length > 0 ? \`- Parques: \${r.parquesIncluidos.join(', ')}\\n\` : ''}- Saldo Pendiente: \${formatCurrency(r.saldoPendiente)}\\n\\nConsulta tu comprobante en: https://confirmacion.bgcaribe.mx/?codigo=\${r.codigo}`;
+
+  try {
+    const blobHtml = new Blob([html], { type: 'text/html' });
+    const blobText = new Blob([text], { type: 'text/plain' });
+    
+    // Escribir al portapapeles tanto en texto plano como en HTML formateado
+    const data = [new ClipboardItem({
+      'text/html': blobHtml,
+      'text/plain': blobText
+    })];
+    
+    navigator.clipboard.write(data).then(() => {
+      showToast('Plantilla de correo copiada (HTML enriquecido)', 'success');
+    }).catch(err => {
+      console.error('Clipboard write error:', err);
+      // Fallback a texto plano
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Plantilla copiada en formato texto plano', 'info');
+      });
+    });
+  } catch (err) {
+    console.error('Clipboard API fail:', err);
+    // Fallback absoluto a texto plano
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Plantilla copiada en formato texto plano', 'info');
+    });
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
