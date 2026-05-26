@@ -2,7 +2,7 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/",
+      "source": "/((?!css|js|images|favicon.ico).*)",
       "has": [
         {
           "type": "host",
@@ -12,27 +12,7 @@
       "destination": "/admin.html"
     },
     {
-      "source": "/index.html",
-      "has": [
-        {
-          "type": "host",
-          "value": "admin.bgcaribe.mx"
-        }
-      ],
-      "destination": "/admin.html"
-    },
-    {
-      "source": "/",
-      "has": [
-        {
-          "type": "host",
-          "value": "confirmacion.bgcaribe.mx"
-        }
-      ],
-      "destination": "/confirmacion.html"
-    },
-    {
-      "source": "/index.html",
+      "source": "/((?!css|js|images|favicon.ico).*)",
       "has": [
         {
           "type": "host",
