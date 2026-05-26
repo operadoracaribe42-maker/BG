@@ -217,6 +217,10 @@
               <label for="clienteCiudad">Ciudad de origen *</label>
               <input type="text" id="clienteCiudad" name="clienteCiudad" placeholder="Ej. Ciudad de México" required>
             </div>
+            <div class="form-group">
+              <label for="agenteNombre">Agente de viajes</label>
+              <input type="text" id="agenteNombre" name="agenteNombre" placeholder="Nombre del agente">
+            </div>
           </div>
         </div>
 
@@ -249,12 +253,27 @@
               </select>
             </div>
             <div class="form-group">
+              <label for="planAlimentos">Plan de Alimentos *</label>
+              <select id="planAlimentos" name="planAlimentos" required>
+                <option value="Solo Habitación">Solo Habitación (Plan Europeo)</option>
+                <option value="Desayuno Incluido">Desayuno Incluido</option>
+                <option value="Todo Incluido">Todo Incluido</option>
+                <option value="All-Fun Inclusive (Hoteles Xcaret)">All-Fun Inclusive (Hoteles Xcaret)</option>
+                <option value="Gourmet Inclusive (Nickelodeon)">Gourmet Inclusive (Nickelodeon)</option>
+                <option value="Otro / Ver notas">Otro / Ver notas</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label for="fechaEntrada">Fecha de entrada *</label>
               <input type="date" id="fechaEntrada" name="fechaEntrada" required>
             </div>
             <div class="form-group">
               <label for="fechaSalida">Fecha de salida *</label>
               <input type="date" id="fechaSalida" name="fechaSalida" required>
+            </div>
+            <div class="form-group">
+              <label>Cantidad de noches</label>
+              <div class="saldo-display" id="nochesDisplay" style="background:var(--surface-alt); border-color:#ccd5d4; color:var(--text); font-weight:600;">—</div>
             </div>
             <div class="form-group">
               <label for="adultos">Número de adultos *</label>
@@ -271,6 +290,32 @@
             <div class="form-group form-check">
               <input type="checkbox" id="trasladosIncluidos" name="trasladosIncluidos">
               <label for="trasladosIncluidos">Traslados incluidos</label>
+            </div>
+            <div class="form-group" id="tipoTrasladoGroup" style="display: none;">
+              <label for="tipoTraslado">Tipo de traslado</label>
+              <select id="tipoTraslado" name="tipoTraslado">
+                <option value="Compartido">Compartido (Colectivo)</option>
+                <option value="Privado">Privado</option>
+                <option value="Shuttle Oficial (Hotel Xcaret)">Shuttle Oficial (Hotel Xcaret)</option>
+                <option value="No requerido">No requerido</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Información de Vuelos (Opcional) ─────────────────── -->
+        <div class="form-card" id="vueloSection" style="display: none;">
+          <div class="form-section-title">
+            <i class="fas fa-plane-departure"></i> Detalles de Vuelos
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="vueloDetalleIda">Vuelo de Ida (Aerolínea, No. de Vuelo y Hora)</label>
+              <input type="text" id="vueloDetalleIda" name="vueloDetalleIda" placeholder="Ej. Aeroméxico AM422 - 09:30 AM">
+            </div>
+            <div class="form-group">
+              <label for="vueloDetalleVuelta">Vuelo de Regreso (Aerolínea, No. de Vuelo y Hora)</label>
+              <input type="text" id="vueloDetalleVuelta" name="vueloDetalleVuelta" placeholder="Ej. Aeroméxico AM423 - 06:15 PM">
             </div>
           </div>
         </div>
@@ -367,11 +412,17 @@
         <!-- ── Notas ────────────────────────────────────────────── -->
         <div class="form-card">
           <div class="form-section-title">
-            <i class="fas fa-sticky-note"></i> Notas
+            <i class="fas fa-sticky-note"></i> Peticiones Especiales y Notas
           </div>
-          <div class="form-group">
-            <label for="notas">Notas internas</label>
-            <textarea id="notas" name="notas" placeholder="Observaciones, solicitudes especiales, recordatorios..."></textarea>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="peticionesEspeciales">Peticiones especiales</label>
+              <input type="text" id="peticionesEspeciales" name="peticionesEspeciales" placeholder="Ej. Cama King, piso alto, cuna...">
+            </div>
+            <div class="form-group">
+              <label for="notas">Notas internas</label>
+              <textarea id="notas" name="notas" placeholder="Observaciones, recordatorios..." style="height: 48px; min-height: 48px;"></textarea>
+            </div>
           </div>
         </div>
 
@@ -548,6 +599,10 @@
               <label for="editCiudad">Ciudad de origen</label>
               <input type="text" id="editCiudad" required>
             </div>
+            <div class="form-group">
+              <label for="editAgenteNombre">Agente de viajes</label>
+              <input type="text" id="editAgenteNombre" placeholder="Nombre del agente">
+            </div>
           </div>
         </div>
 
@@ -580,12 +635,27 @@
               </select>
             </div>
             <div class="form-group">
+              <label for="editPlanAlimentos">Plan de Alimentos</label>
+              <select id="editPlanAlimentos">
+                <option value="Solo Habitación">Solo Habitación (Plan Europeo)</option>
+                <option value="Desayuno Incluido">Desayuno Incluido</option>
+                <option value="Todo Incluido">Todo Incluido</option>
+                <option value="All-Fun Inclusive (Hoteles Xcaret)">All-Fun Inclusive (Hoteles Xcaret)</option>
+                <option value="Gourmet Inclusive (Nickelodeon)">Gourmet Inclusive (Nickelodeon)</option>
+                <option value="Otro / Ver notas">Otro / Ver notas</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label for="editFechaEntrada">Fecha de entrada</label>
               <input type="date" id="editFechaEntrada" required>
             </div>
             <div class="form-group">
               <label for="editFechaSalida">Fecha de salida</label>
               <input type="date" id="editFechaSalida" required>
+            </div>
+            <div class="form-group">
+              <label>Cantidad de noches</label>
+              <div class="saldo-display" id="editNochesDisplay" style="background:var(--surface-alt); border-color:#ccd5d4; color:var(--text); font-weight:600;">—</div>
             </div>
             <div class="form-group">
               <label for="editAdultos">Adultos</label>
@@ -602,6 +672,32 @@
             <div class="form-group form-check">
               <input type="checkbox" id="editTraslados">
               <label for="editTraslados">Traslados incluidos</label>
+            </div>
+            <div class="form-group" id="editTipoTrasladoGroup" style="display: none;">
+              <label for="editTipoTraslado">Tipo de traslado</label>
+              <select id="editTipoTraslado">
+                <option value="Compartido">Compartido (Colectivo)</option>
+                <option value="Privado">Privado</option>
+                <option value="Shuttle Oficial (Hotel Xcaret)">Shuttle Oficial (Hotel Xcaret)</option>
+                <option value="No requerido">No requerido</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detalles de vuelos en edición -->
+        <div class="form-card" id="editVueloSection" style="margin-bottom:20px; display: none;">
+          <div class="form-section-title">
+            <i class="fas fa-plane-departure"></i> Detalles de Vuelos
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="editVueloDetalleIda">Vuelo de Ida (Aerolínea, No. de Vuelo y Hora)</label>
+              <input type="text" id="editVueloDetalleIda" placeholder="Ej. Aeroméxico AM422 - 09:30 AM">
+            </div>
+            <div class="form-group">
+              <label for="editVueloDetalleVuelta">Vuelo de Regreso (Aerolínea, No. de Vuelo y Hora)</label>
+              <input type="text" id="editVueloDetalleVuelta" placeholder="Ej. Aeroméxico AM423 - 06:15 PM">
             </div>
           </div>
         </div>
@@ -668,11 +764,17 @@
         <!-- Notas -->
         <div class="form-card">
           <div class="form-section-title">
-            <i class="fas fa-sticky-note"></i> Notas
+            <i class="fas fa-sticky-note"></i> Peticiones Especiales y Notas
           </div>
-          <div class="form-group">
-            <label for="editNotas">Notas internas</label>
-            <textarea id="editNotas" placeholder="Observaciones..."></textarea>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="editPeticionesEspeciales">Peticiones especiales</label>
+              <input type="text" id="editPeticionesEspeciales" placeholder="Ej. Cama King, piso alto, cuna...">
+            </div>
+            <div class="form-group">
+              <label for="editNotas">Notas internas</label>
+              <textarea id="editNotas" placeholder="Observaciones..." style="height: 48px; min-height: 48px;"></textarea>
+            </div>
           </div>
         </div>
       </form>

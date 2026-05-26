@@ -141,12 +141,20 @@
                   <span class="detail-value" id="resHabitacion">—</span>
                 </div>
                 <div class="detail-item">
+                  <span class="detail-label">Plan de alimentos</span>
+                  <span class="detail-value" id="resPlanAlimentos">—</span>
+                </div>
+                <div class="detail-item">
                   <span class="detail-label">Fecha de entrada</span>
                   <span class="detail-value" id="resFechaEntrada">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Fecha de salida</span>
                   <span class="detail-value" id="resFechaSalida">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Noches de estadía</span>
+                  <span class="detail-value" id="resNoches">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Adultos</span>
@@ -164,6 +172,43 @@
                   <span class="detail-label">Traslados incluidos</span>
                   <span class="detail-value" id="resTraslados">—</span>
                 </div>
+                <div class="detail-item">
+                  <span class="detail-label">Agente de viajes</span>
+                  <span class="detail-value" id="resAgenteNombre">—</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section: Detalles Adicionales (Vuelos y Traslados) -->
+            <div class="detail-section" id="sectionAdicionales" style="display: none;">
+              <div class="section-title">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Logística y Traslados</span>
+              </div>
+              <div class="detail-grid">
+                <div class="detail-item" id="itemVueloIda" style="display: none;">
+                  <span class="detail-label">Vuelo de ida</span>
+                  <span class="detail-value" id="resVueloIda">—</span>
+                </div>
+                <div class="detail-item" id="itemVueloVuelta" style="display: none;">
+                  <span class="detail-label">Vuelo de regreso</span>
+                  <span class="detail-value" id="resVueloVuelta">—</span>
+                </div>
+                <div class="detail-item" id="itemTipoTraslado" style="display: none;">
+                  <span class="detail-label">Tipo de traslado</span>
+                  <span class="detail-value" id="resTipoTraslado">—</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section: Solicitudes Especiales -->
+            <div class="detail-section" id="sectionPeticiones" style="display: none;">
+              <div class="section-title">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Solicitudes Especiales</span>
+              </div>
+              <div style="background: #F9F6F0; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid #ccd5d4; font-size: 0.95rem; line-height: 1.4; color: var(--text);">
+                <span id="resPeticiones">—</span>
               </div>
             </div>
 

@@ -313,6 +313,20 @@ function initReservationForm() {
     }
   });
 
+  // Fecha Entrada/Salida para calcular noches
+  $('#fechaEntrada').addEventListener('change', () => calculateNights(''));
+  $('#fechaSalida').addEventListener('change', () => calculateNights(''));
+
+  // Vuelo incluido toggle
+  $('#vueloIncluido').addEventListener('change', (e) => {
+    $('#vueloSection').style.display = e.target.checked ? 'block' : 'none';
+  });
+
+  // Traslados incluidos toggle
+  $('#trasladosIncluidos').addEventListener('change', (e) => {
+    $('#tipoTrasladoGroup').style.display = e.target.checked ? 'block' : 'none';
+  });
+
   // Saldo auto-calculation
   $('#montoTotal').addEventListener('input', calculateSaldo);
   $('#anticipo').addEventListener('input', calculateSaldo);
@@ -399,19 +413,67 @@ function initReservationForm() {
   updateGuestInputs('');
 }
 
+// Calcula dinámicamente la cantidad de noches entre fecha de entrada y salida
+function calculateNights(prefix = '') {
+  const isEdit = prefix === 'edit';
+  const entradaInput = isEdit ? $('#editFechaEntrada') : $('#fechaEntrada');
+  const salidaInput = isEdit ? $('#editFechaSalida') : $('#fechaSalida');
+  const displayEl = isEdit ? $('#editNochesDisplay') : $('#nochesDisplay');
+
+  if (!entradaInput || !salidaInput || !displayEl) return 0;
+
+  const entradaVal = entradaInput.value;
+  const salidaVal = salidaInput.value;
+
+  if (entradaVal && salidaVal) {
+    const dateEntrada = new Date(entradaVal + 'T00:00:00');
+    const dateSalida = new Date(salidaVal + 'T00:00:00');
+    const diffTime = dateSalida - dateEntrada;
+    if (diffTime > 0) {
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      displayEl.textContent = `${diffDays} noche${diffDays > 1 ? 's' : ''}`;
+      return diffDays;
+    } else if (diffTime === 0) {
+      displayEl.textContent = 'Mismo día (0 noches)';
+      return 0;
+    } else {
+      displayEl.textContent = 'Salida anterior a Entrada';
+      return 0;
+    }
+  } else {
+    displayEl.textContent = '—';
+    return 0;
+  }
+}
+
 // Genera dinámicamente inputs para los huéspedes
 function updateGuestInputs(prefix = '') {
-  const container = $(`#${prefix}huespedesContainer`);
-  const section = $(`#${prefix}huespedesSection`);
-  const adultos = parseInt($(`#${prefix}adultos`).value) || 1;
-  const ninos = parseInt($(`#${prefix}ninos`).value) || 0;
+  const isEdit = prefix === 'edit';
+  const container = isEdit ? $('#editHuespedesContainer') : $('#huespedesContainer');
+  const section = isEdit ? $('#editHuespedesSection') : $('#huespedesSection');
+  const adultos = parseInt((isEdit ? $('#editAdultos') : $('#adultos')).value) || 1;
+  const ninos = parseInt((isEdit ? $('#editNinos') : $('#ninos')).value) || 0;
   const total = adultos + ninos;
 
-  // Guardar los nombres que ya estén escritos para no borrarlos
+  // Guardar los nombres y edades que ya estén escritos para no borrarlos
   const existingValues = [];
-  const inputs = container.querySelectorAll('input');
-  inputs.forEach(input => {
-    existingValues.push(input.value);
+  const existingAges = [];
+  
+  const nameInputs = container.querySelectorAll('.guest-name-input');
+  if (nameInputs.length > 0) {
+    nameInputs.forEach(input => {
+      existingValues.push(input.value);
+    });
+  } else {
+    const oldInputs = container.querySelectorAll('input[type="text"]');
+    oldInputs.forEach(input => {
+      existingValues.push(input.value);
+    });
+  }
+
+  const ageInputs = container.querySelectorAll('.guest-age-input');
+  ageInputs.forEach(input => {
+    existingAges.push(input.value);
   });
 
   container.innerHTML = '';
@@ -428,10 +490,9 @@ function updateGuestInputs(prefix = '') {
     const div = document.createElement('div');
     div.className = 'form-group';
     
-    const isTitular = (i === 1 && prefix === '');
+    const isTitular = (i === 1 && !isEdit);
     const labelText = isTitular ? 'Huésped 1 (Titular) *' : `Huésped ${i} (Adulto) *`;
     
-    // Obtener valor previo o pre-llenar con el titular
     let val = existingValues[i - 1] || '';
     if (isTitular && !val) {
       val = $('#clienteNombre').value;
@@ -439,7 +500,7 @@ function updateGuestInputs(prefix = '') {
 
     div.innerHTML = `
       <label>${labelText}</label>
-      <input type="text" id="${prefix}g-name-${i}" placeholder="Nombre completo" value="${escapeHtml(val)}" required>
+      <input type="text" id="${prefix ? prefix + 'g' : 'g'}-name-${i}" class="guest-name-input" placeholder="Nombre completo" value="${escapeHtml(val)}" required>
     `;
     container.appendChild(div);
   }
@@ -449,10 +510,16 @@ function updateGuestInputs(prefix = '') {
     const idx = adultos + j;
     const div = document.createElement('div');
     div.className = 'form-group';
+    
     let val = existingValues[idx - 1] || '';
+    let ageVal = existingAges[j - 1] || '';
+    
     div.innerHTML = `
       <label>Huésped ${idx} (Niño) *</label>
-      <input type="text" id="${prefix}g-name-${idx}" placeholder="Nombre completo" value="${escapeHtml(val)}" required>
+      <div style="display: flex; gap: 10px;">
+        <input type="text" id="${prefix ? prefix + 'g' : 'g'}-name-${idx}" class="guest-name-input" placeholder="Nombre completo" value="${escapeHtml(val)}" style="flex: 2;" required>
+        <input type="number" id="${prefix ? prefix + 'g' : 'g'}-age-${idx}" class="guest-age-input" placeholder="Edad" min="0" max="17" value="${escapeHtml(ageVal)}" style="flex: 1;" required>
+      </div>
     `;
     container.appendChild(div);
   }
@@ -460,48 +527,92 @@ function updateGuestInputs(prefix = '') {
 
 // Recopila la información del formulario (válido para nueva reserva y editar)
 function gatherFormData(prefix = '') {
-  const monto = parseFloat($(`#${prefix}montoTotal`).value) || 0;
-  const anticipo = parseFloat($(`#${prefix}anticipo`).value) || 0;
+  const isEdit = prefix === 'edit';
+
+  const clienteNombre = (isEdit ? $('#editNombre') : $('#clienteNombre')).value.trim();
+  const clienteEmail = (isEdit ? $('#editEmail') : $('#clienteEmail')).value.trim();
+  const clienteTelefono = (isEdit ? $('#editTelefono') : $('#clienteTelefono')).value.trim();
+  const clienteCiudad = (isEdit ? $('#editCiudad') : $('#clienteCiudad')).value.trim();
   
-  // Recopilar nombres de los huéspedes
-  const adultos = parseInt($(`#${prefix}adultos`).value) || 1;
-  const ninos = parseInt($(`#${prefix}ninos`).value) || 0;
+  const destino = (isEdit ? $('#editDestino') : $('#destino')).value;
+  const hotel = (isEdit ? $('#editHotel') : $('#hotel')).value;
+  const tipoHabitacion = (isEdit ? $('#editTipoHabitacion') : $('#tipoHabitacion')).value;
+  
+  const fechaEntrada = (isEdit ? $('#editFechaEntrada') : $('#fechaEntrada')).value;
+  const fechaSalida = (isEdit ? $('#editFechaSalida') : $('#fechaSalida')).value;
+  
+  const adultos = parseInt((isEdit ? $('#editAdultos') : $('#adultos')).value) || 1;
+  const ninos = parseInt((isEdit ? $('#editNinos') : $('#ninos')).value) || 0;
+  
+  const vueloIncluido = (isEdit ? $('#editVuelo') : $('#vueloIncluido')).checked;
+  const trasladosIncluidos = (isEdit ? $('#editTraslados') : $('#trasladosIncluidos')).checked;
+  const tipoTraslado = (isEdit ? $('#editTipoTraslado') : $('#tipoTraslado')).value;
+  
+  const vueloIda = (isEdit ? $('#editVueloDetalleIda') : $('#vueloDetalleIda')).value.trim();
+  const vueloVuelta = (isEdit ? $('#editVueloDetalleVuelta') : $('#vueloDetalleVuelta')).value.trim();
+  
+  const totalInput = isEdit ? $('#editMonto') : $('#montoTotal');
+  const anticipoInput = isEdit ? $('#editAnticipo') : $('#anticipo');
+  
+  const montoTotal = parseFloat(totalInput.value) || 0;
+  const anticipo = parseFloat(anticipoInput.value) || 0;
+  const saldoPendiente = montoTotal - anticipo;
+  
+  const metodoPago = (isEdit ? $('#editMetodoPago') : $('#metodoPago')).value;
+  const notas = (isEdit ? $('#editNotas') : $('#notas')).value.trim();
+  
   const total = adultos + ninos;
   const nombresHuespedes = [];
+  const edadesNinos = [];
+  
   for (let i = 1; i <= total; i++) {
-    const val = $(`#${prefix}g-name-${i}`) ? $(`#${prefix}g-name-${i}`).value.trim() : '';
+    const val = $(`#${prefix ? prefix + 'g' : 'g'}-name-${i}`) ? $(`#${prefix ? prefix + 'g' : 'g'}-name-${i}`).value.trim() : '';
     if (val) nombresHuespedes.push(val);
   }
-
-  // Recopilar parques incluidos
-  const selector = prefix === 'edit' ? 'input[name="editParques"]:checked' : 'input[name="parques"]:checked';
+  
+  for (let j = 1; j <= ninos; j++) {
+    const idx = adultos + j;
+    const ageVal = $(`#${prefix ? prefix + 'g' : 'g'}-age-${idx}`) ? parseInt($(`#${prefix ? prefix + 'g' : 'g'}-age-${idx}`).value) || 0 : 0;
+    edadesNinos.push(ageVal);
+  }
+  
+  const selector = isEdit ? 'input[name="editParques"]:checked' : 'input[name="parques"]:checked';
   const parquesIncluidos = Array.from(document.querySelectorAll(selector)).map(cb => cb.value);
 
-  // Selector de total / editMonto
-  const totalInput = prefix === 'edit' ? $(`#${prefix}Monto`) : $(`#${prefix}montoTotal`);
-  const anticipoInput = prefix === 'edit' ? $(`#${prefix}Anticipo`) : $(`#${prefix}anticipo`);
+  // Nuevos campos
+  const agenteNombre = (isEdit ? $('#editAgenteNombre') : $('#agenteNombre')).value.trim();
+  const planAlimentos = (isEdit ? $('#editPlanAlimentos') : $('#planAlimentos')).value;
+  const peticionesEspeciales = (isEdit ? $('#editPeticionesEspeciales') : $('#peticionesEspeciales')).value.trim();
 
   return {
-    clienteNombre:    $(`#${prefix}Nombre` || `#clienteNombre`).value.trim(),
-    clienteEmail:     $(`#${prefix}Email` || `#clienteEmail`).value.trim(),
-    clienteTelefono:  $(`#${prefix}Telefono` || `#clienteTelefono`).value.trim(),
-    clienteCiudad:    $(`#${prefix}Ciudad` || `#clienteCiudad`).value.trim(),
-    destino:          $(`#${prefix}Destino` || `#destino`).value,
-    hotel:            $(`#${prefix}Hotel` || `#hotel`).value,
-    tipoHabitacion:   $(`#${prefix}TipoHabitacion` || `#tipoHabitacion`).value,
-    fechaEntrada:     $(`#${prefix}FechaEntrada` || `#fechaEntrada`).value,
-    fechaSalida:      $(`#${prefix}FechaSalida` || `#fechaSalida`).value,
-    adultos:          adultos,
-    ninos:            ninos,
-    vueloIncluido:    $(`#${prefix}Vuelo` || `#vueloIncluido`).checked,
-    trasladosIncluidos: ($(`#${prefix}Traslados` || `#trasladosIncluidos`)).checked,
-    montoTotal:       parseFloat(totalInput.value) || 0,
-    anticipo:         parseFloat(anticipoInput.value) || 0,
-    saldoPendiente:   (parseFloat(totalInput.value) || 0) - (parseFloat(anticipoInput.value) || 0),
-    metodoPago:       $(`#${prefix}MetodoPago` || `#metodoPago`).value,
-    notas:            $(`#${prefix}Notas` || `#notas`).value.trim(),
-    nombresHuespedes: nombresHuespedes,
-    parquesIncluidos: parquesIncluidos
+    estado: isEdit ? $('#editEstado').value : 'pendiente',
+    clienteNombre,
+    clienteEmail,
+    clienteTelefono,
+    clienteCiudad,
+    destino,
+    hotel,
+    tipoHabitacion,
+    fechaEntrada,
+    fechaSalida,
+    adultos,
+    ninos,
+    vueloIncluido,
+    trasladosIncluidos,
+    tipoTraslado,
+    vueloIda,
+    vueloVuelta,
+    montoTotal,
+    anticipo,
+    saldoPendiente,
+    metodoPago,
+    notas,
+    nombresHuespedes,
+    parquesIncluidos,
+    edadesNinos,
+    agenteNombre,
+    planAlimentos,
+    peticionesEspeciales
   };
 }
 
@@ -846,6 +957,20 @@ function initEditFormListeners() {
   $('#editAdultos').addEventListener('change', () => updateGuestInputs('edit'));
   $('#editNinos').addEventListener('change', () => updateGuestInputs('edit'));
 
+  // Fecha Entrada/Salida para calcular noches
+  $('#editFechaEntrada').addEventListener('change', () => calculateNights('edit'));
+  $('#editFechaSalida').addEventListener('change', () => calculateNights('edit'));
+
+  // Vuelo incluido toggle
+  $('#editVuelo').addEventListener('change', (e) => {
+    $('#editVueloSection').style.display = e.target.checked ? 'block' : 'none';
+  });
+
+  // Traslados incluidos toggle
+  $('#editTraslados').addEventListener('change', (e) => {
+    $('#editTipoTrasladoGroup').style.display = e.target.checked ? 'block' : 'none';
+  });
+
   // Saldo
   $('#editMonto').addEventListener('input', calculateEditSaldo);
   $('#editAnticipo').addEventListener('input', calculateEditSaldo);
@@ -865,6 +990,7 @@ function openEditModal(docId) {
   $('#editEmail').value = reservation.clienteEmail || '';
   $('#editTelefono').value = reservation.clienteTelefono || '';
   $('#editCiudad').value = reservation.clienteCiudad || '';
+  $('#editAgenteNombre').value = reservation.agenteNombre || '';
   $('#editDestino').value = reservation.destino || '';
 
   // Update hotel options then set value
@@ -879,19 +1005,35 @@ function openEditModal(docId) {
     
     setTimeout(() => {
       $('#editTipoHabitacion').value = reservation.tipoHabitacion || '';
+      $('#editPlanAlimentos').value = reservation.planAlimentos || 'Solo Habitación';
     }, 10);
   }, 10);
 
   $('#editFechaEntrada').value = reservation.fechaEntrada || '';
   $('#editFechaSalida').value = reservation.fechaSalida || '';
+  calculateNights('edit');
+
   $('#editAdultos').value = reservation.adultos || 1;
   $('#editNinos').value = reservation.ninos || 0;
-  $('#editVuelo').checked = reservation.vueloIncluido || false;
-  $('#editTraslados').checked = reservation.trasladosIncluidos || false;
+  
+  // Vuelo
+  const vueloCheck = reservation.vueloIncluido || false;
+  $('#editVuelo').checked = vueloCheck;
+  $('#editVueloSection').style.display = vueloCheck ? 'block' : 'none';
+  $('#editVueloDetalleIda').value = reservation.vueloIda || '';
+  $('#editVueloDetalleVuelta').value = reservation.vueloVuelta || '';
+
+  // Traslados
+  const trasladosCheck = reservation.trasladosIncluidos || false;
+  $('#editTraslados').checked = trasladosCheck;
+  $('#editTipoTrasladoGroup').style.display = trasladosCheck ? 'block' : 'none';
+  $('#editTipoTraslado').value = reservation.tipoTraslado || 'Compartido';
+
   $('#editMonto').value = reservation.montoTotal || 0;
   $('#editAnticipo').value = reservation.anticipo || 0;
   calculateEditSaldo();
   $('#editMetodoPago').value = reservation.metodoPago || 'Transferencia bancaria';
+  $('#editPeticionesEspeciales').value = reservation.peticionesEspeciales || '';
   $('#editNotas').value = reservation.notas || '';
 
   // Renderizar e re-poblar los huéspedes
@@ -900,12 +1042,21 @@ function openEditModal(docId) {
   // Rellenar las cajas de texto de los huéspedes guardados
   setTimeout(() => {
     const container = $('#editHuespedesContainer');
-    const inputs = container.querySelectorAll('input');
-    const savedNames = reservation.nombresHuespedes || [];
+    const nameInputs = container.querySelectorAll('.guest-name-input');
+    const ageInputs = container.querySelectorAll('.guest-age-input');
     
-    inputs.forEach((input, idx) => {
+    const savedNames = reservation.nombresHuespedes || [];
+    const savedAges = reservation.edadesNinos || [];
+    
+    nameInputs.forEach((input, idx) => {
       if (savedNames[idx]) {
         input.value = savedNames[idx];
+      }
+    });
+    
+    ageInputs.forEach((input, idx) => {
+      if (savedAges[idx] !== undefined && savedAges[idx] !== null) {
+        input.value = savedAges[idx];
       }
     });
   }, 50);
@@ -951,6 +1102,17 @@ async function saveEdit() {
     notas:               formData.notas,
     nombres_huespedes:  JSON.stringify(formData.nombresHuespedes),
     parques_incluidos:  JSON.stringify(formData.parquesIncluidos),
+    
+    // Nuevos campos
+    cantidad_noches:     calculateNights('edit'),
+    edades_ninos:        JSON.stringify(formData.edadesNinos),
+    agente_nombre:       formData.agenteNombre,
+    plan_alimentos:      formData.planAlimentos,
+    peticiones_especiales: formData.peticionesEspeciales,
+    vuelo_ida:           formData.vueloIda,
+    vuelo_vuelta:        formData.vueloVuelta,
+    tipo_traslado:       formData.tipoTraslado,
+
     actualizado_en:      new Date().toISOString()
   };
 
@@ -1212,19 +1374,51 @@ function copyEmailTemplate() {
             <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.tipoHabitacion)}</td>
           </tr>
           <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Plan de Alimentos:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.planAlimentos)}</td>
+          </tr>
+          <tr>
             <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Fechas de Viaje:</td>
-            <td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${formatDate(r.fechaEntrada)} al \${formatDate(r.fechaSalida)}</td>
+            <td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${formatDate(r.fechaEntrada)} al \${formatDate(r.fechaSalida)} (\${r.cantidadNoches} noches)</td>
           </tr>
           <tr>
             <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Huéspedes:</td>
             <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.nombresHuespedes.join(', '))}</td>
           </tr>
-          \${r.parquesIncluidos.length > 0 ? `
+          \${r.vueloIncluido ? \`
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Vuelo de Ida:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.vueloIda || 'Incluido')}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Vuelo de Regreso:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.vueloVuelta || 'Incluido')}</td>
+          </tr>
+          \` : ''}
+          \${r.trasladosIncluidos ? \`
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Traslados:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">Incluidos (\${escapeHtml(r.tipoTraslado)})</td>
+          </tr>
+          \` : ''}
+          \${r.parquesIncluidos.length > 0 ? \`
           <tr>
             <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Parques Incluidos:</td>
             <td style="padding: 10px 0; color: #0d5c63; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.parquesIncluidos.join(', '))}</td>
           </tr>
-          ` : ''}
+          \` : ''}
+          \${r.agenteNombre ? \`
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Agente de Viajes:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.agenteNombre)}</td>
+          </tr>
+          \` : ''}
+          \${r.peticionesEspeciales ? \`
+          <tr>
+            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Peticiones Especiales:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6; font-style: italic;">\${escapeHtml(r.peticionesEspeciales)}</td>
+          </tr>
+          \` : ''}
         </table>
 
         <!-- Financiero -->

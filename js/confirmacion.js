@@ -168,12 +168,35 @@
       huespedes = data.nombres_huespedes ? data.nombres_huespedes.split(',').map(function(n) { return n.trim(); }) : [];
     }
 
+    var edades = [];
+    try {
+      if (data.edades_ninos) {
+        edades = JSON.parse(data.edades_ninos);
+      }
+    } catch(e) {
+      edades = data.edades_ninos ? data.edades_ninos.split(',').map(function(n) { return parseInt(n.trim()) || 0; }) : [];
+    }
+
     if (huespedes && huespedes.length > 0) {
       sectionHuespedes.style.display = 'block';
       huespedes.forEach(function (name, index) {
         var div = document.createElement('div');
         div.className = 'huesped-item';
-        div.innerHTML = '<i class="fa-solid fa-circle-user"></i> ' + escapeHtml(name) + (index === 0 ? ' <strong>(Titular)</strong>' : '');
+        
+        var suffix = '';
+        if (index === 0) {
+          suffix = ' <strong>(Titular)</strong>';
+        } else if (index >= Number(data.adultos || 1)) {
+          var childIdx = index - Number(data.adultos || 1);
+          var age = edades[childIdx];
+          if (age !== undefined && age !== null && age !== '') {
+            suffix = ' <span>(' + age + ' años)</span>';
+          } else {
+            suffix = ' <span>(Niño)</span>';
+          }
+        }
+        
+        div.innerHTML = '<i class="fa-solid fa-circle-user"></i> ' + escapeHtml(name) + suffix;
         huespedesListEl.appendChild(div);
       });
     } else {
@@ -184,10 +207,77 @@
     document.getElementById('resDestino').textContent     = safeVal(data.destino);
     document.getElementById('resHotel').textContent       = safeVal(data.hotel);
     document.getElementById('resHabitacion').textContent   = safeVal(data.tipo_habitacion);
+    document.getElementById('resPlanAlimentos').textContent = safeVal(data.plan_alimentos, 'Solo Habitación');
     document.getElementById('resFechaEntrada').textContent = formatDate(data.fecha_entrada);
     document.getElementById('resFechaSalida').textContent  = formatDate(data.fecha_salida);
+    
+    // Noches de estadía
+    var nochesText = '—';
+    if (data.cantidad_noches !== undefined && data.cantidad_noches !== null) {
+      nochesText = data.cantidad_noches + ' noche' + (Number(data.cantidad_noches) !== 1 ? 's' : '');
+    } else if (data.fecha_entrada && data.fecha_salida) {
+      var ent = new Date(data.fecha_entrada + 'T00:00:00');
+      var sal = new Date(data.fecha_salida + 'T00:00:00');
+      var diff = sal - ent;
+      if (diff > 0) {
+        var nights = Math.ceil(diff / (1000 * 60 * 60 * 24));
+        nochesText = nights + ' noche' + (nights !== 1 ? 's' : '');
+      }
+    }
+    document.getElementById('resNoches').textContent = nochesText;
+
     document.getElementById('resAdultos').textContent      = safeVal(data.adultos, '0');
     document.getElementById('resNinos').textContent        = safeVal(data.ninos, '0');
+    document.getElementById('resAgenteNombre').textContent = safeVal(data.agente_nombre, 'Asignado automáticamente');
+
+    // Detalles Adicionales (Vuelos y Traslados)
+    var sectionAdicionales = document.getElementById('sectionAdicionales');
+    var itemVueloIda = document.getElementById('itemVueloIda');
+    var itemVueloVuelta = document.getElementById('itemVueloVuelta');
+    var itemTipoTraslado = document.getElementById('itemTipoTraslado');
+    var showAdicionales = false;
+
+    if (data.vuelo_incluido === true && (data.vuelo_ida || data.vuelo_vuelta)) {
+      showAdicionales = true;
+      if (data.vuelo_ida) {
+        itemVueloIda.style.display = 'block';
+        document.getElementById('resVueloIda').textContent = data.vuelo_ida;
+      } else {
+        itemVueloIda.style.display = 'none';
+      }
+      if (data.vuelo_vuelta) {
+        itemVueloVuelta.style.display = 'block';
+        document.getElementById('resVueloVuelta').textContent = data.vuelo_vuelta;
+      } else {
+        itemVueloVuelta.style.display = 'none';
+      }
+    } else {
+      itemVueloIda.style.display = 'none';
+      itemVueloVuelta.style.display = 'none';
+    }
+
+    if (data.traslados_incluidos === true && data.tipo_traslado) {
+      showAdicionales = true;
+      itemTipoTraslado.style.display = 'block';
+      document.getElementById('resTipoTraslado').textContent = data.tipo_traslado;
+    } else {
+      itemTipoTraslado.style.display = 'none';
+    }
+
+    if (showAdicionales) {
+      sectionAdicionales.style.display = 'block';
+    } else {
+      sectionAdicionales.style.display = 'none';
+    }
+
+    // Solicitudes Especiales
+    var sectionPeticiones = document.getElementById('sectionPeticiones');
+    if (data.peticiones_especiales) {
+      sectionPeticiones.style.display = 'block';
+      document.getElementById('resPeticiones').textContent = data.peticiones_especiales;
+    } else {
+      sectionPeticiones.style.display = 'none';
+    }
 
     // Renderizar Parques Incluidos
     var parquesListEl = document.getElementById('resParquesList');
