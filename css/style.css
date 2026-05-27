@@ -2572,3 +2572,282 @@ button, input, select, textarea {
   }
 }
 
+/* ========================================================================
+   HOT SALE OFFERS SECTION STYLES
+   ======================================================================== */
+.hotsale-section {
+  background-color: #FAF8F5;
+  border-top: 1px solid rgba(13, 92, 99, 0.05);
+  border-bottom: 1px solid rgba(13, 92, 99, 0.05);
+}
+
+.hotsale-tag {
+  background: rgba(230, 57, 70, 0.1);
+  color: #E63946;
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hotsale-tag i {
+  animation: pulse-fire 1.5s infinite;
+}
+
+@keyframes pulse-fire {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.hotsale-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.hotsale-card {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(13, 92, 99, 0.05);
+  border: 1px solid rgba(13, 92, 99, 0.06);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.hotsale-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(13, 92, 99, 0.1);
+}
+
+.hotsale-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #E63946;
+  color: var(--white);
+  padding: 6px 14px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 30px;
+  z-index: 10;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
+}
+
+.hotsale-badge.orange-badge {
+  background: #FF7A00;
+  box-shadow: 0 4px 10px rgba(255, 122, 0, 0.3);
+}
+
+.hotsale-img-wrapper {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+}
+
+.hotsale-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.hotsale-card:hover .hotsale-img-wrapper img {
+  transform: scale(1.05);
+}
+
+.hotsale-content {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.hotsale-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.brand-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.facebook-brand-icon {
+  color: #1877F2;
+  font-size: 1.1rem;
+}
+
+.hotsale-hotel-tag {
+  background: rgba(13, 92, 99, 0.08);
+  color: var(--primary);
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hotsale-hotel-tag.nick-tag {
+  background: rgba(255, 122, 0, 0.08);
+  color: #FF7A00;
+}
+
+.hotsale-card h3 {
+  font-size: 1.4rem;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.hotsale-description {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.hotsale-details {
+  border-top: 1px solid rgba(13, 92, 99, 0.08);
+  border-bottom: 1px solid rgba(13, 92, 99, 0.08);
+  padding: 16px 0;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.detail-inline i {
+  color: var(--accent);
+  width: 16px;
+}
+
+.hotsale-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hotsale-price-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.hotsale-price-box .price-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.hotsale-price-box .price-amount {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+  margin: 4px 0;
+}
+
+.hotsale-price-box .price-amount small {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.hotsale-price-box .price-caption {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.hotsale-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-whatsapp-btn {
+  background: #25D366;
+  color: var(--white) !important;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: var(--border-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-smooth);
+}
+
+.btn-whatsapp-btn:hover {
+  background: #20BA5A;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+}
+
+.btn-fb-link {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid rgba(13, 92, 99, 0.15);
+  color: #1877F2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: var(--transition-smooth);
+}
+
+.btn-fb-link:hover {
+  background: rgba(24, 119, 242, 0.08);
+  border-color: #1877F2;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 992px) {
+  .hotsale-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hotsale-content {
+    padding: 20px;
+  }
+  .hotsale-img-wrapper {
+    height: 200px;
+  }
+  .hotsale-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+  }
+  .hotsale-actions {
+    width: 100%;
+  }
+  .btn-whatsapp-btn {
+    flex-grow: 1;
+    justify-content: center;
+  }
+}
+
+
