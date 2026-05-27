@@ -364,7 +364,17 @@ function initReservationForm() {
         metodo_pago: formData.metodoPago,
         notas: formData.notas,
         nombres_huespedes: JSON.stringify(formData.nombresHuespedes),
-        parques_incluidos: JSON.stringify(formData.parquesIncluidos)
+        parques_incluidos: JSON.stringify(formData.parquesIncluidos),
+        
+        // Nuevos campos mapeados en la inserción
+        cantidad_noches: calculateNights(''),
+        edades_ninos: JSON.stringify(formData.edadesNinos),
+        agente_nombre: formData.agenteNombre,
+        plan_alimentos: formData.planAlimentos,
+        peticiones_especiales: formData.peticionesEspeciales,
+        vuelo_ida: formData.vueloIda,
+        vuelo_vuelta: formData.vueloVuelta,
+        tipo_traslado: formData.tipoTraslado
       };
 
       const { error } = await db.from('reservas').insert([record]);
@@ -382,7 +392,20 @@ function initReservationForm() {
         fechaSalida: formData.fechaSalida,
         nombresHuespedes: formData.nombresHuespedes,
         parquesIncluidos: formData.parquesIncluidos,
-        saldoPendiente: formData.saldoPendiente
+        saldoPendiente: formData.saldoPendiente,
+        adultos: formData.adultos,
+        ninos: formData.ninos,
+        
+        // Nuevos campos agregados
+        planAlimentos: formData.planAlimentos,
+        cantidadNoches: calculateNights(''),
+        vueloIncluido: formData.vueloIncluido,
+        vueloIda: formData.vueloIda,
+        vueloVuelta: formData.vueloVuelta,
+        trasladosIncluidos: formData.trasladosIncluidos,
+        tipoTraslado: formData.tipoTraslado,
+        agenteNombre: formData.agenteNombre,
+        peticionesEspeciales: formData.peticionesEspeciales
       };
 
       // Show success modal
@@ -393,6 +416,7 @@ function initReservationForm() {
       // Reset form
       $('#reservationForm').reset();
       $('#saldoPendiente').textContent = '$0.00 MXN';
+      $('#nochesDisplay').textContent = '—';
       updateHotelOptions('destino', 'hotel', 'tipoHabitacion');
       $('#huespedesSection').style.display = 'none';
       $('#huespedesContainer').innerHTML = '';
@@ -738,6 +762,7 @@ async function loadReservations() {
 function mapSupabaseRecord(row) {
   let nombresHuespedes = [];
   let parquesIncluidos = [];
+  let edadesNinos = [];
 
   try {
     if (row.nombres_huespedes) {
@@ -753,6 +778,14 @@ function mapSupabaseRecord(row) {
     }
   } catch(e) {
     parquesIncluidos = row.parques_incluidos ? row.parques_incluidos.split(',').map(p => p.trim()) : [];
+  }
+
+  try {
+    if (row.edades_ninos) {
+      edadesNinos = JSON.parse(row.edades_ninos);
+    }
+  } catch(e) {
+    edadesNinos = row.edades_ninos ? row.edades_ninos.split(',').map(n => parseInt(n.trim()) || 0) : [];
   }
 
   return {
@@ -780,7 +813,17 @@ function mapSupabaseRecord(row) {
     creadoEn:           row.creado_en,
     actualizadoEn:      row.actualizado_en,
     nombresHuespedes:   nombresHuespedes,
-    parquesIncluidos:   parquesIncluidos
+    parquesIncluidos:   parquesIncluidos,
+    
+    // Mapeo de nuevos campos
+    cantidadNoches:     parseInt(row.cantidad_noches) || 0,
+    edadesNinos:        edadesNinos,
+    agenteNombre:       row.agente_nombre || '',
+    planAlimentos:      row.plan_alimentos || 'Solo Habitación',
+    peticionesEspeciales: row.peticiones_especiales || '',
+    vueloIda:           row.vuelo_ida || '',
+    vueloVuelta:        row.vuelo_vuelta || '',
+    tipoTraslado:       row.tipo_traslado || 'Compartido'
   };
 }
 
@@ -1176,145 +1219,7 @@ async function confirmDelete() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   17.  CALENDAR WIDGET LOGIC
-   ══════════════════════════════════════════════════════════════════════ */
-function initCalendarListeners() {
-  $('#prevMonthBtn').addEventListener('click', () => {
-    currentCalMonth--;
-    if (currentCalMonth < 0) {
-      currentCalMonth = 11;
-      currentCalYear--;
-    }
-    renderCalendar();
-  });
-
-  $('#nextMonthBtn').addEventListener('click', () => {
-    currentCalMonth++;
-    if (currentCalMonth > 11) {
-      currentCalMonth = 0;
-      currentCalYear++;
-    }
-    renderCalendar();
-  });
-}
-
-function renderCalendar() {
-  const daysContainer = $('#calendarDays');
-  const monthYearLabel = $('#calendarMonthYear');
-  daysContainer.innerHTML = '';
-
-  // Establecer mes y año actual en la cabecera
-  monthYearLabel.textContent = `${MESES_ES_LARGOS[currentCalMonth]} ${currentCalYear}`;
-
-  // Obtener primer día de la semana y cantidad de días del mes
-  const firstDayIndex = new Date(currentCalYear, currentCalMonth, 1).getDay();
-  const totalDays = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
-
-  // Generar espacios en blanco para días anteriores
-  for (let i = 0; i < firstDayIndex; i++) {
-    const emptyCell = document.createElement('div');
-    emptyCell.className = 'calendar-day empty';
-    daysContainer.appendChild(emptyCell);
-  }
-
-  // Generar días reales
-  const today = new Date();
-  
-  for (let day = 1; day <= totalDays; day++) {
-    const dayCell = document.createElement('div');
-    dayCell.className = 'calendar-day';
-    dayCell.textContent = day;
-
-    // Formatear fecha para verificar ocupación (Formato "YYYY-MM-DD")
-    const mm = String(currentCalMonth + 1).padStart(2, '0');
-    const dd = String(day).padStart(2, '0');
-    const dateStr = `${currentCalYear}-${mm}-${dd}`;
-
-    // Validar si es el día de hoy
-    if (today.getDate() === day && today.getMonth() === currentCalMonth && today.getFullYear() === currentCalYear) {
-      dayCell.classList.add('today');
-    }
-
-    // Validar si es el día actualmente seleccionado para el filtro
-    if (selectedFilterDate === dateStr) {
-      dayCell.classList.add('selected-filter');
-    }
-
-    // Buscar reservas en este día
-    const checkins = allReservations.filter(r => r.fechaEntrada === dateStr);
-    const checkouts = allReservations.filter(r => r.fechaSalida === dateStr);
-
-    if (checkins.length > 0 || checkouts.length > 0) {
-      const indicators = document.createElement('div');
-      indicators.className = 'day-indicators';
-      
-      if (checkins.length > 0) {
-        const dot = document.createElement('span');
-        dot.className = 'day-dot checkin';
-        dot.title = `${checkins.length} check-in(s)`;
-        indicators.appendChild(dot);
-      }
-      
-      if (checkouts.length > 0) {
-        const dot = document.createElement('span');
-        dot.className = 'day-dot checkout';
-        dot.title = `${checkouts.length} check-out(s)`;
-        indicators.appendChild(dot);
-      }
-      
-      dayCell.appendChild(indicators);
-    }
-
-    // Evento de clic para filtrar la lista por la fecha seleccionada
-    dayCell.addEventListener('click', () => {
-      if (selectedFilterDate === dateStr) {
-        // Deseleccionar
-        selectedFilterDate = null;
-      } else {
-        // Seleccionar
-        selectedFilterDate = dateStr;
-      }
-      renderCalendar();
-      filterReservations();
-    });
-
-    daysContainer.appendChild(dayCell);
-  }
-}
-
-/* ══════════════════════════════════════════════════════════════════════
-   18.  MODALS
-   ══════════════════════════════════════════════════════════════════════ */
-function openModal(modalId) {
-  $(`#${modalId}`).classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal(modalId) {
-  $(`#${modalId}`).classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-// Clic en fondo cierra modal
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('modal-overlay') && e.target.classList.contains('active')) {
-    e.target.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-});
-
-// ESC cierra modal
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    $$('.modal-overlay.active').forEach(m => {
-      m.classList.remove('active');
-    });
-    document.body.style.overflow = '';
-  }
-});
-
-/* ══════════════════════════════════════════════════════════════════════
-   19.  COPY CODE
+   16.  COPY CODE
    ══════════════════════════════════════════════════════════════════════ */
 function copyCode() {
   const code = $('#successCode').textContent;
@@ -1340,135 +1245,194 @@ function copyEmailTemplate() {
   }
   
   const r = lastCreatedReservation;
+  const entryDate = formatDate(r.fechaEntrada);
+  const exitDate = formatDate(r.fechaSalida);
   
-  // Plantilla HTML en línea para correos electrónicos (tonos claro corporativos)
+  // Nombres de huéspedes
+  const huespedesStr = r.nombresHuespedes && r.nombresHuespedes.length > 0 
+    ? r.nombresHuespedes.map(name => escapeHtml(name)).join(', ') 
+    : '—';
+    
+  // Parques incluidos
+  const parksStr = r.parquesIncluidos && r.parquesIncluidos.length > 0
+    ? r.parquesIncluidos.map(park => escapeHtml(park)).join(', ')
+    : '—';
+  
+  // Plantilla HTML de lujo para correos electrónicos (adaptable y compatible con clientes de correo)
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eae6e1; border-radius: 8px; overflow: hidden; background-color: #ffffff;">
-      <!-- Cabecera -->
-      <div style="background-color: #0d5c63; padding: 24px; text-align: center; border-bottom: 3px solid #d1ac70;">
-        <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">BG CARIBE</h1>
-        <p style="color: #eae6e1; margin: 4px 0 0 0; font-size: 14px; text-transform: uppercase;">Confirmación de Reservación</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmación de Reserva</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #FAF8F5; font-family: 'Outfit', Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+  <div style="background-color: #FAF8F5; padding: 20px 10px; width: 100%;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #FFFFFF; border: 1px solid #E6ECEB; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(13, 92, 99, 0.05);">
+      
+      <!-- Header -->
+      <div style="background-color: #0D5C63; padding: 30px 20px; text-align: center; color: #FFFFFF;">
+        <h2 style="margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase;">BG CARIBE</h2>
+        <p style="margin: 6px 0 0 0; font-size: 13px; color: #E6EFF0; text-transform: uppercase; letter-spacing: 1px;">Confirmación Oficial de Viaje</p>
       </div>
-      <!-- Cuerpo -->
-      <div style="padding: 24px; color: #2c3e50; line-height: 1.5;">
-        <h2 style="margin-top: 0; color: #0d5c63; font-size: 18px; border-bottom: 1px solid #eae6e1; padding-bottom: 8px;">¡Tu reservación está lista!</h2>
-        <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;">
-          Hola, <strong>\${escapeHtml(r.clienteNombre)}</strong>. Te confirmamos que tu paquete vacacional ha sido registrado con éxito en nuestro sistema. A continuación, te compartimos los detalles de tu viaje:
-        </p>
+      
+      <!-- Content Body -->
+      <div style="padding: 30px 24px;">
+        <p style="font-size: 16px; font-weight: bold; margin-top: 0; color: #1E252B;">¡Hola, ${escapeHtml(r.clienteNombre)}!</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #5C6770; margin-bottom: 24px;">Te confirmamos que tu reservación ha sido generada con éxito. A continuación te presentamos el resumen de tu itinerario de viaje y detalles del paquete:</p>
         
-        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
+        <!-- Código de Reserva Block -->
+        <div style="margin: 20px 0; border: 1px solid #E6ECEB; border-radius: 6px; padding: 16px; background-color: #FAF8F5; text-align: center;">
+          <span style="font-size: 11px; color: #95A5A6; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">CÓDIGO DE RESERVACIÓN</span>
+          <strong style="font-size: 20px; color: #0D5C63; letter-spacing: 0.5px;">${escapeHtml(r.codigo)}</strong>
+        </div>
+        
+        <!-- Detalles Table -->
+        <h3 style="border-bottom: 2px solid #E6EFF0; padding-bottom: 8px; color: #0D5C63; font-size: 15px; margin-top: 25px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Detalles del Itinerario</h3>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #1E252B;">
           <tr>
-            <td style="padding: 10px 0; font-weight: bold; color: #7f8c8d; width: 40%; border-bottom: 1px solid #f3f6f6;">Código de Reserva:</td>
-            <td style="padding: 10px 0; font-weight: bold; color: #0d5c63; font-size: 16px; border-bottom: 1px solid #f3f6f6;">\${r.codigo}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6; width: 35%;">Destino:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6; font-weight: bold;">${escapeHtml(r.destino)}</td>
           </tr>
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Destino:</td>
-            <td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.destino)}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Hotel / Resort:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6; font-weight: bold;">${escapeHtml(r.hotel)}</td>
           </tr>
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Hotel / Resort:</td>
-            <td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.hotel)}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Habitación:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">${escapeHtml(r.tipoHabitacion)}</td>
           </tr>
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Tipo de Habitación:</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.tipoHabitacion)}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Plan de Alimentos:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">${escapeHtml(r.planAlimentos)}</td>
           </tr>
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Plan de Alimentos:</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.planAlimentos)}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Fechas:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6; font-weight: 500;">${entryDate} al ${exitDate} (${r.cantidadNoches} noches)</td>
           </tr>
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Fechas de Viaje:</td>
-            <td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${formatDate(r.fechaEntrada)} al \${formatDate(r.fechaSalida)} (\${r.cantidadNoches} noches)</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Pasajeros:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">${r.adultos} Adulto(s) ${r.ninos > 0 ? `, ${r.ninos} Niño(s)` : ''}</td>
           </tr>
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Huéspedes:</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.nombresHuespedes.join(', '))}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Huéspedes:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6; font-size: 13px;">${huespedesStr}</td>
           </tr>
-          \${r.vueloIncluido ? \`
+          ${r.vueloIncluido ? `
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Vuelo de Ida:</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.vueloIda || 'Incluido')}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Vuelo de Ida:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">${escapeHtml(r.vueloIda || 'Incluido')}</td>
           </tr>
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Vuelo de Regreso:</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.vueloVuelta || 'Incluido')}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Vuelo de Regreso:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">${escapeHtml(r.vueloVuelta || 'Incluido')}</td>
           </tr>
-          \` : ''}
-          \${r.trasladosIncluidos ? \`
+          ` : ''}
+          ${r.trasladosIncluidos ? `
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Traslados:</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">Incluidos (\${escapeHtml(r.tipoTraslado)})</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Traslados:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">Incluidos (${escapeHtml(r.tipoTraslado)})</td>
           </tr>
-          \` : ''}
-          \${r.parquesIncluidos.length > 0 ? \`
+          ` : ''}
+          ${r.parquesIncluidos && r.parquesIncluidos.length > 0 ? `
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Parques Incluidos:</td>
-            <td style="padding: 10px 0; color: #0d5c63; font-weight: 600; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.parquesIncluidos.join(', '))}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Parques Incluidos:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6; color: #0D5C63; font-weight: 600;">${parksStr}</td>
           </tr>
-          \` : ''}
-          \${r.agenteNombre ? \`
+          ` : ''}
+          ${r.agenteNombre ? `
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Agente de Viajes:</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">\${escapeHtml(r.agenteNombre)}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Agente de Viajes:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6;">${escapeHtml(r.agenteNombre)}</td>
           </tr>
-          \` : ''}
-          \${r.peticionesEspeciales ? \`
+          ` : ''}
+          ${r.peticionesEspeciales ? `
           <tr>
-            <td style="padding: 10px 0; color: #7f8c8d; border-bottom: 1px solid #f3f6f6;">Peticiones Especiales:</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6; font-style: italic;">\${escapeHtml(r.peticionesEspeciales)}</td>
+            <td style="padding: 10px 0; color: #7F8C8D; border-bottom: 1px solid #f3f6f6;">Peticiones Especiales:</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #f3f6f6; font-style: italic; color: #5C6770;">${escapeHtml(r.peticionesEspeciales)}</td>
           </tr>
-          \` : ''}
+          ` : ''}
         </table>
-
-        <!-- Financiero -->
-        <div style="background-color: #f9f6f0; border: 1px dashed #d1ac70; border-radius: 6px; padding: 18px; margin: 24px 0; text-align: center;">
-          <span style="font-size: 11px; text-transform: uppercase; color: #bfa063; font-weight: bold; letter-spacing: 0.8px; display: block; margin-bottom: 4px;">Saldo Pendiente a Liquidar</span>
-          <span style="font-size: 22px; font-weight: bold; color: #0d5c63;">\${formatCurrency(r.saldoPendiente)}</span>
+        
+        <!-- Saldo Box -->
+        <div style="background-color: #FAF8F5; border: 1px dashed #D1AC70; border-radius: 6px; padding: 18px; margin: 24px 0; text-align: center;">
+          <span style="font-size: 11px; text-transform: uppercase; color: #BFA063; font-weight: bold; letter-spacing: 0.8px; display: block; margin-bottom: 4px;">Saldo Pendiente a Liquidar</span>
+          <span style="font-size: 22px; font-weight: bold; color: #0D5C63;">${formatCurrency(r.saldoPendiente)}</span>
         </div>
-
-        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-          <p style="font-size: 13px; color: #7f8c8d; margin-bottom: 16px;">Puedes consultar los detalles oficiales, vuelos, traslados y descargar tu comprobante digital en cualquier momento entrando a nuestro portal:</p>
-          <a href="https://confirmacion.bgcaribe.mx/?codigo=\${r.codigo}" style="background-color: #d1ac70; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-block;">Ver Comprobante de Viaje</a>
+        
+        <!-- CTA Link -->
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 10px;">
+          <p style="font-size: 13px; color: #7F8C8D; margin-bottom: 16px;">Puedes consultar los detalles oficiales, vuelos, traslados y descargar tu comprobante digital en cualquier momento entrando a nuestro portal:</p>
+          <a href="https://confirmacion.bgcaribe.mx/?codigo=${r.codigo}" style="background-color: #D1AC70; color: #FFFFFF; text-decoration: none; padding: 12px 24px; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-block;">Ver Comprobante de Viaje</a>
         </div>
       </div>
-      <!-- Pie de página -->
-      <div style="background-color: #f9f6f0; padding: 20px; text-align: center; font-size: 11px; color: #7f8c8d; border-top: 1px solid #eae6e1;">
+      
+      <!-- Footer -->
+      <div style="background-color: #FAF8F5; padding: 20px; text-align: center; font-size: 11px; color: #7F8C8D; border-top: 1px solid #E6ECEB;">
         <strong>BG Transportadora del Caribe S.A. de C.V.</strong><br>
-        RNT: 04230051C28259<br>
-        ¿Tienes dudas o necesitas asistencia? Contáctanos a nuestro <a href="https://wa.me/529981234567" style="color: #0d5c63; text-decoration: none; font-weight: bold;">WhatsApp de Soporte</a>
+        RNT: 0423005C28259<br>
+        ¿Tienes dudas o necesitas asistencia? Contáctanos a nuestro <a href="https://wa.me/529981234567" style="color: #0D5C63; text-decoration: none; font-weight: bold;">WhatsApp de Soporte</a>
       </div>
+      
     </div>
-  `;
+  </div>
+</body>
+</html>
+  `.trim();
 
   // Texto plano como fallback
-  const text = `BG CARIBE - Confirmación de Reservación\\n\\n¡Tu reservación está lista!\\n\\nHola, \${r.clienteNombre}. Te confirmamos tu reservación con código: \${r.codigo}.\\n\\nDetalles del viaje:\\n- Destino: \${r.destino}\\n- Hotel: \${r.hotel}\\n- Habitación: \${r.tipoHabitacion}\\n- Fechas: \${formatDate(r.fechaEntrada)} al \${formatDate(r.fechaSalida)}\\n- Huéspedes: \${r.nombresHuespedes.join(', ')}\\n\${r.parquesIncluidos.length > 0 ? \`- Parques: \${r.parquesIncluidos.join(', ')}\\n\` : ''}- Saldo Pendiente: \${formatCurrency(r.saldoPendiente)}\\n\\nConsulta tu comprobante en: https://confirmacion.bgcaribe.mx/?codigo=\${r.codigo}`;
+  const text = `BG CARIBE - Confirmación de Reservación\n\n¡Tu reservación está lista!\n\nHola, ${r.clienteNombre}. Te confirmamos tu reservación con código: ${r.codigo}.\n\nDetalles del viaje:\n- Destino: ${r.destino}\n- Hotel: ${r.hotel}\n- Habitación: ${r.tipoHabitacion}\n- Fechas: ${entryDate} al ${exitDate} (${r.cantidadNoches} noches)\n- Huéspedes: ${r.nombresHuespedes.join(', ')}\n${r.parquesIncluidos.length > 0 ? `- Parques: ${r.parquesIncluidos.join(', ')}\n` : ''}- Saldo Pendiente: ${formatCurrency(r.saldoPendiente)}\n\nConsulta tu comprobante en: https://confirmacion.bgcaribe.mx/?codigo=${r.codigo}`;
 
-  try {
+  // Copiar al portapapeles con nuestro helper robusto de 3 niveles
+  copyHtmlToClipboard(html, text);
+}
+
+function copyHtmlToClipboard(html, text) {
+  if (navigator.clipboard && window.ClipboardItem) {
     const blobHtml = new Blob([html], { type: 'text/html' });
     const blobText = new Blob([text], { type: 'text/plain' });
-    
-    // Escribir al portapapeles tanto en texto plano como en HTML formateado
     const data = [new ClipboardItem({
       'text/html': blobHtml,
       'text/plain': blobText
     })];
-    
     navigator.clipboard.write(data).then(() => {
       showToast('Plantilla de correo copiada (HTML enriquecido)', 'success');
     }).catch(err => {
-      console.error('Clipboard write error:', err);
-      // Fallback a texto plano
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('Plantilla copiada en formato texto plano', 'info');
-      });
+      console.warn('Clipboard write failure, trying fallback:', err);
+      fallbackCopy(html, text);
     });
-  } catch (err) {
-    console.error('Clipboard API fail:', err);
-    // Fallback absoluto a texto plano
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('Plantilla copiada en formato texto plano', 'info');
-    });
+  } else {
+    fallbackCopy(html, text);
+  }
+}
+
+function fallbackCopy(html, text) {
+  const listener = function(e) {
+    e.clipboardData.setData('text/html', html);
+    e.clipboardData.setData('text/plain', text);
+    e.preventDefault();
+  };
+  document.addEventListener('copy', listener);
+  const success = document.execCommand('copy');
+  document.removeEventListener('copy', listener);
+  
+  if (success) {
+    showToast('Plantilla copiada (HTML enriquecido mediante fallback)', 'success');
+  } else {
+    // Ultimo fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    const txtSuccess = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (txtSuccess) {
+      showToast('Plantilla copiada (formato texto plano)', 'info');
+    } else {
+      showToast('Error al copiar la plantilla', 'error');
+    }
   }
 }
 

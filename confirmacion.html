@@ -72,183 +72,210 @@
 
         <!-- STATE: Result Card (found) -->
         <div class="result-card hidden" id="stateFound">
-          <!-- Card Header -->
-          <div class="result-card-header">
-            <div class="reservation-code" id="resCode">
-              <i class="fa-solid fa-bookmark"></i>
-              <span id="resCodeText"></span>
-            </div>
-            <div id="resStatusBadge"></div>
+          
+          <!-- Card Ribbon -->
+          <div class="card-ribbon">
+            <span><i class="fa-solid fa-shield-halved"></i> Documento Oficial de Confirmación</span>
+            <span>RNT: 04230051C28259</span>
           </div>
 
-          <!-- Card Body -->
+          <!-- Card Header -->
+          <div class="result-card-header">
+            <div class="header-main-info">
+              <img src="images/logo.jpg" alt="BG Caribe" class="card-logo">
+              <div class="header-text-block">
+                <h3>VOUCHER DE VIAJE</h3>
+                <p>Fecha de emisión: <span id="resFechaEmision">—</span></p>
+              </div>
+            </div>
+            <div class="header-badge-block">
+              <div class="reservation-code" id="resCode">
+                <span class="code-label">CÓDIGO DE RESERVA</span>
+                <span id="resCodeText"></span>
+              </div>
+              <div id="resStatusBadge"></div>
+            </div>
+          </div>
+
           <div class="result-card-body">
+            <div class="voucher-grid-layout">
+              
+              <!-- Left Column: Client & Logistics -->
+              <div class="voucher-main-col">
+                
+                <!-- Section: Datos del Titular -->
+                <div class="detail-section">
+                  <div class="section-title">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Datos del Titular</span>
+                  </div>
+                  <div class="detail-grid">
+                    <div class="detail-item">
+                      <span class="detail-label">Nombre completo</span>
+                      <span class="detail-value" id="resNombre">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Correo electrónico</span>
+                      <span class="detail-value" id="resEmail">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Teléfono</span>
+                      <span class="detail-value" id="resTelefono">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Ciudad</span>
+                      <span class="detail-value" id="resCiudad">—</span>
+                    </div>
+                  </div>
+                </div>
 
-            <!-- Section: Datos del Titular -->
-            <div class="detail-section">
-              <div class="section-title">
-                <i class="fa-solid fa-user"></i>
-                <span>Datos del Titular</span>
+                <!-- Section: Acompañantes / Huéspedes -->
+                <div class="detail-section" id="sectionHuespedes" style="display: none;">
+                  <div class="section-title">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Acompañantes / Huéspedes</span>
+                  </div>
+                  <div class="huespedes-list-grid" id="resHuespedesList">
+                    <!-- Dynamically populated -->
+                  </div>
+                </div>
+
+                <!-- Section: Detalles Adicionales (Vuelos y Traslados) -->
+                <div class="detail-section" id="sectionAdicionales" style="display: none;">
+                  <div class="section-title">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Logística y Traslados</span>
+                  </div>
+                  <div class="detail-grid">
+                    <div class="detail-item" id="itemVueloIda" style="display: none;">
+                      <span class="detail-label">Vuelo de ida</span>
+                      <span class="detail-value" id="resVueloIda">—</span>
+                    </div>
+                    <div class="detail-item" id="itemVueloVuelta" style="display: none;">
+                      <span class="detail-label">Vuelo de regreso</span>
+                      <span class="detail-value" id="resVueloVuelta">—</span>
+                    </div>
+                    <div class="detail-item" id="itemTipoTraslado" style="display: none;">
+                      <span class="detail-label">Tipo de traslado</span>
+                      <span class="detail-value" id="resTipoTraslado">—</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section: Solicitudes Especiales -->
+                <div class="detail-section" id="sectionPeticiones" style="display: none;">
+                  <div class="section-title">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Solicitudes Especiales</span>
+                  </div>
+                  <div style="background: #F9F6F0; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid #ccd5d4; font-size: 0.95rem; line-height: 1.4; color: var(--text);">
+                    <span id="resPeticiones">—</span>
+                  </div>
+                </div>
+
+                <!-- Section: Parques Incluidos -->
+                <div class="detail-section" id="sectionParques" style="display: none;">
+                  <div class="section-title">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span>Parques Incluidos (Grupo Xcaret)</span>
+                  </div>
+                  <div class="parques-list-badges" id="resParquesList">
+                    <!-- Dynamically populated -->
+                  </div>
+                </div>
               </div>
-              <div class="detail-grid">
-                <div class="detail-item">
-                  <span class="detail-label">Nombre completo</span>
-                  <span class="detail-value" id="resNombre">—</span>
+
+              <!-- Right Column: Itinerary & Financial -->
+              <div class="voucher-side-col">
+                
+                <!-- Section: Detalles del Viaje -->
+                <div class="detail-section">
+                  <div class="section-title">
+                    <i class="fa-solid fa-plane"></i>
+                    <span>Detalles del Viaje</span>
+                  </div>
+                  <div class="detail-grid detail-grid-side">
+                    <div class="detail-item">
+                      <span class="detail-label">Destino</span>
+                      <span class="detail-value" id="resDestino">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Hotel / Resort</span>
+                      <span class="detail-value" id="resHotel">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Tipo de habitación</span>
+                      <span class="detail-value" id="resHabitacion">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Plan de alimentos</span>
+                      <span class="detail-value" id="resPlanAlimentos">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Fecha de entrada</span>
+                      <span class="detail-value" id="resFechaEntrada">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Fecha de salida</span>
+                      <span class="detail-value" id="resFechaSalida">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Noches de estadía</span>
+                      <span class="detail-value" id="resNoches">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Adultos</span>
+                      <span class="detail-value" id="resAdultos">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Niños</span>
+                      <span class="detail-value" id="resNinos">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Vuelo incluido</span>
+                      <span class="detail-value" id="resVuelo">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Traslados incluidos</span>
+                      <span class="detail-value" id="resTraslados">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Agente de viajes</span>
+                      <span class="detail-value" id="resAgenteNombre">—</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Correo electrónico</span>
-                  <span class="detail-value" id="resEmail">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Teléfono</span>
-                  <span class="detail-value" id="resTelefono">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Ciudad</span>
-                  <span class="detail-value" id="resCiudad">—</span>
+
+                <div class="ticket-divider-side"></div>
+
+                <!-- Section: Información Financiera -->
+                <div class="detail-section">
+                  <div class="section-title">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Información Financiera</span>
+                  </div>
+                  <div class="detail-grid detail-grid-side">
+                    <div class="detail-item">
+                      <span class="detail-label">Monto total del paquete</span>
+                      <span class="detail-value highlight" id="resMontoTotal">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Anticipo recibido</span>
+                      <span class="detail-value" id="resAnticipo">—</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Método de pago</span>
+                      <span class="detail-value" id="resMetodoPago">—</span>
+                    </div>
+                  </div>
+                  <div class="financial-highlight" id="resSaldoBox">
+                    <span class="label">Saldo pendiente a liquidar</span>
+                    <span class="amount" id="resSaldo">—</span>
+                  </div>
                 </div>
               </div>
+
             </div>
-
-            <!-- Section: Acompañantes / Huéspedes -->
-            <div class="detail-section" id="sectionHuespedes" style="display: none;">
-              <div class="section-title">
-                <i class="fa-solid fa-users"></i>
-                <span>Acompañantes / Huéspedes</span>
-              </div>
-              <div class="huespedes-list-grid" id="resHuespedesList">
-                <!-- Dynamically populated -->
-              </div>
-            </div>
-
-            <!-- Section: Detalles del Viaje -->
-            <div class="detail-section">
-              <div class="section-title">
-                <i class="fa-solid fa-plane"></i>
-                <span>Detalles del Viaje</span>
-              </div>
-              <div class="detail-grid">
-                <div class="detail-item">
-                  <span class="detail-label">Destino</span>
-                  <span class="detail-value" id="resDestino">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Hotel / Resort</span>
-                  <span class="detail-value" id="resHotel">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Tipo de habitación</span>
-                  <span class="detail-value" id="resHabitacion">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Plan de alimentos</span>
-                  <span class="detail-value" id="resPlanAlimentos">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Fecha de entrada</span>
-                  <span class="detail-value" id="resFechaEntrada">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Fecha de salida</span>
-                  <span class="detail-value" id="resFechaSalida">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Noches de estadía</span>
-                  <span class="detail-value" id="resNoches">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Adultos</span>
-                  <span class="detail-value" id="resAdultos">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Niños</span>
-                  <span class="detail-value" id="resNinos">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Vuelo incluido</span>
-                  <span class="detail-value" id="resVuelo">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Traslados incluidos</span>
-                  <span class="detail-value" id="resTraslados">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Agente de viajes</span>
-                  <span class="detail-value" id="resAgenteNombre">—</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Section: Detalles Adicionales (Vuelos y Traslados) -->
-            <div class="detail-section" id="sectionAdicionales" style="display: none;">
-              <div class="section-title">
-                <i class="fa-solid fa-circle-info"></i>
-                <span>Logística y Traslados</span>
-              </div>
-              <div class="detail-grid">
-                <div class="detail-item" id="itemVueloIda" style="display: none;">
-                  <span class="detail-label">Vuelo de ida</span>
-                  <span class="detail-value" id="resVueloIda">—</span>
-                </div>
-                <div class="detail-item" id="itemVueloVuelta" style="display: none;">
-                  <span class="detail-label">Vuelo de regreso</span>
-                  <span class="detail-value" id="resVueloVuelta">—</span>
-                </div>
-                <div class="detail-item" id="itemTipoTraslado" style="display: none;">
-                  <span class="detail-label">Tipo de traslado</span>
-                  <span class="detail-value" id="resTipoTraslado">—</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Section: Solicitudes Especiales -->
-            <div class="detail-section" id="sectionPeticiones" style="display: none;">
-              <div class="section-title">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>Solicitudes Especiales</span>
-              </div>
-              <div style="background: #F9F6F0; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid #ccd5d4; font-size: 0.95rem; line-height: 1.4; color: var(--text);">
-                <span id="resPeticiones">—</span>
-              </div>
-            </div>
-
-            <!-- Section: Parques Incluidos -->
-            <div class="detail-section" id="sectionParques" style="display: none;">
-              <div class="section-title">
-                <i class="fa-solid fa-ticket"></i>
-                <span>Parques Incluidos (Grupo Xcaret)</span>
-              </div>
-              <div class="parques-list-badges" id="resParquesList">
-                <!-- Dynamically populated -->
-              </div>
-            </div>
-
-            <!-- Section: Información Financiera -->
-            <div class="detail-section">
-              <div class="section-title">
-                <i class="fa-solid fa-credit-card"></i>
-                <span>Información Financiera</span>
-              </div>
-              <div class="detail-grid">
-                <div class="detail-item">
-                  <span class="detail-label">Monto total del paquete</span>
-                  <span class="detail-value highlight" id="resMontoTotal">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Anticipo recibido</span>
-                  <span class="detail-value" id="resAnticipo">—</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Método de pago</span>
-                  <span class="detail-value" id="resMetodoPago">—</span>
-                </div>
-              </div>
-              <div class="financial-highlight" id="resSaldoBox">
-                <span class="label">Saldo pendiente a liquidar</span>
-                <span class="amount" id="resSaldo">—</span>
-              </div>
-            </div>
-
           </div>
 
           <!-- Print Button -->

@@ -139,6 +139,7 @@
   function renderReservation(data) {
     // Code & Status
     document.getElementById('resCodeText').textContent = safeVal(data.codigo);
+    document.getElementById('resFechaEmision').textContent = formatDate(data.creado_en || new Date());
 
     var statusInfo = getStatusLabel(data.estado);
     var badgeEl = document.getElementById('resStatusBadge');
