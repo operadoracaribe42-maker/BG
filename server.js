@@ -20,6 +20,10 @@ app.get('/status', (req, res) => {
   res.json({ status: 'ok', service: 'BG Caribe API' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor de BG Caribe escuchando en el puerto ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Servidor de BG Caribe escuchando en el puerto ${PORT}`);
+  });
+}
+
+module.exports = app;

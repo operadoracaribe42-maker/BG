@@ -2,6 +2,10 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 
+const chromium = require('@sparticuz/chromium');
+const puppeteerDev = require('puppeteer'); // local puppeteer
+const puppeteerCore = require('puppeteer-core'); // Vercel puppeteer
+
 /**
  * Genera un buffer de PDF a partir de un string de HTML usando Puppeteer
  * 
@@ -9,12 +13,25 @@ const path = require('path');
  * @returns {Promise<Buffer>}
  */
 async function generatePDFBuffer(htmlContent) {
-  const browser = await puppeteer.launch({
-    headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-  
+  const isLocal = process.env.NODE_ENV !== 'production' && !process.env.VERCEL;
+  let browser;
+
   try {
+    if (isLocal) {
+      browser = await puppeteerDev.launch({
+        headless: 'new',
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+    } else {
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
+      });
+    }
+    
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
     
@@ -31,7 +48,9 @@ async function generatePDFBuffer(htmlContent) {
     
     return buffer;
   } finally {
-    await browser.close();
+    if (browser) {
+      await browser.close();
+    }
   }
 }
 
