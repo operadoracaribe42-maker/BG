@@ -362,6 +362,7 @@ function initReservationForm() {
         anticipo: formData.anticipo,
         saldo_pendiente: formData.saldoPendiente,
         metodo_pago: formData.metodoPago,
+        estado_pago: formData.estadoPago,
         notas: formData.notas,
         nombres_huespedes: JSON.stringify(formData.nombresHuespedes),
         parques_incluidos: JSON.stringify(formData.parquesIncluidos),
@@ -583,6 +584,7 @@ function gatherFormData(prefix = '') {
   const saldoPendiente = montoTotal - anticipo;
   
   const metodoPago = (isEdit ? $('#editMetodoPago') : $('#metodoPago')).value;
+  const estadoPago = (isEdit ? $('#editEstadoPago') : $('#estadoPago')).value;
   const notas = (isEdit ? $('#editNotas') : $('#notas')).value.trim();
   
   const total = adultos + ninos;
@@ -630,6 +632,7 @@ function gatherFormData(prefix = '') {
     anticipo,
     saldoPendiente,
     metodoPago,
+    estadoPago,
     notas,
     nombresHuespedes,
     parquesIncluidos,
@@ -823,7 +826,8 @@ function mapSupabaseRecord(row) {
     peticionesEspeciales: row.peticiones_especiales || '',
     vueloIda:           row.vuelo_ida || '',
     vueloVuelta:        row.vuelo_vuelta || '',
-    tipoTraslado:       row.tipo_traslado || 'Compartido'
+    tipoTraslado:       row.tipo_traslado || 'Compartido',
+    estadoPago:         row.estado_pago || 'Abonada'
   };
 }
 
@@ -873,7 +877,7 @@ function renderReservationsTable(reservations) {
       <td>${escapeHtml(r.destino || '—')}</td>
       <td>${formatDate(r.fechaEntrada)} — ${formatDate(r.fechaSalida)}</td>
       <td>${formatCurrency(r.montoTotal || 0)}</td>
-      <td>${renderBadge(r.estado)}</td>
+      <td>${renderBadge(r.estado)}${renderPaymentBadge(r.estadoPago)}</td>
       <td class="actions-cell">
         <button class="btn btn-primary btn-icon" title="Editar" onclick="openEditModal('${r.id}')">
           <i class="fas fa-pen"></i>
@@ -909,7 +913,7 @@ function renderDashboardTable(reservations) {
       <td>${escapeHtml(r.destino || '—')}</td>
       <td>${formatDate(r.fechaEntrada)} — ${formatDate(r.fechaSalida)}</td>
       <td>${formatCurrency(r.montoTotal || 0)}</td>
-      <td>${renderBadge(r.estado)}</td>
+      <td>${renderBadge(r.estado)}${renderPaymentBadge(r.estadoPago)}</td>
     </tr>
   `).join('');
 }
@@ -922,6 +926,17 @@ function renderBadge(estado) {
   };
   const info = map[estado] || map.pendiente;
   return `<span class="badge ${info.cls}"><i class="fas ${info.icon}"></i> ${info.text}</span>`;
+}
+
+function renderPaymentBadge(estadoPago) {
+  const map = {
+    pagada:    { cls: 'badge-confirmada', icon: 'fa-credit-card', text: 'Pagada' },
+    abonada:   { cls: 'badge-pendiente',  icon: 'fa-piggy-bank',  text: 'Abonada' },
+    'no pagada': { cls: 'badge-cancelada',  icon: 'fa-exclamation-circle', text: 'No Pagada' }
+  };
+  const val = String(estadoPago || 'Abonada').toLowerCase();
+  const info = map[val] || { cls: 'badge-pendiente', icon: 'fa-piggy-bank', text: estadoPago };
+  return `<span class="badge ${info.cls}" style="margin-left: 5px;"><i class="fas ${info.icon}"></i> ${info.text}</span>`;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -1076,6 +1091,7 @@ function openEditModal(docId) {
   $('#editAnticipo').value = reservation.anticipo || 0;
   calculateEditSaldo();
   $('#editMetodoPago').value = reservation.metodoPago || 'Transferencia bancaria';
+  $('#editEstadoPago').value = reservation.estadoPago || 'Abonada';
   $('#editPeticionesEspeciales').value = reservation.peticionesEspeciales || '';
   $('#editNotas').value = reservation.notas || '';
 
@@ -1142,6 +1158,7 @@ async function saveEdit() {
     anticipo:            formData.anticipo,
     saldo_pendiente:     formData.saldoPendiente,
     metodo_pago:         formData.metodoPago,
+    estado_pago:         formData.estadoPago,
     notas:               formData.notas,
     nombres_huespedes:  JSON.stringify(formData.nombresHuespedes),
     parques_incluidos:  JSON.stringify(formData.parquesIncluidos),

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Contrato de Prestación de Servicios Turísticos — {{CODIGO_RESERVA}}</title>
+<style>
+@page { margin: 20mm 22mm; size: letter; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ink: #000000;
+  --mid: #444444;
+  --lt:  #777777;
+  --rule:#BBBBBB;
+  --bg:  #F8F8F8;
+  --f: Georgia, 'Times New Roman', Times, serif;
+  --sans: Arial, Helvetica, sans-serif;
+}
+
+body {
+  font-family: var(--f);
+  font-size: 10.5pt;
+  line-height: 1.65;
+  color: var(--ink);
+  background: #fff;
+  max-width: 680px;
+  margin: 28px auto;
+  padding: 0 32px;
+}
+
+/* ─── MEMBRETE ─── */
+.membrete {
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+}
+.membrete-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.empresa-nombre {
+  font-family: var(--sans);
+  font-size: 15pt;
+  font-weight: bold;
+  letter-spacing: .5px;
+  color: var(--ink);
+}
+.empresa-sub {
+  font-family: var(--sans);
+  font-size: 8pt;
+  color: var(--mid);
+  margin-top: 2px;
+  letter-spacing: .3px;
+}
+.membrete-derecha {
+  text-align: right;
+  font-family: var(--sans);
+  font-size: 8pt;
+  color: var(--mid);
+  line-height: 1.7;
+}
+.membrete-derecha strong {
+  color: var(--ink);
+  font-size: 9pt;
+}
+
+.doc-titulo {
+  font-family: var(--sans);
+  font-size: 9pt;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 18px;
+}
+
+/* ─── TABLA DE PARTES ─── */
+.partes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 9.5pt;
+}
+.partes-table th {
+  font-family: var(--sans);
+  font-size: 8pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  padding: 6px 10px;
+  text-align: left;
+}
+.partes-table td {
+  border: 1px solid var(--rule);
+  padding: 6px 10px;
+  vertical-align: top;
+  line-height: 1.6;
+}
+.partes-table .campo {
+  font-family: var(--sans);
+  font-size: 8pt;
+  color: var(--lt);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  width: 120px;
+}
+
+/* ─── TABLA DE SERVICIOS ─── */
+.servicios-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 20px;
+  font-size: 9.5pt;
+}
+.servicios-table thead tr {
+  background: var(--bg);
+}
+.servicios-table th {
+  font-family: var(--sans);
+  font-size: 8pt;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid var(--rule);
+  padding: 6px 10px;
+  text-align: left;
+}
+.servicios-table td {
+  border: 1px solid var(--rule);
+  padding: 6px 10px;
+  vertical-align: top;
+}
+.servicios-table .total-row {
+  font-weight: bold;
+  background: var(--bg);
+}
+.servicios-table .col-concepto { width: 45%; }
+.servicios-table .col-detalle  { width: 55%; }
+
+/* ─── TABLA FINANCIERA ─── */
+.fin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0 20px;
+  font-size: 9.5pt;
+}
+.fin-table td {
+  border: 1px solid var(--rule);
+  padding: 6px 10px;
+}
+.fin-table .campo {
+  font-family: var(--sans);
+  font-size: 8pt;
+  color: var(--lt);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  width: 40%;
+  background: var(--bg);
+}
+.fin-table .saldo-row td {
+  font-weight: bold;
+  font-size: 11pt;
+}
+
+/* ─── CLÁUSULAS ─── */
+.clausulas-titulo {
+  font-family: var(--sans);
+  font-size: 9pt;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 24px 0 16px;
+  padding: 8px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.clausula { margin-bottom: 14px; }
+.clausula-num {
+  font-family: var(--sans);
+  font-size: 9.5pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+}
+.clausula p {
+  text-align: justify;
+  font-size: 10pt;
+  hyphens: auto;
+}
+.clausula p + p { margin-top: 6px; }
+.clausula ul {
+  margin: 6px 0 0 22px;
+}
+.clausula li {
+  font-size: 10pt;
+  line-height: 1.7;
+  text-align: justify;
+}
+
+/* ─── FIRMAS ─── */
+.firmas-section {
+  margin-top: 32px;
+  border-top: 1px solid var(--rule);
+  padding-top: 20px;
+}
+.firmas-titulo {
+  font-family: var(--sans);
+  font-size: 9pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+.firmas-intro {
+  font-size: 10pt;
+  text-align: justify;
+  margin-bottom: 36px;
+}
+.firmas-grid {
+  display: flex;
+  gap: 60px;
+}
+.firma-box { flex: 1; }
+.firma-linea {
+  border-bottom: 1px solid var(--ink);
+  height: 56px;
+  margin-bottom: 8px;
+}
+.firma-nombre {
+  font-family: var(--sans);
+  font-size: 9pt;
+  font-weight: bold;
+  color: var(--ink);
+}
+.firma-cargo {
+  font-family: var(--sans);
+  font-size: 8.5pt;
+  color: var(--mid);
+  margin-top: 2px;
+}
+
+/* ─── PIE ─── */
+.pie {
+  margin-top: 32px;
+  border-top: 2px solid var(--ink);
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--sans);
+  font-size: 7.5pt;
+  color: var(--lt);
+}
+
+/* ─── AVISO ─── */
+.aviso {
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  padding: 12px 16px;
+  margin: 18px 0;
+  font-size: 9.5pt;
+  line-height: 1.65;
+  text-align: justify;
+}
+
+/* ─── PRINT ─── */
+.print-row {
+  text-align: center;
+  padding: 14px 0 20px;
+  margin-top: 8px;
+}
+.btn-print {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 8px 24px;
+  font-family: var(--sans);
+  font-size: 11px;
+  cursor: pointer;
+}
+.btn-print:hover { background: var(--bg); }
+
+@media print {
+  body { margin: 0; padding: 0; max-width: 100%; }
+  .print-row { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- MEMBRETE -->
+<div class="membrete">
+  <div class="membrete-inner">
+    <div>
+      <div class="empresa-nombre">BG Transportadora del Caribe, S.A. de C.V.</div>
+      <div class="empresa-sub">Marca comercial: BG Caribe · Mayorista de Viajes</div>
+    </div>
+    <div class="membrete-derecha">
+      Av. Cobá SM 35, Mza 2, Lte 12<br/>
+      Cancún, Quintana Roo, C.P. 77500<br/>
+      Tel. +52 (998) 609-0514<br/>
+      reservaciones@bgcaribe.mx<br/>
+      <strong>RNT SECTUR: 0423005C28259</strong>
+    </div>
+  </div>
+</div>
+
+<div class="doc-titulo">
+  Contrato de Prestación de Servicios Turísticos
+</div>
+
+<!-- PARTES -->
+<table class="partes-table">
+  <tr>
+    <th colspan="2">El Proveedor</th>
+    <th colspan="2">El Consumidor</th>
+  </tr>
+  <tr>
+    <td class="campo">Razón social</td>
+    <td>BG Transportadora del Caribe, S.A. de C.V.</td>
+    <td class="campo">Nombre completo</td>
+    <td>{{TITULAR_NOMBRE}}</td>
+  </tr>
+  <tr>
+    <td class="campo">RNT SECTUR</td>
+    <td>0423005C28259</td>
+    <td class="campo">Correo</td>
+    <td>{{TITULAR_EMAIL}}</td>
+  </tr>
+  <tr>
+    <td class="campo">Domicilio</td>
+    <td>Av. Cobá SM 35, Mza 2, Lte 12, Cancún, Q. Roo, C.P. 77500</td>
+    <td class="campo">Teléfono</td>
+    <td>{{TITULAR_TELEFONO}}</td>
+  </tr>
+  <tr>
+    <td class="campo">Asesor</td>
+    <td>{{NOMBRE_ASESOR}}</td>
+    <td class="campo">Dirección</td>
+    <td>{{TITULAR_DIRECCION}}, C.P. {{TITULAR_CP}}</td>
+  </tr>
+  <tr>
+    <td class="campo">Folio</td>
+    <td>{{CODIGO_RESERVA}}</td>
+    <td class="campo">Ciudad / Estado</td>
+    <td>{{TITULAR_CIUDAD}}</td>
+  </tr>
+  <tr>
+    <td class="campo">Fecha</td>
+    <td>{{FECHA_EMISION}}</td>
+    <td class="campo">RFC</td>
+    <td>{{TITULAR_RFC}}</td>
+  </tr>
+  <tr>
+    <td class="campo"></td>
+    <td></td>
+    <td class="campo">Identificación</td>
+    <td>{{TITULAR_ID_TIPO}} No. {{TITULAR_ID_NUM}}</td>
+  </tr>
+</table>
+
+<!-- SERVICIOS CONTRATADOS -->
+<div class="clausulas-titulo" style="margin-top:0; border-top:none;">Servicios Contratados</div>
+
+<table class="servicios-table">
+  <thead>
+    <tr><th class="col-concepto">Concepto</th><th class="col-detalle">Detalle</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Destino</td><td>{{DESTINO}}</td></tr>
+    <tr><td>Hotel / Resort</td><td>{{HOTEL}}</td></tr>
+    <tr><td>Tipo de habitación</td><td>{{TIPO_HABITACION}}</td></tr>
+    <tr><td>Plan de alimentos</td><td>{{PLAN_ALIMENTOS}}</td></tr>
+    <tr><td>Fecha de entrada</td><td>{{FECHA_ENTRADA}}</td></tr>
+    <tr><td>Fecha de salida</td><td>{{FECHA_SALIDA}}</td></tr>
+    <tr><td>Número de noches</td><td>{{NOCHES}}</td></tr>
+    <tr><td>Huéspedes</td><td>{{NUM_ADULTOS}} adulto(s) · {{NUM_NINOS}} niño(s)</td></tr>
+    <tr><td>Vuelo</td><td>{{VUELO_INCLUIDO}} — Origen: {{ORIGEN_VUELO}} · Aerolínea: {{AEROLINEA}}</td></tr>
+    <tr><td>Traslados</td><td>{{TRASLADOS}} · {{TIPO_TRASLADO}}</td></tr>
+    <tr><td>Parques / Actividades</td><td>{{LISTA_PARQUES}}</td></tr>
+    <tr><td>Servicios adicionales</td><td>{{SERVICIOS_ADICIONALES}}</td></tr>
+  </tbody>
+</table>
+
+<!-- FINANCIERO -->
+<table class="fin-table">
+  <tr><td class="campo">Monto total del paquete</td><td><strong>{{TOTAL_PAQUETE}} MXN</strong></td></tr>
+  <tr><td class="campo">Anticipo recibido (30%)</td><td>{{ANTICIPO}} MXN</td></tr>
+  <tr><td class="campo">Método de pago</td><td>{{METODO_PAGO}}</td></tr>
+  <tr><td class="campo">Fecha límite de liquidación</td><td>{{FECHA_LIMITE_PAGO}}</td></tr>
+  <tr class="saldo-row"><td class="campo">Saldo pendiente a liquidar</td><td>{{SALDO_PENDIENTE}} MXN</td></tr>
+</table>
+
+<!-- DATOS DE FACTURACIÓN -->
+<table class="fin-table" style="margin-top:0;">
+  <tr><td class="campo">Requiere factura</td><td>{{REQUIERE_FACTURA}}</td></tr>
+  <tr><td class="campo">Razón social fiscal</td><td>{{FACTURA_RAZON_SOCIAL}}</td></tr>
+  <tr><td class="campo">RFC</td><td>{{FACTURA_RFC}}</td></tr>
+  <tr><td class="campo">Uso del CFDI</td><td>{{FACTURA_USO_CFDI}}</td></tr>
+  <tr><td class="campo">Régimen fiscal</td><td>{{FACTURA_REGIMEN}}</td></tr>
+  <tr><td class="campo">Domicilio fiscal / C.P.</td><td>{{FACTURA_DOMICILIO}}, C.P. {{FACTURA_CP}}</td></tr>
+</table>
+
+<!-- CLÁUSULAS -->
+<div class="clausulas-titulo">Cláusulas</div>
+
+<div class="clausula">
+  <div class="clausula-num">Primera. Objeto del Contrato</div>
+  <p>El Proveedor, actuando como operador mayorista de viajes registrado ante la Secretaría de Turismo con Registro Nacional de Turismo número <strong>0423005C28259</strong>, se obliga a gestionar, reservar y confirmar los servicios turísticos descritos en el apartado anterior, por cuenta y a favor del Consumidor, en su carácter de intermediario entre éste y los prestadores directos de dichos servicios (hoteles, aerolíneas, transportistas y operadores de parques temáticos).</p>
+</div>
+
+<div class="clausula">
+  <div class="clausula-num">Segunda. Precio y Condiciones de Pago</div>
+  <p>El precio total pactado asciende a la cantidad señalada en el cuadro financiero en Moneda Nacional. El Consumidor se obliga a cubrir un anticipo del treinta por ciento (30%) al momento de la firma del presente instrumento como garantía de reserva, y el setenta por ciento (70%) restante a más tardar en la fecha límite de liquidación indicada, so pena de pérdida de los espacios confirmados. El Proveedor emitirá comprobante fiscal digital (CFDI) por cada pago recibido. En caso de pago con cheque sin fondos, se cobrará el veinte por ciento (20%) adicional sobre el valor del documento conforme al artículo 193 de la Ley General de Títulos y Operaciones de Crédito.</p>
+</div>
+
+<div class="clausula">
+  <div class="clausula-num">Tercera. Obligaciones del Proveedor</div>
+  <p>El Proveedor se compromete a: (a) confirmar por escrito la totalidad de los servicios reservados; (b) entregar al Consumidor todos los documentos de viaje (vouchers, boletos, itinerario final) con un mínimo de setenta y dos (72) horas de anticipación a la fecha de salida; (c) mantener una línea de atención activa durante el periodo vacacional contratado; (d) gestionar, ante el prestador final, las reclamaciones y reembolsos que correspondan en caso de incumplimiento imputable a dicho prestador.</p>
+</div>
+
+<div class="clausula">
+  <div class="clausula-num">Cuarta. Obligaciones del Consumidor</div>
+  <p>El Consumidor declara y se obliga a: (a) proporcionar datos verídicos y completos de todos los viajeros, incluyendo nombres, edades y documentos de identidad vigentes; (b) presentar la documentación oficial necesaria para viajar (identificación oficial, pasaporte o visa, según aplique); (c) cubrir por su cuenta los gastos de equipaje excedente, consumos personales y cualquier servicio no incluido expresamente en el paquete; (d) respetar los reglamentos internos de los establecimientos contratados.</p>
+</div>
+
+<div class="clausula">
+  <div class="clausula-num">Quinta. Cancelaciones y Penalizaciones</div>
+  <p>Las solicitudes de cancelación deberán notificarse por escrito al correo <strong>reservaciones@bgcaribe.mx</strong>. Las penalizaciones aplicables son:</p>
+  <ul>
+    <li>Con más de treinta (30) días naturales de anticipación al check-in: pérdida del anticipo del 30%.</li>
+    <li>Entre quince (15) y veintinueve (29) días antes del check-in: cargo del 50% del monto total.</li>
+    <li>Con menos de quince (15) días antes del check-in: cargo del 100% del monto total.</li>
+    <li>No show (inasistencia sin aviso previo): cargo del 100% sin derecho a reembolso alguno.</li>
+    <li>Las políticas de cancelación del proveedor final (hotel y/o aerolínea) prevalecerán cuando resulten más restrictivas que las anteriores.</li>
+  </ul>
+</div>
+
+<div class="clausula">
+  <div class="clausula-num">Sexta. Modificaciones al Itinerario</div>
+  <p>Las solicitudes de cambio de fecha o de servicios están sujetas a disponibilidad del proveedor final y a posibles diferencias de tarifa que serán cubiertas íntegramente por el Consumidor. Las modificaciones deberán solicitarse con un mínimo de veintiún (21) días calendario de anticipación a la fecha de salida original. El Proveedor no garantiza disponibilidad en fechas alternativas.</p>
+</div>
+
+<div class="clausula">
+  <div class="clausula-num">Séptima. Fuerza Mayor y Caso Fortuito</div>
+  <p>Ninguna de las partes será responsable por el incumplimiento de sus obligaciones cuando éste derive de causas ajenas a su voluntad, imprevisibles e irresistibles, tales como fenómenos naturales, contingencias sanitarias, cierres de fronteras o huelgas de aerolíneas. El Proveedor notificará al Consumidor a la brevedad y gestionará, en la medida de lo posible, la reprogramación o el reembolso parcial de los servicios no prestados, descontando únicamente los cargos aplicados por el prestador final.</p>
+</div>
+
+<div class="clausula">
+  <div class="clausula-num">Octava. Protección de Datos Personales</div>
+  <p>Los datos personales del Consumidor serán tratados conforme al Aviso de Privacidad publicado en <strong>bgcaribe.mx</strong>, de conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP) y su Reglamento. Serán utilizados exclusivamente para la gestión de los servicios contratados y comunicaciones relacionadas, sin cederlos ni venderlos a terceros ajenos a la operación del viaje.</p>
+</div>
+
+<div class="clausula">
+  <div class="clausula-num">Novena. Facturación</div>
+  <p>El Consumidor podrá solicitar comprobante fiscal digital (CFDI) proporcionando sus datos fiscales completos al momento de realizar cada pago. No se emitirán facturas retroactivas una vez cerrado el período fiscal correspondiente, conforme a las disposiciones del Servicio de Administración Tributaria (SAT). Los datos de facturación registrados se detallan en el apartado respectivo del presente contrato.</p>
+</div>
+
+<div class="clausula">
+  <div class="clausula-num">Décima. Jurisdicción y Legislación Aplicable</div>
+  <p>Para todo lo no previsto en el presente instrumento, las partes se someten a la legislación vigente en los Estados Unidos Mexicanos, incluyendo la Ley Federal de Turismo, la Ley Federal de Protección al Consumidor y la Norma Oficial Mexicana NOM-010-TUR-2001. Cualquier controversia será sometida, en primera instancia, a la Procuraduría Federal del Consumidor (PROFECO) y, en su caso, a los tribunales competentes del Estado de Quintana Roo, con renuncia expresa a cualquier otro fuero.</p>
+</div>
+
+<!-- AVISO PROFECO -->
+<div class="aviso">
+  <strong>Información para el Consumidor (PROFECO):</strong> Si considera que sus derechos han sido vulnerados, puede presentar una queja ante la Procuraduría Federal del Consumidor en el número 800 468 8722 o en www.profeco.gob.mx. El presente contrato se sujeta al Contrato de Adhesión registrado por BG Transportadora del Caribe, S.A. de C.V. El Consumidor tiene derecho a recibir copia del presente contrato firmado.
+</div>
+
+<!-- FIRMAS -->
+<div class="firmas-section">
+  <div class="firmas-titulo">Aceptación y Firmas</div>
+  <p class="firmas-intro">Leído íntegramente el presente contrato y estando de acuerdo con su contenido, las partes lo suscriben en la Ciudad de Cancún, Quintana Roo, el día {{FECHA_EMISION}}.</p>
+  <div class="firmas-grid">
+    <div class="firma-box">
+      <div class="firma-linea"></div>
+      <div class="firma-nombre">BG Transportadora del Caribe, S.A. de C.V.</div>
+      <div class="firma-cargo">El Proveedor · Asesor: {{NOMBRE_ASESOR}}</div>
+    </div>
+    <div class="firma-box">
+      <div class="firma-linea"></div>
+      <div class="firma-nombre">{{TITULAR_NOMBRE}}</div>
+      <div class="firma-cargo">El Consumidor · RFC: {{TITULAR_RFC}}</div>
+    </div>
+  </div>
+</div>
+
+<!-- PIE -->
+<div class="pie">
+  <span>BG Transportadora del Caribe, S.A. de C.V. · RNT: 0423005C28259 · NOM-010-TUR-2001 · LFPDPPP</span>
+  <span>Folio: {{CODIGO_RESERVA}}</span>
+</div>
+
+<div class="print-row">
+  <button class="btn-print" onclick="window.print()">Imprimir / Guardar PDF</button>
+</div>
+
+</body>
+</html>

@@ -2,9 +2,10 @@
   "name": "bg-caribe-web",
   "version": "1.0.0",
   "description": "Sitio web premium para la agencia de viajes BG Caribe",
-  "main": "index.html",
+  "main": "server.js",
   "scripts": {
-    "dev": "npx http-server -p 3000"
+    "dev": "npx http-server -p 3000",
+    "start": "node server.js"
   },
   "keywords": [
     "travel",
@@ -14,5 +15,12 @@
     "premium"
   ],
   "author": "BG Caribe Team",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemailer": "^6.9.13",
+    "puppeteer": "^22.9.0"
+  }
 }

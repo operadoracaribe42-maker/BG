@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Captura de Reservas Internas — BG Caribe</title>
+  
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #0A1F33;
+      --primary-hover: #112840;
+      --teal: #00818A;
+      --teal-light: #E6F4F5;
+      --gold: #B8973C;
+      --gold-light: #FBF5E6;
+      --border: #D8E4EA;
+      --bg: #F3F6F9;
+      --white: #FFFFFF;
+      --ink: #1C2B3A;
+      --text-muted: #5C6770;
+      --danger: #C0392B;
+      --success: #27AE60;
+      --radius: 8px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 40px 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-size: 24px;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .form-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--teal);
+      border-bottom: 2px solid var(--teal-light);
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .span-full {
+      grid-column: span 2;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg);
+      color: var(--ink);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--teal);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(0, 129, 138, 0.1);
+    }
+
+    input[readonly] {
+      background: #EAEFF2;
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .phone-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .phone-group select {
+      flex: 0 0 100px;
+    }
+
+    .phone-group input {
+      flex: 1;
+    }
+
+    /* Companions Section */
+    .guest-block {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 18px;
+      background: #F8FAFC;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .guest-block h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .btn-delete-guest {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--danger);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-delete-guest:hover {
+      text-decoration: underline;
+    }
+
+    .btn-add {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--teal-light);
+      color: var(--teal);
+      border: 1px dashed var(--teal);
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-top: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-add:hover {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    /* Parks Grid */
+    .parks-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .park-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .park-checkbox input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--teal);
+    }
+
+    /* Billing Section toggle styles */
+    .factura-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .factura-toggle-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--teal);
+      cursor: pointer;
+    }
+
+    /* Buttons */
+    .btn-submit {
+      width: 100%;
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0, 129, 138, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit:hover {
+      background: #006D75;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0, 129, 138, 0.3);
+    }
+
+    .btn-submit:disabled {
+      background: var(--text-muted);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 31, 51, 0.6);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--white);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 600px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 18px;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .modal-body {
+      margin-bottom: 24px;
+      font-size: 14px;
+      max-height: 350px;
+      overflow-y: auto;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 15px 0;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #F3F6F9;
+    }
+
+    .summary-item span:first-child {
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .summary-item span:last-child {
+      color: var(--ink);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn-modal {
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-modal-cancel {
+      background: var(--bg);
+      color: var(--text-muted);
+    }
+
+    .btn-modal-cancel:hover {
+      background: #E9ECEF;
+    }
+
+    .btn-modal-confirm {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    .btn-modal-confirm:hover {
+      background: #006D75;
+    }
+
+    /* Error Summary */
+    .error-summary {
+      background: #FDF3F2;
+      border: 1px solid #F5C6CB;
+      border-radius: 4px;
+      color: var(--danger);
+      padding: 15px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 13px;
+    }
+
+    .error-summary ul {
+      margin-top: 6px;
+      padding-left: 20px;
+    }
+
+    /* Success Area */
+    .success-alert {
+      background: #E8F5E9;
+      border: 1px solid #C8E6C9;
+      border-radius: var(--radius);
+      color: var(--success);
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .success-alert i {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .success-alert h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .success-alert p {
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    .success-alert .code-display {
+      display: inline-block;
+      margin: 14px 0;
+      padding: 8px 16px;
+      background: var(--white);
+      border: 1px dashed var(--success);
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <header>
+    <h1>Captura de Reservaciones</h1>
+    <p>Portal interno para asesores de venta de BG Caribe</p>
+  </header>
+
+  <!-- Error Summary -->
+  <div class="error-summary" id="errorSummary">
+    <strong>Por favor corrige los siguientes campos obligatorios:</strong>
+    <ul id="errorList"></ul>
+  </div>
+
+  <!-- Success Area -->
+  <div class="success-alert" id="successAlert">
+    <i class="fa-solid fa-circle-check"></i>
+    <h2>Reservación Confirmada</h2>
+    <p>Los documentos (voucher y contrato) han sido generados y enviados por correo electrónico con éxito.</p>
+    <div class="code-display" id="generatedCode">BG-XXXXXXXX</div>
+    <p style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">
+      Puedes copiar el código para el cliente.
+    </p>
+  </div>
+
+  <form id="reservationForm" novalidate>
+    
+    <!-- SECCIÓN A: Datos del Titular -->
+    <div class="form-card">
+      <div class="section-title">
+        <i class="fa-solid fa-user"></i>
+        <span>Sección A: Datos del Titular</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="titularNombre">Nombre completo *</label>
+          <input type="text" id="titularNombre" required placeholder="Ej. Juan Pérez">
+        </div>
+        <div class="form-group">
+          <label for="titularEmail">Correo electrónico *</label>
+          <input type="email" id="titularEmail" required placeholder="Ej. cliente@correo.com">
+        </div>
+        <div class="form-group">
+          <label for="titularTelefono">Teléfono / WhatsApp *</label>
+          <div class="phone-group">
+            <select id="ladaSelect">
+              <option value="+52">+52 (MX)</option>
+              <option value="+1">+1 (US/CA)</option>
+              <option value="+34">+34 (ES)</option>
+              <option value="+54">+54 (AR)</option>
+              <option value="+57">+57 (CO)</option>
+            </select>
+            <input type="text" id="titularTelefono" required placeholder="10 dígitos">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="titularCiudad">Ciudad y Estado *</label>
+          <input type="text" id="titularCiudad" required placeholder="Ej. Monterrey, NL">
+        </div>
+        <div class="form-group span-full">
+          <label for="titularDireccion">Dirección Completa *</label>
+          <input type="text" id="titularDireccion" required placeholder="Calle, número, colonia, municipio">
+        </div>
+        <div class="form-group">
+          <label for="titularCP">Código Postal *</label>
+          <input type="text" id="titularCP" required maxlength="5" placeholder="5 dígitos">
+        </div>
+        <div class="form-group">
+          <label for="titularRFC">RFC (Opcional)</label>
+          <input type="text" id="titularRFC" placeholder="RFC de persona física o moral">
+        </div>
+        <div class="form-group">
+          <label for="titularIdTipo">Tipo de Identificación *</label>
+          <select id="titularIdTipo">
+            <option value="INE">INE</option>
+            <option value="Pasaporte">Pasaporte</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="titularIdNum">Número de Identificación *</label>
+          <input type="text" id="titularIdNum" required placeholder="Número de folio o pasaporte">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN B: Acompañantes -->
+    <div class="form-card">
+      <div class="section-title">
+        <i class="fa-solid fa-users"></i>
+        <span>Sección B: Acompañantes / Huéspedes</span>
+      </div>
+      
+      <div id="guestsContainer">
+        <!-- Dynanmic blocks will be inserted here -->
+      </div>
+      
+      <button type="button" class="btn-add" id="btnAddGuest">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>Agregar Acompañante</span>
+      </button>
+    </div>
+
+    <!-- SECCIÓN C: Detalles del Viaje -->
+    <div class="form-card">
+      <div class="section-title">
+        <i class="fa-solid fa-plane-departure"></i>
+        <span>Sección C: Detalles del Viaje</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="destino">Destino *</label>
+          <select id="destino">
+            <option value="Riviera Maya">Riviera Maya</option>
+            <option value="Cancún">Cancún</option>
+            <option value="Hoteles Xcaret">Hoteles Xcaret</option>
+            <option value="Nickelodeon Hotels">Nickelodeon Resort</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="hotel">Hotel / Resort *</label>
+          <input type="text" id="hotel" required placeholder="Nombre del hotel">
+        </div>
+        <div class="form-group">
+          <label for="tipoHabitacion">Tipo de habitación *</label>
+          <input type="text" id="tipoHabitacion" required placeholder="Ej. Deluxe Junior Suite">
+        </div>
+        <div class="form-group">
+          <label for="planAlimentos">Plan de alimentos *</label>
+          <input type="text" id="planAlimentos" required placeholder="Ej. All-Fun Inclusive / Todo Incluido" value="All-Fun Inclusive">
+        </div>
+        <div class="form-group">
+          <label for="fechaEntrada">Fecha de entrada *</label>
+          <input type="date" id="fechaEntrada" required>
+        </div>
+        <div class="form-group">
+          <label for="fechaSalida">Fecha de salida *</label>
+          <input type="date" id="fechaSalida" required>
+        </div>
+        <div class="form-group">
+          <label for="noches">Noches de estadía</label>
+          <input type="number" id="noches" readonly value="0">
+        </div>
+        <div class="form-group">
+          <label for="numAdultos">Número de adultos *</label>
+          <input type="number" id="numAdultos" required min="1" value="2">
+        </div>
+        <div class="form-group">
+          <label for="numNinos">Número de niños</label>
+          <input type="number" id="numNinos" min="0" value="0">
+        </div>
+        
+        <!-- Vuelo check -->
+        <div class="form-group span-full factura-toggle-row">
+          <input type="checkbox" id="vueloIncluido">
+          <label for="vueloIncluido" style="cursor:pointer;">¿El paquete incluye vuelos?</label>
+        </div>
+        
+        <!-- Vuelo details grid (hidden by default) -->
+        <div class="span-full form-grid" id="vueloDetailsSection" style="display: none; background: #F8FAFC; padding: 15px; border-radius: 4px; border: 1px solid var(--border);">
+          <div class="form-group">
+            <label for="origenVuelo">Origen del vuelo</label>
+            <input type="text" id="origenVuelo" placeholder="Ej. CDMX">
+          </div>
+          <div class="form-group">
+            <label for="aerolinea">Aerolínea</label>
+            <input type="text" id="aerolinea" placeholder="Ej. Aeroméxico">
+          </div>
+          <div class="form-group">
+            <label for="vueloIda">Número de vuelo de ida</label>
+            <input type="text" id="vueloIda" placeholder="Ej. AM-501">
+          </div>
+          <div class="form-group">
+            <label for="vueloRegreso">Número de vuelo de regreso</label>
+            <input type="text" id="vueloRegreso" placeholder="Ej. AM-502">
+          </div>
+        </div>
+
+        <!-- Traslados check -->
+        <div class="form-group span-full factura-toggle-row">
+          <input type="checkbox" id="traslados">
+          <label for="traslados" style="cursor:pointer;">¿El paquete incluye traslados?</label>
+        </div>
+
+        <!-- Traslado details select (hidden by default) -->
+        <div class="form-group span-full" id="trasladoDetailsSection" style="display: none; background: #F8FAFC; padding: 15px; border-radius: 4px; border: 1px solid var(--border);">
+          <label for="tipoTraslado">Tipo de traslado</label>
+          <select id="tipoTraslado">
+            <option value="Shuttle Oficial">Shuttle Oficial (Hotel Xcaret)</option>
+            <option value="Privado">Privado</option>
+            <option value="No incluido">No incluido</option>
+          </select>
+        </div>
+
+        <!-- Parques -->
+        <div class="form-group span-full">
+          <label style="margin-bottom: 8px;">Parques de Grupo Xcaret Incluidos</label>
+          <div class="parks-grid">
+            <label class="park-checkbox"><input type="checkbox" class="park-cb" value="Xcaret"> Xcaret</label>
+            <label class="park-checkbox"><input type="checkbox" class="park-cb" value="Xel-Há"> Xel-Há</label>
+            <label class="park-checkbox"><input type="checkbox" class="park-cb" value="Xplor"> Xplor</label>
+            <label class="park-checkbox"><input type="checkbox" class="park-cb" value="Xplor Fuego"> Xplor Fuego</label>
+            <label class="park-checkbox"><input type="checkbox" class="park-cb" value="Xoximilco"> Xoximilco</label>
+            <label class="park-checkbox"><input type="checkbox" class="park-cb" value="Xenses"> Xenses</label>
+            <label class="park-checkbox"><input type="checkbox" class="park-cb" value="Xenotes"> Xenotes</label>
+            <label class="park-checkbox"><input type="checkbox" class="park-cb" value="Xavage"> Xavage</label>
+          </div>
+        </div>
+
+        <div class="form-group span-full">
+          <label for="serviciosAdicionales">Servicios adicionales</label>
+          <textarea id="serviciosAdicionales" rows="2" placeholder="Ej. Tour Chichén Itzá Deluxe para todos los huéspedes"></textarea>
+        </div>
+
+        <div class="form-group span-full">
+          <label for="notasEspeciales">Peticiones o notas especiales</label>
+          <textarea id="notasEspeciales" rows="2" placeholder="Ej. Habitación libre de humo, cama de bebé, etc."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN D: Información Financiera -->
+    <div class="form-card">
+      <div class="section-title">
+        <i class="fa-solid fa-coins"></i>
+        <span>Sección D: Información Financiera</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="totalPaquete">Precio total del paquete (MXN) *</label>
+          <input type="number" id="totalPaquete" required min="0" placeholder="0.00" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="porcentajeAnticipo">Porcentaje de Anticipo (%) *</label>
+          <input type="number" id="porcentajeAnticipo" required value="30" min="0" max="100">
+        </div>
+        <div class="form-group">
+          <label for="anticipo">Monto de Anticipo (MXN)</label>
+          <input type="number" id="anticipo" readonly value="0.00">
+        </div>
+        <div class="form-group">
+          <label for="saldoPendiente">Saldo Pendiente (MXN)</label>
+          <input type="number" id="saldoPendiente" readonly value="0.00">
+        </div>
+        <div class="form-group">
+          <label for="metodoPago">Método de pago *</label>
+          <select id="metodoPago">
+            <option value="Transferencia bancaria">Transferencia bancaria</option>
+            <option value="Tarjeta de crédito">Tarjeta de crédito</option>
+            <option value="Tarjeta de débito">Tarjeta de débito</option>
+            <option value="Efectivo">Efectivo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="estadoPago">Estado del pago *</label>
+          <select id="estadoPago">
+            <option value="Abonada">Abonada</option>
+            <option value="Pagada">Pagada</option>
+            <option value="No pagada">No pagada</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fechaLimitePago">Fecha límite de liquidación *</label>
+          <input type="date" id="fechaLimitePago" required>
+        </div>
+        <div class="form-group">
+          <label for="referenciaPago">Referencia de pago / comprobante</label>
+          <input type="text" id="referenciaPago" placeholder="Código de rastreo SPEI / No. de folio">
+        </div>
+        <div class="form-group span-full">
+          <label for="nombreAsesor">Nombre del asesor *</label>
+          <input type="text" id="nombreAsesor" required placeholder="Nombre y apellido del agente">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN E: Facturación -->
+    <div class="form-card">
+      <div class="section-title">
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+        <span>Sección E: Facturación</span>
+      </div>
+      
+      <div class="factura-toggle-row">
+        <input type="checkbox" id="requiereFactura">
+        <label for="requiereFactura" style="cursor:pointer; font-weight: 700; color: var(--primary);">El cliente requiere factura fiscal</label>
+      </div>
+
+      <div class="form-grid" id="facturaSection" style="display: none;">
+        <div class="form-group span-full">
+          <label for="facturaRazonSocial">Razón Social *</label>
+          <input type="text" id="facturaRazonSocial" placeholder="Denominación o nombre legal registrado">
+        </div>
+        <div class="form-group">
+          <label for="facturaRFC">RFC Fiscal *</label>
+          <input type="text" id="facturaRFC" placeholder="RFC a 12 o 13 posiciones">
+        </div>
+        <div class="form-group">
+          <label for="facturaUsoCFDI">Uso del CFDI *</label>
+          <select id="facturaUsoCFDI">
+            <option value="G03 Gastos en general">G03 Gastos en general</option>
+            <option value="G01 Adquisición de mercancías">G01 Adquisición de mercancías</option>
+            <option value="D01 Honorarios médicos, dentales y gastos hospitalarios">D01 Honorarios médicos, dentales y gastos hospitalarios</option>
+            <option value="I01 Construcciones">I01 Construcciones</option>
+            <option value="S01 Sin efectos fiscales">S01 Sin efectos fiscales</option>
+          </select>
+        </div>
+        <div class="form-group span-full">
+          <label for="facturaDomicilio">Domicilio Fiscal Completo *</label>
+          <input type="text" id="facturaDomicilio" placeholder="Calle, número ext/int, colonia, municipio">
+        </div>
+        <div class="form-group">
+          <label for="facturaCp">C.P. Fiscal *</label>
+          <input type="text" id="facturaCp" maxlength="5" placeholder="5 dígitos">
+        </div>
+        <div class="form-group">
+          <label for="facturaRegimen">Régimen Fiscal *</label>
+          <select id="facturaRegimen">
+            <option value="601 General de Ley Personas Morales">601 General de Ley Personas Morales</option>
+            <option value="605 Sueldos y Salarios e Ingresos Asimilados a Salarios">605 Sueldos y Salarios e Ingresos Asimilados a Salarios</option>
+            <option value="606 Arrendamiento">606 Arrendamiento</option>
+            <option value="612 Personas Físicas con Actividades Empresariales y Profesionales">612 Personas Físicas con Actividades Empresariales y Profesionales</option>
+            <option value="616 Sin obligaciones fiscales">616 Sin obligaciones fiscales</option>
+            <option value="621 Incorporación Fiscal">621 Incorporación Fiscal</option>
+            <option value="625 Régimen de las Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras">625 Régimen de las Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras</option>
+            <option value="626 Régimen Simplificado de Confianza (RESICO)">626 Régimen Simplificado de Confianza (RESICO)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn-submit" id="btnSubmit">
+      <i class="fa-solid fa-circle-check"></i>
+      <span>Confirmar Reserva</span>
+    </button>
+
+  </form>
+
+</div>
+
+<!-- CONFIRMATION SUMMARY MODAL -->
+<div class="modal" id="summaryModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Resumen de Reserva a Generar</h3>
+    </div>
+    <div class="modal-body" id="modalSummaryBody">
+      <!-- Summary list loaded dynamically -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal btn-modal-cancel" id="btnCancelModal">Cancelar</button>
+      <button class="btn-modal btn-modal-confirm" id="btnConfirmModal">Confirmar y enviar documentos</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT JAVASCRIPT LOGIC -->
+<script>
+  // Elements
+  const form = document.getElementById('reservationForm');
+  const btnAddGuest = document.getElementById('btnAddGuest');
+  const guestsContainer = document.getElementById('guestsContainer');
+  const fechaEntrada = document.getElementById('fechaEntrada');
+  const fechaSalida = document.getElementById('fechaSalida');
+  const noches = document.getElementById('noches');
+  
+  const totalPaquete = document.getElementById('totalPaquete');
+  const porcentajeAnticipo = document.getElementById('porcentajeAnticipo');
+  const anticipo = document.getElementById('anticipo');
+  const saldoPendiente = document.getElementById('saldoPendiente');
+  
+  const requiereFactura = document.getElementById('requiereFactura');
+  const facturaSection = document.getElementById('facturaSection');
+  
+  const vueloIncluido = document.getElementById('vueloIncluido');
+  const vueloDetailsSection = document.getElementById('vueloDetailsSection');
+  
+  const traslados = document.getElementById('traslados');
+  const trasladoDetailsSection = document.getElementById('trasladoDetailsSection');
+
+  const errorSummary = document.getElementById('errorSummary');
+  const errorList = document.getElementById('errorList');
+  const successAlert = document.getElementById('successAlert');
+  const generatedCode = document.getElementById('generatedCode');
+  
+  const summaryModal = document.getElementById('summaryModal');
+  const modalSummaryBody = document.getElementById('modalSummaryBody');
+  const btnCancelModal = document.getElementById('btnCancelModal');
+  const btnConfirmModal = document.getElementById('btnConfirmModal');
+  const btnSubmit = document.getElementById('btnSubmit');
+
+  let guestCount = 0;
+
+  // 1. DYNAMIC COMPANIONS BLOCK (MAX 10)
+  btnAddGuest.addEventListener('click', () => {
+    if (guestCount >= 10) {
+      alert('Se permite un máximo de 10 acompañantes.');
+      return;
+    }
+    guestCount++;
+    const div = document.createElement('div');
+    div.className = 'guest-block';
+    div.id = `guest-block-${guestCount}`;
+    div.innerHTML = `
+      <button type="button" class="btn-delete-guest" onclick="removeGuest(${guestCount})">
+        <i class="fa-solid fa-trash"></i> Eliminar
+      </button>
+      <h4>Acompañante ${guestCount}</h4>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre completo *</label>
+          <input type="text" class="g-name" required placeholder="Nombre completo">
+        </div>
+        <div class="form-group">
+          <label>Edad (Niños) *</label>
+          <input type="number" class="g-age" min="0" max="17" placeholder="Edad (si es menor)">
+        </div>
+        <div class="form-group">
+          <label>Tipo ID</label>
+          <select class="g-id-tipo">
+            <option value="INE">INE</option>
+            <option value="Pasaporte">Pasaporte</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>No. de Identificación</label>
+          <input type="text" class="g-id-num" placeholder="Folio del ID">
+        </div>
+      </div>
+    `;
+    guestsContainer.appendChild(div);
+  });
+
+  window.removeGuest = function(id) {
+    const el = document.getElementById(`guest-block-${id}`);
+    if (el) {
+      el.remove();
+      guestCount = document.querySelectorAll('.guest-block').length;
+      // Re-index titles
+      const titles = guestsContainer.querySelectorAll('.guest-block h4');
+      titles.forEach((title, idx) => {
+        title.textContent = `Acompañante ${idx + 1}`;
+      });
+    }
+  };
+
+  // 2. NIGHTS CALCULATION
+  function calculateNights() {
+    if (fechaEntrada.value && fechaSalida.value) {
+      const ent = new Date(fechaEntrada.value + 'T00:00:00');
+      const sal = new Date(fechaSalida.value + 'T00:00:00');
+      const diff = sal - ent;
+      if (diff > 0) {
+        noches.value = Math.ceil(diff / (1000 * 60 * 60 * 24));
+      } else {
+        noches.value = 0;
+      }
+    }
+  }
+  fechaEntrada.addEventListener('change', calculateNights);
+  fechaSalida.addEventListener('change', calculateNights);
+
+  // 3. FINANCIAL CALCULATIONS
+  function calculateFinance() {
+    const total = parseFloat(totalPaquete.value) || 0;
+    const pct = parseFloat(porcentajeAnticipo.value) || 30;
+    const ant = total * (pct / 100);
+    anticipo.value = ant.toFixed(2);
+    saldoPendiente.value = (total - ant).toFixed(2);
+  }
+  totalPaquete.addEventListener('input', calculateFinance);
+  porcentajeAnticipo.addEventListener('input', calculateFinance);
+
+  // 4. CONDITIONAL TOGGLES
+  vueloIncluido.addEventListener('change', () => {
+    vueloDetailsSection.style.display = vueloIncluido.checked ? 'grid' : 'none';
+  });
+
+  traslados.addEventListener('change', () => {
+    trasladoDetailsSection.style.display = traslados.checked ? 'block' : 'none';
+  });
+
+  requiereFactura.addEventListener('change', () => {
+    facturaSection.style.display = requiereFactura.checked ? 'grid' : 'none';
+    const inputs = facturaSection.querySelectorAll('input, select');
+    inputs.forEach(input => {
+      if (requiereFactura.checked) {
+        if (input.id !== 'facturaRFC') input.required = true;
+      } else {
+        input.required = false;
+      }
+    });
+  });
+
+  // 5. VALIDATIONS
+  function validateForm() {
+    const errors = [];
+    errorSummary.style.display = 'none';
+    errorList.innerHTML = '';
+    
+    // Check standard required
+    const requiredInputs = form.querySelectorAll('input[required], select[required]');
+    requiredInputs.forEach(input => {
+      if (!input.value.trim() && input.offsetParent !== null) {
+        const label = input.closest('.form-group').querySelector('label').textContent.replace(' *', '');
+        errors.push(`El campo "${label}" es requerido.`);
+      }
+    });
+
+    // Check lada phone length
+    const phoneInput = document.getElementById('titularTelefono');
+    if (phoneInput.value.trim() && !/^\d{10}$/.test(phoneInput.value.trim())) {
+      errors.push('El teléfono del titular debe ser a 10 dígitos numéricos.');
+    }
+
+    // Check RFC format if enabled
+    if (requiereFactura.checked) {
+      const rfcInput = document.getElementById('facturaRFC');
+      const rfcVal = rfcInput.value.trim().toUpperCase();
+      if (!/^[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}$/.test(rfcVal)) {
+        errors.push('El RFC de facturación tiene un formato no válido (debe tener entre 12 y 13 caracteres con homoclave).');
+      }
+    }
+
+    if (errors.length > 0) {
+      errorSummary.style.display = 'block';
+      errors.forEach(err => {
+        const li = document.createElement('li');
+        li.textContent = err;
+        errorList.appendChild(li);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return false;
+    }
+    return true;
+  }
+
+  // 6. SUBMISSION FLOW
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    
+    // Build summary body HTML
+    const lada = document.getElementById('ladaSelect').value;
+    const phone = document.getElementById('titularTelefono').value;
+    
+    let summaryHtml = `
+      <div class="summary-item"><span>Titular:</span><span>${document.getElementById('titularNombre').value}</span></div>
+      <div class="summary-item"><span>Teléfono:</span><span>${lada} ${phone}</span></div>
+      <div class="summary-item"><span>Destino:</span><span>${document.getElementById('destino').value}</span></div>
+      <div class="summary-item"><span>Hotel / Resort:</span><span>${document.getElementById('hotel').value}</span></div>
+      <div class="summary-item"><span>Habitación:</span><span>${document.getElementById('tipoHabitacion').value}</span></div>
+      <div class="summary-item"><span>Entrada:</span><span>${document.getElementById('fechaEntrada').value}</span></div>
+      <div class="summary-item"><span>Salida:</span><span>${document.getElementById('fechaSalida').value}</span></div>
+      <div class="summary-item"><span>Adultos/Niños:</span><span>${document.getElementById('numAdultos').value} Ad. / ${document.getElementById('numNinos').value} Ni.</span></div>
+      <div class="summary-item"><span>Total del Paquete:</span><span>$${parseFloat(totalPaquete.value).toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN</span></div>
+      <div class="summary-item"><span>Saldo Pendiente:</span><span>$${parseFloat(saldoPendiente.value).toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN</span></div>
+      <div class="summary-item"><span>Asesor:</span><span>${document.getElementById('nombreAsesor').value}</span></div>
+    `;
+    modalSummaryBody.innerHTML = summaryHtml;
+    summaryModal.style.display = 'flex';
+  });
+
+  // Modal actions
+  btnCancelModal.addEventListener('click', () => {
+    summaryModal.style.display = 'none';
+  });
+
+  btnConfirmModal.addEventListener('click', async () => {
+    summaryModal.style.display = 'none';
+    btnSubmit.disabled = true;
+    btnSubmit.querySelector('span').textContent = 'Confirmando y enviando...';
+    
+    // Gather all fields matching ReservaData interface schema
+    const lada = document.getElementById('ladaSelect').value;
+    const phone = document.getElementById('titularTelefono').value;
+    const fullPhone = `${lada}${phone.replace(/\s+/g, '')}`;
+
+    // Guests array
+    const companions = [];
+    companions.push({
+      nombre: document.getElementById('titularNombre').value.trim(),
+      esTitular: true,
+      idTipo: document.getElementById('titularIdTipo').value,
+      idNum: document.getElementById('titularIdNum').value.trim()
+    });
+
+    const guestBlocks = document.querySelectorAll('.guest-block');
+    guestBlocks.forEach(block => {
+      const name = block.querySelector('.g-name').value.trim();
+      const age = parseInt(block.querySelector('.g-age').value) || undefined;
+      const idTipo = block.querySelector('.g-id-tipo').value;
+      const idNum = block.querySelector('.g-id-num').value.trim() || undefined;
+      companions.push({
+        nombre: name,
+        esTitular: false,
+        edad: age,
+        idTipo,
+        idNum
+      });
+    });
+
+    // Check parks
+    const parksChecked = Array.from(document.querySelectorAll('.park-cb:checked')).map(cb => cb.value);
+
+    // Build JSON body
+    const body = {
+      nombreAsesor: document.getElementById('nombreAsesor').value.trim(),
+      estado: 'CONFIRMADA',
+      
+      titularNombre: document.getElementById('titularNombre').value.trim(),
+      titularEmail: document.getElementById('titularEmail').value.trim(),
+      titularTelefono: fullPhone,
+      titularCiudad: document.getElementById('titularCiudad').value.trim(),
+      titularDireccion: document.getElementById('titularDireccion').value.trim(),
+      titularCP: document.getElementById('titularCP').value.trim(),
+      titularRFC: document.getElementById('titularRFC').value.trim() || undefined,
+      titularIdTipo: document.getElementById('titularIdTipo').value,
+      titularIdNum: document.getElementById('titularIdNum').value.trim(),
+      
+      huespedes: companions,
+      
+      destino: document.getElementById('destino').value,
+      hotel: document.getElementById('hotel').value.trim(),
+      tipoHabitacion: document.getElementById('tipoHabitacion').value.trim(),
+      planAlimentos: document.getElementById('planAlimentos').value.trim(),
+      fechaEntrada: document.getElementById('fechaEntrada').value,
+      fechaSalida: document.getElementById('fechaSalida').value,
+      noches: parseInt(noches.value) || 0,
+      numAdultos: parseInt(document.getElementById('numAdultos').value) || 1,
+      numNinos: parseInt(document.getElementById('numNinos').value) || 0,
+      vueloIncluido: vueloIncluido.checked,
+      origenVuelo: vueloIncluido.checked ? document.getElementById('origenVuelo').value.trim() : undefined,
+      vueloIda: vueloIncluido.checked ? document.getElementById('vueloIda').value.trim() : undefined,
+      vueloRegreso: vueloIncluido.checked ? document.getElementById('vueloRegreso').value.trim() : undefined,
+      aerolinea: vueloIncluido.checked ? document.getElementById('aerolinea').value.trim() : undefined,
+      traslados: traslados.checked,
+      tipoTraslado: traslados.checked ? document.getElementById('tipoTraslado').value : 'No incluido',
+      parquesIncluidos: parksChecked,
+      serviciosAdicionales: document.getElementById('serviciosAdicionales').value.trim() || undefined,
+      notasEspeciales: document.getElementById('notasEspeciales').value.trim() || undefined,
+      
+      totalPaquete: parseFloat(totalPaquete.value) || 0,
+      porcentajeAnticipo: parseFloat(porcentajeAnticipo.value) || 30,
+      anticipo: parseFloat(anticipo.value) || 0,
+      saldoPendiente: parseFloat(saldoPendiente.value) || 0,
+      metodoPago: document.getElementById('metodoPago').value,
+      estadoPago: document.getElementById('estadoPago').value,
+      fechaLimitePago: document.getElementById('fechaLimitePago').value,
+      referenciaPago: document.getElementById('referenciaPago').value.trim() || undefined,
+      
+      requiereFactura: requiereFactura.checked,
+      facturaRazonSocial: requiereFactura.checked ? document.getElementById('facturaRazonSocial').value.trim() : undefined,
+      facturaRFC: requiereFactura.checked ? document.getElementById('facturaRFC').value.trim().toUpperCase() : undefined,
+      facturaUsoCFDI: requiereFactura.checked ? document.getElementById('facturaUsoCFDI').value : undefined,
+      facturaDomicilio: requiereFactura.checked ? document.getElementById('facturaDomicilio').value.trim() : undefined,
+      facturaCp: requiereFactura.checked ? document.getElementById('facturaCp').value.trim() : undefined,
+      facturaRegimen: requiereFactura.checked ? document.getElementById('facturaRegimen').value : undefined
+    };
+
+    try {
+      // LLamar al endpoint de confirmar reserva (usando API_KEY por seguridad)
+      const apiKey = 'bgcaribe_secure_key_2026_prod_api_key_32chars';
+      const response = await fetch('/api/reservas/confirmar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        successAlert.style.display = 'block';
+        generatedCode.textContent = result.codigoReserva;
+        window.scrollTo({ top: successAlert.offsetTop - 50, behavior: 'smooth' });
+        form.reset();
+        guestsContainer.innerHTML = '';
+        vueloDetailsSection.style.display = 'none';
+        trasladoDetailsSection.style.display = 'none';
+        facturaSection.style.display = 'none';
+        noches.value = '0';
+        anticipo.value = '0.00';
+        saldoPendiente.value = '0.00';
+      } else {
+        alert('Error al confirmar reservación: ' + (result.error || 'Intenta de nuevo.'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error de red al conectar con el servidor.');
+    } finally {
+      btnSubmit.disabled = false;
+      btnSubmit.querySelector('span').textContent = 'Confirmar Reserva';
+    }
+  });
+</script>
+
+</body>
+</html>

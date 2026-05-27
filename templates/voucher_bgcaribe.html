@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Confirmación de Reserva {{CODIGO_RESERVA}} — BG Caribe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy:    #0A1F33;
+  --navy-2:  #112840;
+  --teal:    #00818A;
+  --teal-lt: #E6F4F5;
+  --gold:    #B8973C;
+  --gold-lt: #FBF5E6;
+  --ink:     #1C2B3A;
+  --mid:     #4A5E72;
+  --muted:   #8899A6;
+  --rule:    #D8E4EA;
+  --bg:      #F3F6F9;
+  --white:   #FFFFFF;
+  --danger:  #C0392B;
+  --f: 'Outfit', sans-serif;
+}
+
+body {
+  font-family: var(--f);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 800px;
+  margin: 28px auto;
+  background: var(--white);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 24px rgba(10,31,51,.12);
+}
+
+/* ─── HEADER ─── */
+.hd {
+  background: var(--navy);
+  padding: 32px 44px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.hd-brand {}
+.hd-brand .wordmark {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--teal);
+  display: block;
+  margin-bottom: 4px;
+}
+.hd-brand .tagline {
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--white);
+  letter-spacing: .5px;
+}
+.hd-right { text-align: right; }
+.hd-right .doc-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 6px;
+}
+.hd-right .folio {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 2px;
+}
+.status-pill {
+  display: inline-block;
+  margin-top: 8px;
+  background: var(--teal);
+  color: var(--white);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 2px;
+}
+
+/* ─── ACCENT LINE ─── */
+.accent-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal) 0%, var(--gold) 100%);
+}
+
+/* ─── META ROW ─── */
+.meta {
+  background: var(--teal-lt);
+  padding: 10px 44px;
+  display: flex;
+  gap: 36px;
+  border-bottom: 1px solid var(--rule);
+}
+.meta-item { font-size: 11px; color: var(--mid); }
+.meta-item strong { color: var(--ink); font-weight: 600; }
+
+/* ─── BODY ─── */
+.body { padding: 36px 44px; }
+
+/* ─── SECTION HEADING ─── */
+.sh {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+}
+.sh-num {
+  width: 22px; height: 22px;
+  background: var(--navy);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.sh-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--mid);
+}
+
+/* ─── FIELD GRID ─── */
+.fg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; }
+.fg-3 { grid-template-columns: 1fr 1fr 1fr; }
+.fg-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+.f {
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 11px 14px;
+}
+.f .lbl {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 4px;
+}
+.f .val {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.f.accent { border-color: var(--teal); background: var(--teal-lt); }
+.f.accent .val { color: var(--teal); font-weight: 600; }
+.f.span2 { grid-column: span 2; }
+.f.span3 { grid-column: span 3; }
+
+/* ─── COMPANIONS ─── */
+.guests { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+.guest-chip {
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.guest-chip .badge {
+  background: var(--navy);
+  color: var(--white);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 2px;
+}
+
+/* ─── PARKS ─── */
+.parks { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+.park-tag {
+  border: 1px solid var(--teal);
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 2px;
+  letter-spacing: .3px;
+}
+
+/* ─── FINANCIERO ─── */
+.fin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.fin-cell {
+  padding: 14px 18px;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.fin-cell:nth-child(even) { border-right: none; }
+.fin-cell:nth-last-child(-n+2) { border-bottom: none; }
+.fin-cell .lbl {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.fin-cell .val {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.saldo {
+  background: var(--navy);
+  border-radius: 3px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.saldo .lbl {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.saldo .sub {
+  font-size: 10px;
+  color: var(--muted);
+}
+.saldo .amount {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+.saldo .currency {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+  margin-left: 6px;
+}
+
+/* ─── FACTURACIÓN ─── */
+.factura-wrap {
+  border: 1px solid #E8D9A0;
+  background: var(--gold-lt);
+  border-radius: 3px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+}
+.factura-heading {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+/* ─── POLÍTICAS ─── */
+.policies {
+  border-left: 3px solid var(--danger);
+  padding: 14px 18px;
+  background: #FDF3F2;
+  border-radius: 0 3px 3px 0;
+  margin-bottom: 28px;
+}
+.policies-heading {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--danger);
+  margin-bottom: 10px;
+}
+.policies ul { padding-left: 16px; }
+.policies li {
+  font-size: 11.5px;
+  color: #7A1F1A;
+  line-height: 1.85;
+}
+
+/* ─── NOTAS ─── */
+.notes {
+  border-left: 3px solid var(--gold);
+  padding: 12px 18px;
+  background: var(--gold-lt);
+  border-radius: 0 3px 3px 0;
+  font-size: 12px;
+  color: var(--mid);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+.notes strong { color: var(--ink); }
+
+/* ─── DIVIDER ─── */
+.divider { border: none; border-top: 1px solid var(--rule); margin: 28px 0; }
+
+/* ─── FOOTER ─── */
+.ft {
+  background: var(--navy-2);
+  padding: 22px 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ft-brands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+.ft-brand {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #3D5568;
+}
+.ft-right { text-align: right; }
+.ft-rnt {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.ft-contact { font-size: 10px; color: #3D5568; line-height: 1.7; }
+.ft-contact a { color: #5E7F99; text-decoration: none; }
+
+/* ─── PRINT ─── */
+.print-row {
+  text-align: center;
+  padding: 16px;
+  background: var(--bg);
+  border-top: 1px solid var(--rule);
+}
+.btn-print {
+  background: var(--navy);
+  color: var(--white);
+  border: none;
+  border-radius: 3px;
+  padding: 10px 28px;
+  font-family: var(--f);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.btn-print:hover { background: var(--teal); }
+
+@media print {
+  body { background: #fff; }
+  .wrap { box-shadow: none; margin: 0; border-radius: 0; }
+  .print-row { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="hd">
+    <div class="hd-brand">
+      <span class="wordmark">BG Caribe</span>
+      <span class="tagline">Confirmación de Reserva</span>
+    </div>
+    <div class="hd-right">
+      <span class="doc-label">Código de reserva</span>
+      <div class="folio">{{CODIGO_RESERVA}}</div>
+      <span class="status-pill">Confirmada</span>
+    </div>
+  </div>
+  <div class="accent-bar"></div>
+
+  <!-- META -->
+  <div class="meta">
+    <span class="meta-item">Fecha de emisión: <strong>{{FECHA_EMISION}}</strong></span>
+    <span class="meta-item">Asesor: <strong>{{NOMBRE_ASESOR}}</strong></span>
+    <span class="meta-item">RNT SECTUR: <strong>0423005C28259</strong></span>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- 1. TITULAR -->
+    <div class="sh"><div class="sh-num">1</div><span class="sh-label">Datos del Titular</span></div>
+    <div class="fg">
+      <div class="f"><span class="lbl">Nombre completo</span><span class="val">{{TITULAR_NOMBRE}}</span></div>
+      <div class="f"><span class="lbl">Correo electrónico</span><span class="val">{{TITULAR_EMAIL}}</span></div>
+      <div class="f"><span class="lbl">Teléfono / WhatsApp</span><span class="val">{{TITULAR_TELEFONO}}</span></div>
+      <div class="f"><span class="lbl">Ciudad / Estado</span><span class="val">{{TITULAR_CIUDAD}}</span></div>
+      <div class="f span2"><span class="lbl">Dirección</span><span class="val">{{TITULAR_DIRECCION}}, C.P. {{TITULAR_CP}}</span></div>
+    </div>
+
+    <!-- 2. HUÉSPEDES -->
+    <div class="sh"><div class="sh-num">2</div><span class="sh-label">Huéspedes</span></div>
+    <div class="guests">
+      <div class="guest-chip"><span>{{HUESPED_1_NOMBRE}}</span><span class="badge">Titular</span></div>
+      <div class="guest-chip"><span>{{HUESPED_2_NOMBRE}}</span></div>
+      <!-- {{REPETIR_HUESPEDES}} -->
+    </div>
+
+    <!-- 3. DETALLES DEL VIAJE -->
+    <div class="sh"><div class="sh-num">3</div><span class="sh-label">Detalles del Viaje</span></div>
+    <div class="fg fg-3">
+      <div class="f accent"><span class="lbl">Destino</span><span class="val">{{DESTINO}}</span></div>
+      <div class="f accent span2"><span class="lbl">Hotel / Resort</span><span class="val">{{HOTEL}}</span></div>
+      <div class="f"><span class="lbl">Tipo de habitación</span><span class="val">{{TIPO_HABITACION}}</span></div>
+      <div class="f"><span class="lbl">Plan de alimentos</span><span class="val">{{PLAN_ALIMENTOS}}</span></div>
+      <div class="f"><span class="lbl">Noches de estadía</span><span class="val">{{NOCHES}}</span></div>
+    </div>
+    <div class="fg fg-4">
+      <div class="f"><span class="lbl">Entrada</span><span class="val">{{FECHA_ENTRADA}}</span></div>
+      <div class="f"><span class="lbl">Salida</span><span class="val">{{FECHA_SALIDA}}</span></div>
+      <div class="f"><span class="lbl">Adultos</span><span class="val">{{NUM_ADULTOS}}</span></div>
+      <div class="f"><span class="lbl">Niños</span><span class="val">{{NUM_NINOS}}</span></div>
+    </div>
+
+    <!-- 4. VUELO Y TRASLADOS -->
+    <div class="sh"><div class="sh-num">4</div><span class="sh-label">Vuelo y Traslados</span></div>
+    <div class="fg fg-3">
+      <div class="f"><span class="lbl">Vuelo incluido</span><span class="val">{{VUELO_INCLUIDO}}</span></div>
+      <div class="f"><span class="lbl">Origen del vuelo</span><span class="val">{{ORIGEN_VUELO}}</span></div>
+      <div class="f"><span class="lbl">Aerolínea</span><span class="val">{{AEROLINEA}}</span></div>
+      <div class="f"><span class="lbl">Vuelo de ida</span><span class="val">{{VUELO_IDA}}</span></div>
+      <div class="f"><span class="lbl">Vuelo de regreso</span><span class="val">{{VUELO_REGRESO}}</span></div>
+      <div class="f"><span class="lbl">Tipo de traslado</span><span class="val">{{TIPO_TRASLADO}}</span></div>
+    </div>
+
+    <!-- 5. PARQUES -->
+    <div class="sh"><div class="sh-num">5</div><span class="sh-label">Parques y Actividades Incluidos</span></div>
+    <div class="parks">
+      <span class="park-tag">{{PARQUE_1}}</span>
+      <span class="park-tag">{{PARQUE_2}}</span>
+      <!-- {{REPETIR_PARQUES}} -->
+    </div>
+
+    <!-- 6. FINANCIERO -->
+    <div class="sh"><div class="sh-num">6</div><span class="sh-label">Información Financiera</span></div>
+    <div class="fin-grid">
+      <div class="fin-cell"><div class="lbl">Monto total del paquete</div><div class="val">{{TOTAL_PAQUETE}} MXN</div></div>
+      <div class="fin-cell"><div class="lbl">Anticipo recibido (30%)</div><div class="val">{{ANTICIPO}} MXN</div></div>
+      <div class="fin-cell"><div class="lbl">Método de pago</div><div class="val">{{METODO_PAGO}}</div></div>
+      <div class="fin-cell"><div class="lbl">Fecha límite de liquidación</div><div class="val">{{FECHA_LIMITE_PAGO}}</div></div>
+    </div>
+    <div class="saldo">
+      <div>
+        <div class="lbl">Saldo pendiente a liquidar</div>
+        <div class="sub">Documentos protegidos · BG Caribe</div>
+      </div>
+      <div>
+        <span class="amount">{{SALDO_PENDIENTE}}</span>
+        <span class="currency">MXN</span>
+      </div>
+    </div>
+
+    <!-- 7. FACTURACIÓN -->
+    <div class="sh"><div class="sh-num">7</div><span class="sh-label">Datos de Facturación</span></div>
+    <div class="factura-wrap">
+      <div class="factura-heading">Información fiscal registrada</div>
+      <div class="fg fg-3">
+        <div class="f span2"><span class="lbl">Razón social</span><span class="val">{{FACTURA_RAZON_SOCIAL}}</span></div>
+        <div class="f"><span class="lbl">RFC</span><span class="val">{{FACTURA_RFC}}</span></div>
+        <div class="f"><span class="lbl">Uso del CFDI</span><span class="val">{{FACTURA_USO_CFDI}}</span></div>
+        <div class="f"><span class="lbl">Régimen fiscal</span><span class="val">{{FACTURA_REGIMEN}}</span></div>
+        <div class="f span3"><span class="lbl">Domicilio fiscal / C.P.</span><span class="val">{{FACTURA_DOMICILIO}}, C.P. {{FACTURA_CP}}</span></div>
+      </div>
+    </div>
+
+    <!-- 8. POLÍTICAS -->
+    <div class="sh"><div class="sh-num">8</div><span class="sh-label">Políticas de Cancelación</span></div>
+    <div class="policies">
+      <div class="policies-heading">Penalizaciones aplicables</div>
+      <ul>
+        <li>El anticipo del 30% es no reembolsable una vez confirmada la reserva.</li>
+        <li>Cancelación con más de 30 días de anticipación al check-in: pérdida del anticipo (30%).</li>
+        <li>Cancelación entre 15 y 29 días antes del check-in: cargo del 50% del total del paquete.</li>
+        <li>Cancelación con menos de 15 días antes del check-in: cargo del 100% del total.</li>
+        <li>No show (no presentación sin aviso previo): cargo del 100% sin derecho a reembolso.</li>
+        <li>Cambios de fecha sujetos a disponibilidad y posibles diferencias de tarifa.</li>
+        <li>Las políticas del proveedor final (hotel/aerolínea) prevalecerán si resultan más restrictivas.</li>
+      </ul>
+    </div>
+
+    <!-- NOTAS -->
+    <div class="notes"><strong>Peticiones especiales:</strong> {{NOTAS_ESPECIALES}}</div>
+
+  </div><!-- /body -->
+
+  <!-- FOOTER -->
+  <div class="ft">
+    <div class="ft-brands">
+      <span class="ft-brand">Hotel Xcaret México</span>
+      <span class="ft-brand">Hotel Xcaret Arte</span>
+      <span class="ft-brand">La Casa de la Playa</span>
+      <span class="ft-brand">Nickelodeon Hotels &amp; Resorts</span>
+      <span class="ft-brand">PriceTravel Affiliates</span>
+    </div>
+    <div class="ft-right">
+      <div class="ft-rnt">RNT: 0423005C28259</div>
+      <div class="ft-contact">
+        Av. Cobá SM 35, Mza 2, Lte 12, Cancún Q. Roo<br/>
+        <a href="tel:+529986090514">+52 (998) 609-0514</a> ·
+        <a href="mailto:reservaciones@bgcaribe.mx">reservaciones@bgcaribe.mx</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="print-row">
+    <button class="btn-print" onclick="window.print()">Imprimir / Guardar PDF</button>
+  </div>
+
+</div>
+</body>
+</html>

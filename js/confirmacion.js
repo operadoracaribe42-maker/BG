@@ -332,6 +332,23 @@
     document.getElementById('resAnticipo').textContent   = formatCurrency(anticipo);
     document.getElementById('resSaldo').textContent      = formatCurrency(saldo);
     document.getElementById('resMetodoPago').textContent  = safeVal(data.metodo_pago);
+    
+    // Renderizado del Estado de Pago
+    const estadoPagoEl = document.getElementById('resEstadoPago');
+    if (estadoPagoEl) {
+      const ep = String(data.estado_pago || 'Abonada').trim();
+      estadoPagoEl.textContent = ep;
+      if (ep.toLowerCase() === 'pagada') {
+        estadoPagoEl.style.color = '#27AE60';
+        estadoPagoEl.style.fontWeight = '700';
+      } else if (ep.toLowerCase() === 'abonada') {
+        estadoPagoEl.style.color = '#D1AC70';
+        estadoPagoEl.style.fontWeight = '700';
+      } else {
+        estadoPagoEl.style.color = '#C0392B';
+        estadoPagoEl.style.fontWeight = '700';
+      }
+    }
   }
 
   /* ==========================================================
