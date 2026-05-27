@@ -1371,7 +1371,7 @@ function copyEmailTemplate() {
       <div style="background-color: #FAF8F5; padding: 20px; text-align: center; font-size: 11px; color: #7F8C8D; border-top: 1px solid #E6ECEB;">
         <strong>BG Transportadora del Caribe S.A. de C.V.</strong><br>
         RNT: 0423005C28259<br>
-        ¿Tienes dudas o necesitas asistencia? Contáctanos a nuestro <a href="https://wa.me/529981234567" style="color: #0D5C63; text-decoration: none; font-weight: bold;">WhatsApp de Soporte</a>
+        ¿Tienes dudas o necesitas asistencia? Contáctanos a nuestro <a href="https://wa.me/5219862444375" style="color: #0D5C63; text-decoration: none; font-weight: bold;">WhatsApp de Soporte</a>
       </div>
       
     </div>

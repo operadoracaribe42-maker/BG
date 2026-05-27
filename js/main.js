@@ -424,7 +424,7 @@ ${comentarios ? `*Comentarios:* ${comentarios}` : ''}
 Quedo atento a la propuesta. ¡Muchas gracias!`;
 
   // Encode URL
-  const whatsappUrl = `https://wa.me/529989800625?text=${encodeURIComponent(message)}`;
+  const whatsappUrl = `https://wa.me/5219862444375?text=${encodeURIComponent(message)}`;
   
   // Simulate database submission with a premium layout feedback
   const formBox = document.getElementById('quoteFormBox');
@@ -470,7 +470,7 @@ window.sendDirectWhatsApp = function() {
 *Nombre:* ${nombre}
 ${comentarios ? `*Comentarios:* ${comentarios}` : ''}`;
 
-  const whatsappUrl = `https://wa.me/529989800625?text=${encodeURIComponent(message)}`;
+  const whatsappUrl = `https://wa.me/5219862444375?text=${encodeURIComponent(message)}`;
   window.open(whatsappUrl, '_blank');
 };
 
