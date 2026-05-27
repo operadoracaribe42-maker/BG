@@ -137,6 +137,41 @@ async function confirmarReserva(input) {
   }
 }
 
+/**
+ * Controller to handle downloading PDF or HTML without sending emails
+ */
+async function descargarDocumento(tipo, input) {
+  try {
+    const data = { ...input };
+    if (!data.codigoReserva && data.codigo) data.codigoReserva = data.codigo;
+    if (!data.fechaEmision) data.fechaEmision = data.creado_en || new Date().toISOString();
+    
+    // Fill required calculated fields if missing
+    if (data.totalPaquete === undefined) data.totalPaquete = data.montoTotal || 0;
+    if (data.anticipo === undefined) data.anticipo = 0;
+    if (data.saldoPendiente === undefined) data.saldoPendiente = 0;
+    if (data.porcentajeAnticipo === undefined) data.porcentajeAnticipo = 30;
+
+    const isPdf = tipo.endsWith('-pdf');
+    const templateType = tipo.replace('-pdf', ''); // 'voucher' or 'contrato'
+    const templatePath = templateType === 'contrato' ? './templates/contrato_bgcaribe.html' : './templates/voucher_bgcaribe.html';
+    
+    const html = renderTemplate(templatePath, data);
+
+    if (isPdf) {
+      const buffer = await generatePDFBuffer(html);
+      const cleanCode = (data.codigoReserva || 'NUEVA').replace(/[^a-zA-Z0-9_-]/g, '');
+      return { success: true, type: 'pdf', buffer, filename: `${templateType}_${cleanCode}.pdf` };
+    } else {
+      return { success: true, type: 'html', html };
+    }
+  } catch (error) {
+    console.error('Error en descargarDocumento:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 module.exports = {
-  confirmarReserva
+  confirmarReserva,
+  descargarDocumento
 };

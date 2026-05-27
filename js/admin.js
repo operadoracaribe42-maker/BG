@@ -879,6 +879,12 @@ function renderReservationsTable(reservations) {
       <td>${formatCurrency(r.montoTotal || 0)}</td>
       <td>${renderBadge(r.estado)}${renderPaymentBadge(r.estadoPago)}</td>
       <td class="actions-cell">
+        <button class="btn btn-outline btn-icon" title="Descargar Contrato PDF" onclick="downloadDocument('${r.id}', 'contrato-pdf')">
+          <i class="fas fa-file-pdf"></i>
+        </button>
+        <button class="btn btn-outline btn-icon" title="Ver Voucher HTML" onclick="downloadDocument('${r.id}', 'voucher-html')">
+          <i class="fas fa-code"></i>
+        </button>
         <button class="btn btn-primary btn-icon" title="Editar" onclick="openEditModal('${r.id}')">
           <i class="fas fa-pen"></i>
         </button>
@@ -1507,3 +1513,68 @@ function showToast(message, type = 'info') {
     setTimeout(() => toast.remove(), 300);
   }, 4000);
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   22.  MODAL HELPERS
+   ══════════════════════════════════════════════════════════════════════ */
+function openModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.add('active');
+  }
+}
+
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   23.  DOWNLOAD DOCUMENTS
+   ══════════════════════════════════════════════════════════════════════ */
+async function downloadDocument(id, tipo) {
+  const reservation = allReservations.find(r => r.id === id);
+  if (!reservation) {
+    showToast('Reservación no encontrada', 'error');
+    return;
+  }
+
+  showToast(`Generando ${tipo}...`, 'info');
+  try {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const baseUrl = isLocal ? 'http://localhost:5000' : '';
+    
+    const res = await fetch(`${baseUrl}/api/reservas/download/${tipo}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(reservation)
+    });
+
+    if (!res.ok) throw new Error('Error al generar el documento');
+
+    if (tipo.endsWith('-pdf')) {
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Documento_${reservation.codigo}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } else {
+      const text = await res.text();
+      const newWin = window.open('', '_blank');
+      newWin.document.write(text);
+      newWin.document.close();
+    }
+  } catch (error) {
+    console.error(error);
+    showToast('Error al descargar: ' + error.message, 'error');
+  }
+}
+
