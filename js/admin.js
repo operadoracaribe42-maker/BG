@@ -1273,7 +1273,7 @@ function copyEmailTemplate() {
       <!-- Header -->
       <div style="background-color: #0D5C63; padding: 30px 20px; text-align: center; color: #FFFFFF;">
         <h2 style="margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase;">BG CARIBE</h2>
-        <p style="margin: 6px 0 0 0; font-size: 13px; color: #E6EFF0; text-transform: uppercase; letter-spacing: 1px;">Confirmación Oficial de Viaje</p>
+        <p style="margin: 6px 0 0 0; font-size: 13px; color: #E6EFF0; text-transform: uppercase; letter-spacing: 1px;">Confirmación de Viaje</p>
       </div>
       
       <!-- Content Body -->
@@ -1362,7 +1362,7 @@ function copyEmailTemplate() {
         
         <!-- CTA Link -->
         <div style="text-align: center; margin-top: 30px; margin-bottom: 10px;">
-          <p style="font-size: 13px; color: #7F8C8D; margin-bottom: 16px;">Puedes consultar los detalles oficiales, vuelos, traslados y descargar tu comprobante digital en cualquier momento entrando a nuestro portal:</p>
+          <p style="font-size: 13px; color: #7F8C8D; margin-bottom: 16px;">Puedes consultar los detalles de tu viaje, vuelos, traslados y descargar tu comprobante digital en cualquier momento entrando a nuestro portal:</p>
           <a href="https://confirmacion.bgcaribe.mx/?codigo=${r.codigo}" style="background-color: #D1AC70; color: #FFFFFF; text-decoration: none; padding: 12px 24px; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-block;">Ver Comprobante de Viaje</a>
         </div>
       </div>

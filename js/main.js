@@ -530,7 +530,7 @@ const testimonialsDatabase = [
     stars: 5,
     category: "xcaret",
     date: "Febrero 2026",
-    text: "Reservamos el paquete de Hotel Xcaret Arte con BG Caribe y superó las expectativas. Todo fue transparente: los vuelos, la transportación oficial y el hotel. El precio de operador fue mucho menor que en portales tradicionales. ¡Recomendados al 100%!"
+    text: "Reservamos el paquete de Hotel Xcaret Arte con BG Caribe y superó las expectativas. Todo fue transparente: los vuelos, la transportación y el hotel. El precio de operador fue mucho menor que en portales tradicionales. ¡Recomendados al 100%!"
   },
   {
     name: "Alejandro Pineda",
@@ -554,7 +554,7 @@ const testimonialsDatabase = [
     stars: 5,
     category: "xcaret",
     date: "Marzo 2026",
-    text: "Hospedarnos en Hotel Xcaret México con el paquete All-Fun Inclusive fue espectacular. Xplor y Xel-Há de forma ilimitada con niños pequeños fue comodísimo porque los autobuses oficiales salen cada 20 minutos desde el lobby. El proceso de pago a meses sin intereses con BG Caribe fue muy sencillo."
+    text: "Hospedarnos en Hotel Xcaret México con el paquete All-Fun Inclusive fue espectacular. Xplor y Xel-Há de forma ilimitada con niños pequeños fue comodísimo porque los autobuses salen cada 20 minutos desde el lobby. El proceso de pago a meses sin intereses con BG Caribe fue muy sencillo."
   },
   {
     name: "Familia Beltrán",
@@ -682,7 +682,7 @@ const testimonialsDatabase = [
     stars: 5,
     category: "xcaret",
     date: "Enero 2026",
-    text: "El Muluk Spa en cavernas naturales en Hotel Xcaret México es una maravilla. El circuito de hidroterapia es súper relajante. Todo el viaje estuvo perfectamente coordinado por BG Caribe, desde el traslado oficial de Xcaret (Xuttle) hasta la estancia."
+    text: "El Muluk Spa en cavernas naturales en Hotel Xcaret México es una maravilla. El circuito de hidroterapia es súper relajante. Todo el viaje estuvo perfectamente coordinado por BG Caribe, desde el traslado de Xcaret (Xuttle) hasta la estancia."
   },
   {
     name: "Laura Pozos",
@@ -730,7 +730,7 @@ const testimonialsDatabase = [
     stars: 5,
     category: "nickelodeon",
     date: "Enero 2026",
-    text: "Aqua Nick tiene toboganes increíbles para todas las edades. Las suites temáticas de Nickelodeon son de lo más divertidas y cómodas. Pagamos nuestra reservación a meses sin intereses con BG Caribe. Todo seguro y oficial con su registro RNT."
+    text: "Aqua Nick tiene toboganes increíbles para todas las edades. Las suites temáticas de Nickelodeon son de lo más divertidas y cómodas. Pagamos nuestra reservación a meses sin intereses con BG Caribe. Todo seguro con su registro RNT."
   },
   {
     name: "Héctor Duarte",
@@ -770,7 +770,7 @@ const testimonialsDatabase = [
     stars: 5,
     category: "xcaret",
     date: "Marzo 2026",
-    text: "El tour oficial de Xcaret a Chichén Itzá (Xichén Deluxe) es de lo mejor, con guía certificado y desayuno premium a bordo del autobús. BG Caribe integró este tour a nuestro paquete de forma impecable. Un servicio excelente."
+    text: "El tour de Xcaret a Chichén Itzá (Xichén Deluxe) es de lo mejor, con guía certificado y desayuno premium a bordo del autobús. BG Caribe integró este tour a nuestro paquete de forma impecable. Un servicio excelente."
   },
   {
     name: "Liliana Mendoza",
@@ -778,7 +778,7 @@ const testimonialsDatabase = [
     stars: 5,
     category: "caribe",
     date: "Febrero 2026",
-    text: "Reservar con una agencia mayorista con RNT oficial te da la paz mental de que tu dinero está protegido. Todo el proceso de cotización y reservación con BG Caribe fue claro y transparente. Muy contenta con el servicio."
+    text: "Reservar con una agencia mayorista con RNT registrado te da la paz mental de que tu dinero está protegido. Todo el proceso de cotización y reservación con BG Caribe fue claro y transparente. Muy contenta con el servicio."
   },
   {
     name: "Gustavo Loya",
@@ -826,7 +826,7 @@ const testimonialsDatabase = [
     stars: 5,
     category: "caribe",
     date: "Mayo 2026",
-    text: "Teníamos dudas por fraudes de internet, pero al verificar el RNT oficial (0423005C28259) en el portal de Sectur nos dio total tranquilidad. La atención del equipo de BG Caribe fue súper transparente y humana. Los recomendamos ampliamente."
+    text: "Teníamos dudas por fraudes de internet, pero al verificar el RNT registrado (0423005C28259) en el portal de Sectur nos dio total tranquilidad. La atención del equipo de BG Caribe fue súper transparente y humana. Los recomendamos ampliamente."
   },
   {
     name: "Familia Vargas",
