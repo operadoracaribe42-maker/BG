@@ -370,6 +370,7 @@ button, input, select, textarea {
   color: var(--text-main);
   position: relative;
   padding: 8px 0;
+  white-space: nowrap;
 }
 
 .nav-item a::after {
@@ -434,6 +435,21 @@ button, input, select, textarea {
   background-color: var(--color-primary);
   border-radius: 2px;
   transition: var(--transition-fast);
+}
+
+@media (min-width: 993px) and (max-width: 1200px) {
+  .nav-menu {
+    gap: 16px;
+  }
+  .nav-item a {
+    font-size: 0.85rem;
+  }
+  .rnt-indicator {
+    display: none;
+  }
+  .nav-actions {
+    gap: 12px;
+  }
 }
 
 @media (max-width: 992px) {
